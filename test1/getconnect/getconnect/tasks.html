@@ -1397,6 +1397,7 @@
     </style>
 </head>
 <body>
+    <script src="api-config.js"></script>
     <!-- New Task Modal -->
     <div id="newTaskModal" class="modal">
         <div class="modal-content">
@@ -1905,8 +1906,8 @@
         const filterSelects = document.querySelectorAll('.filter-select');
         const taskSearch = document.getElementById('taskSearch');
 
-        // ===== SAMPLE TASK DATA =====
-        const sampleTasks = [
+        // ===== SAMPLE TASK DATA (will be replaced by backend data) =====
+        let sampleTasks = [
             {
                 id: 'TASK-8934',
                 name: 'ML Model Training - Customer Segmentation',
@@ -2455,54 +2456,56 @@
             document.getElementById('failedTasks').textContent = failedTasks;
         }
 
-        // ===== CREATE NEW TASK =====
-        submitTaskBtn.addEventListener('click', () => {
+        // ===== CREATE NEW TASK (connected to backend) =====
+        submitTaskBtn.addEventListener('click', async () => {
             // Get form values
             const taskName = document.querySelector('#taskForm input').value;
             const taskType = document.querySelector('#taskForm select').value;
-            
+
             if (!taskName || !taskType) {
                 alert('Please fill in all required fields.');
                 return;
             }
-            
-            // Create new task
-            const newTaskId = `TASK-${Math.floor(Math.random() * 9000 + 1000)}`;
-            const newTask = {
-                id: newTaskId,
-                name: taskName,
-                type: taskType,
-                typeLabel: taskType.charAt(0).toUpperCase() + taskType.slice(1),
-                priority: 'medium',
-                status: 'queued',
-                progress: 0,
-                node: null,
-                created: new Date().toLocaleString('en-US', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                }),
-                description: 'New task created from form'
-            };
-            
-            // Add to tasks array
-            sampleTasks.unshift(newTask);
-            
-            // Update table
-            renderTasksTable(sampleTasks);
-            
-            // Update stats
-            updateTaskStats();
-            
-            // Close modal and reset form
-            closeModalFunc();
-            document.querySelector('#taskForm').reset();
-            
-            // Show success message
-            alert(`Task #${newTaskId} created successfully and added to queue.`);
+
+            submitTaskBtn.disabled = true;
+            submitTaskBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            try {
+                // Create task via API
+                const result = await apiCreateTask({
+                    type: taskType,
+                    input_size: 0,
+                    requires_gpu: false,
+                    priority: 'medium',
+                });
+
+                // Add to local list
+                const newTask = {
+                    id: result.task_id,
+                    name: taskName,
+                    type: taskType,
+                    typeLabel: taskType.charAt(0).toUpperCase() + taskType.slice(1).replace('_', ' '),
+                    priority: 'medium',
+                    status: 'queued',
+                    progress: 0,
+                    node: null,
+                    created: new Date().toLocaleString(),
+                    description: `Task created: ${taskName}`,
+                };
+                sampleTasks.unshift(newTask);
+
+                renderTasksTable(sampleTasks);
+                updateTaskStats();
+                closeModalFunc();
+                document.querySelector('#taskForm').reset();
+
+                alert(`Task ${result.task_id} created successfully!`);
+            } catch (err) {
+                alert(`Failed to create task: ${err.detail || 'Unknown error'}`);
+            } finally {
+                submitTaskBtn.disabled = false;
+                submitTaskBtn.innerHTML = '<i class="fas fa-plus"></i> Create Task';
+            }
         });
 
         // ===== BATCH OPERATIONS =====
@@ -2701,20 +2704,55 @@
             }
         }
 
+        // ===== LOAD TASKS FROM BACKEND =====
+        async function loadTasksFromBackend() {
+            try {
+                const result = await apiGetTasks();
+                if (result.tasks && result.tasks.length > 0) {
+                    sampleTasks = result.tasks.map(task => ({
+                        id: task.id,
+                        name: `${task.type} #${String(task.id).slice(0, 8)}`,
+                        type: task.type || 'data',
+                        typeLabel: (task.type || 'Unknown').charAt(0).toUpperCase() + (task.type || 'unknown').slice(1).replace('_', ' '),
+                        priority: task.priority || 'medium',
+                        status: (task.status || 'PENDING').toLowerCase() === 'pending' ? 'queued'
+                            : (task.status || '').toLowerCase() === 'assigned' ? 'queued'
+                            : (task.status || '').toLowerCase() === 'cancelled' ? 'failed'
+                            : (task.status || '').toLowerCase(),
+                        progress: task.progress || 0,
+                        node: task.assigned_node || null,
+                        created: task.created_at || '',
+                        started: task.started_at || null,
+                        completed: task.completed_at || null,
+                        description: `${task.type} task (input_size: ${task.input_size || 0})`,
+                    }));
+                    renderTasksTable(sampleTasks);
+                    updateTaskStats();
+                }
+            } catch (err) {
+                console.warn('Could not load tasks from backend, using sample data:', err.detail || err);
+            }
+        }
+
         // ===== PAGE INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // Initialize charts
             initializeCharts();
-            
-            // Render initial tasks
-            renderTasksTable(sampleTasks);
-            
+
+            // Load tasks from backend (fallback to sample data)
+            await loadTasksFromBackend();
+
+            // Render initial tasks if backend had none
+            if (sampleTasks.length > 0) {
+                renderTasksTable(sampleTasks);
+            }
+
             // Update initial stats
             updateTaskStats();
-            
-            // Start live updates
-            setInterval(simulateLiveUpdates, 3000);
-            
+
+            // Refresh from backend every 10 seconds
+            setInterval(loadTasksFromBackend, 10000);
+
             // Initialize task actions
             document.querySelectorAll('.task-checkbox').forEach(checkbox => {
                 checkbox.addEventListener('change', updateSelectedTasks);

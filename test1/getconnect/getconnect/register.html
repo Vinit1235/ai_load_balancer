@@ -1030,6 +1030,7 @@
     </style>
 </head>
 <body>
+    <script src="api-config.js"></script>
     <!-- Header -->
     <header class="header">
         <nav class="navbar">
@@ -1915,46 +1916,39 @@
         // ===== FORM SUBMISSION =====
         registrationForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             // Validate final step
             if (!validateStep(4)) {
                 return;
             }
-            
+
             // Show loading state
             const submitText = document.getElementById('submitText');
             const submitSpinner = document.getElementById('submitSpinner');
             submitBtn.disabled = true;
             submitText.style.display = 'none';
             submitSpinner.style.display = 'inline-block';
-            
+
             try {
-                // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Combine all form data
-                const completeFormData = {
-                    ...formData.personal,
-                    ...formData.account,
-                    ...formData.plan,
-                    ...formData.confirmation,
-                    registeredAt: new Date().toISOString()
-                };
-                
-                // Store in localStorage (simulating backend storage)
-                localStorage.setItem('userData', JSON.stringify(completeFormData));
-                localStorage.setItem('userEmail', completeFormData.email);
-                
-                // Show success message
-                showToast('Registration Successful', `Welcome to GetConnect, ${completeFormData.firstName}!`, 'success');
-                
-                // Redirect to dashboard after 2 seconds
+                // Call real backend API
+                const fullName = `${formData.personal.firstName || ''} ${formData.personal.lastName || ''}`.trim();
+                const email = formData.personal.email;
+                const password = formData.account.password;
+
+                const result = await apiRegister(fullName, email, password);
+
+                // Auto login after registration
+                await apiLogin(email, password);
+
+                showToast('Registration Successful', `Welcome to GetConnect, ${formData.personal.firstName}!`, 'success');
+
+                // Redirect to dashboard after 1.5 seconds
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
-                }, 2000);
-                
+                }, 1500);
+
             } catch (error) {
-                showToast('Registration Failed', error.message || 'An error occurred during registration', 'error');
+                showToast('Registration Failed', error.detail || 'An error occurred during registration', 'error');
                 submitBtn.disabled = false;
                 submitText.style.display = 'inline-block';
                 submitSpinner.style.display = 'none';

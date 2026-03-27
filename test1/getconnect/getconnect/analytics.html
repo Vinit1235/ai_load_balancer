@@ -1342,6 +1342,7 @@
     </style>
 </head>
 <body>
+    <script src="api-config.js"></script>
     <!-- Header with Animated Navbar -->
     <header class="header">
         <nav class="navbar">
@@ -2602,32 +2603,34 @@
         });
 
         // ===== AUTO-UPDATE FUNCTIONS =====
-        function updateOverviewCards() {
-            // Randomly update overview card values
-            const overviewValues = document.querySelectorAll('.overview-value');
-            overviewValues.forEach(value => {
-                const current = parseFloat(value.textContent.replace(/[^0-9.]/g, ''));
-                const change = Math.random() * 5 - 2.5; // Random change between -2.5 and +2.5
-                const newValue = Math.max(0, Math.min(100, current + change));
-                value.textContent = value.textContent.includes('$') 
-                    ? `$${(newValue * 100).toLocaleString()}`
-                    : `${newValue.toFixed(1)}%`;
-            });
-            
-            // Update trend indicators
-            const trends = document.querySelectorAll('.trend-indicator');
-            trends.forEach(trend => {
-                const isUp = Math.random() > 0.5;
-                const change = (Math.random() * 10).toFixed(1);
-                
-                if (isUp) {
-                    trend.innerHTML = `<i class="fas fa-arrow-up"></i> ${change}%`;
-                    trend.className = 'trend-indicator trend-up';
-                } else {
-                    trend.innerHTML = `<i class="fas fa-arrow-down"></i> ${change}%`;
-                    trend.className = 'trend-indicator trend-down';
+        async function updateOverviewCards() {
+            try {
+                const data = await apiGetClusterStatus();
+                const overviewValues = document.querySelectorAll('.overview-value');
+
+                // Compute averages from real node data
+                if (data.nodes && data.nodes.length > 0) {
+                    const avgCpu = (data.nodes.reduce((s, n) => s + (n.cpu || 0), 0) / data.nodes.length).toFixed(1);
+                    const avgRam = (data.nodes.reduce((s, n) => s + (n.ram || 0), 0) / data.nodes.length).toFixed(1);
+
+                    if (overviewValues[0]) overviewValues[0].textContent = `${avgCpu}%`;
+                    if (overviewValues[1]) overviewValues[1].textContent = `${avgRam}%`;
                 }
-            });
+
+                if (overviewValues[2]) overviewValues[2].textContent = `${data.tasks_total || 0}`;
+                if (overviewValues[3]) overviewValues[3].textContent = `${data.nodes_online || 0}`;
+            } catch (err) {
+                // Fallback to random updates if backend is offline
+                const overviewValues = document.querySelectorAll('.overview-value');
+                overviewValues.forEach(value => {
+                    const current = parseFloat(value.textContent.replace(/[^0-9.]/g, ''));
+                    const change = Math.random() * 5 - 2.5;
+                    const newValue = Math.max(0, Math.min(100, current + change));
+                    value.textContent = value.textContent.includes('$')
+                        ? `$${(newValue * 100).toLocaleString()}`
+                        : `${newValue.toFixed(1)}%`;
+                });
+            }
         }
 
         function updateNodePerformance() {

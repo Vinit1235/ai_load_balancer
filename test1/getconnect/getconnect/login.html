@@ -886,6 +886,7 @@
     </style>
 </head>
 <body>
+    <script src="api-config.js"></script>
     <!-- Header -->
     <header class="header">
         <nav class="navbar">
@@ -1285,53 +1286,42 @@
         // Login Form Submission
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             const rememberMe = document.getElementById('rememberMe').checked;
             const submitBtn = document.getElementById('loginSubmit');
             const loginText = document.getElementById('loginText');
             const loginSpinner = document.getElementById('loginSpinner');
-            
+
             // Basic validation
             if (!email || !password) {
                 showToast('Validation Error', 'Please fill in all required fields', 'error');
                 return;
             }
-            
+
             // Show loading state
             submitBtn.disabled = true;
             loginText.style.display = 'none';
             loginSpinner.style.display = 'inline-block';
-            
+
             try {
-                // Simulate API call delay
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // Simulate successful login
-                // In a real application, this would be an API call
-                if (email && password.length >= 6) {
-                    showToast('Login Successful', 'Welcome back to GetConnect!', 'success');
-                    
-                    // Store login state
-                    if (rememberMe) {
-                        localStorage.setItem('rememberMe', 'true');
-                    }
-                    
-                    // Store user session (in a real app, this would be a token)
-                    sessionStorage.setItem('userEmail', email);
-                    
-                    // Redirect to dashboard after 1.5 seconds
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                } else {
-                    throw new Error('Invalid credentials');
+                // Call real backend API
+                const result = await apiLogin(email, password);
+
+                showToast('Login Successful', `Welcome back, ${result.user.name}!`, 'success');
+
+                if (rememberMe) {
+                    localStorage.setItem('rememberMe', 'true');
                 }
+
+                // Redirect to dashboard after 1 second
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
             } catch (error) {
-                showToast('Login Failed', error.message || 'Invalid email or password', 'error');
+                showToast('Login Failed', error.detail || 'Invalid email or password', 'error');
             } finally {
-                // Reset button state
                 submitBtn.disabled = false;
                 loginText.style.display = 'inline-block';
                 loginSpinner.style.display = 'none';
@@ -1341,76 +1331,60 @@
         // Registration Form Submission
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
             const email = document.getElementById('registerEmail').value;
-            const company = document.getElementById('company').value;
             const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const plan = document.getElementById('plan').value;
+            const confirmPwd = document.getElementById('confirmPassword').value;
             const acceptTerms = document.getElementById('acceptTerms').checked;
             const submitBtn = document.getElementById('registerSubmit');
             const registerText = document.getElementById('registerText');
             const registerSpinner = document.getElementById('registerSpinner');
-            
+
             // Validation
-            if (!firstName || !lastName || !email || !password || !confirmPassword) {
+            if (!firstName || !lastName || !email || !password || !confirmPwd) {
                 showToast('Validation Error', 'Please fill in all required fields', 'error');
                 return;
             }
-            
+
             if (!acceptTerms) {
                 showToast('Validation Error', 'Please accept the Terms & Conditions', 'error');
                 return;
             }
-            
-            if (password !== confirmPassword) {
+
+            if (password !== confirmPwd) {
                 showToast('Validation Error', 'Passwords do not match', 'error');
                 return;
             }
-            
+
             if (password.length < 8) {
                 showToast('Validation Error', 'Password must be at least 8 characters', 'error');
                 return;
             }
-            
+
             // Show loading state
             submitBtn.disabled = true;
             registerText.style.display = 'none';
             registerSpinner.style.display = 'inline-block';
-            
+
             try {
-                // Simulate API call delay
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Simulate successful registration
-                // In a real application, this would be an API call
+                // Call real backend API
+                const fullName = `${firstName} ${lastName}`;
+                const result = await apiRegister(fullName, email, password);
+
                 showToast('Registration Successful', `Welcome to GetConnect, ${firstName}!`, 'success');
-                
-                // Store registration data
-                const userData = {
-                    firstName,
-                    lastName,
-                    email,
-                    company,
-                    plan,
-                    registeredAt: new Date().toISOString()
-                };
-                
-                localStorage.setItem('userData', JSON.stringify(userData));
-                
+
                 // Auto login after registration
-                sessionStorage.setItem('userEmail', email);
-                
-                // Redirect to dashboard after 2 seconds
+                await apiLogin(email, password);
+
+                // Redirect to dashboard after 1.5 seconds
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
-                }, 2000);
+                }, 1500);
             } catch (error) {
-                showToast('Registration Failed', error.message || 'An error occurred during registration', 'error');
+                showToast('Registration Failed', error.detail || 'An error occurred during registration', 'error');
             } finally {
-                // Reset button state
                 submitBtn.disabled = false;
                 registerText.style.display = 'inline-block';
                 registerSpinner.style.display = 'none';
@@ -1560,15 +1534,8 @@
 
         // ===== AUTO-REDIRECT IF ALREADY LOGGED IN =====
         window.addEventListener('load', () => {
-            const userEmail = sessionStorage.getItem('userEmail');
-            const rememberMe = localStorage.getItem('rememberMe');
-            
-            // If user is already logged in and has a session, redirect to dashboard
-            if (userEmail || rememberMe === 'true') {
-                // Show notification
+            if (isLoggedIn()) {
                 showToast('Already Logged In', 'Redirecting to dashboard...', 'info');
-                
-                // Redirect after 1 second
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
                 }, 1000);

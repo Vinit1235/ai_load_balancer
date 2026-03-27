@@ -1294,6 +1294,7 @@
     </style>
 </head>
 <body>
+    <script src="api-config.js"></script>
     <!-- Header with Animated Navbar -->
     <header class="header">
         <nav class="navbar">
@@ -1926,36 +1927,128 @@
         // ===== LOGOUT FUNCTIONALITY =====
         logoutBtn.addEventListener('click', () => {
             if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'index.html';
+                apiLogout();
             }
         });
 
+        // ===== UPDATE USER DISPLAY =====
+        (function updateUserDisplay() {
+            const user = getCurrentUser();
+            const loginBtn = document.getElementById('loginBtn');
+            if (loginBtn && user.name) {
+                loginBtn.innerHTML = `<i class="fas fa-user"></i> ${user.name}`;
+            }
+        })();
+
+        // ===== FETCH DASHBOARD DATA FROM BACKEND =====
+        async function fetchDashboardData() {
+            try {
+                const data = await apiGetDisplayStatus();
+
+                // Update stat cards
+                const avgCpu = data.nodes && data.nodes.length > 0
+                    ? Math.round(data.nodes.reduce((sum, n) => sum + (n.cpu || 0), 0) / data.nodes.length)
+                    : 0;
+                const avgRam = data.nodes && data.nodes.length > 0
+                    ? (data.nodes.reduce((sum, n) => sum + (n.ram || 0), 0) / data.nodes.length).toFixed(1)
+                    : '0';
+
+                document.getElementById('cpuUsage').textContent = `${avgCpu}%`;
+                document.getElementById('memoryUsage').textContent = `${avgRam}%`;
+                document.getElementById('activeTasks').textContent = data.working || 0;
+                document.getElementById('activeNodes').textContent = data.nodes_online || 0;
+
+                // Update stat change labels
+                const taskStatus = data.task_status || {};
+                document.querySelectorAll('.stat-change')[2].innerHTML =
+                    `<i class="fas fa-tasks"></i> ${taskStatus.pending || 0} pending`;
+                document.querySelectorAll('.stat-change')[3].innerHTML =
+                    `<i class="fas fa-server"></i> ${data.nodes_online || 0} online`;
+
+                // Update node grid with real nodes
+                const nodeGrid = document.querySelector('.node-grid');
+                if (data.nodes && data.nodes.length > 0) {
+                    nodeGrid.innerHTML = data.nodes.map(node => `
+                        <div class="node-card ${node.status === 'HEALTHY' ? 'active' : node.status === 'DRAINING' ? 'warning' : 'critical'}">
+                            <div class="node-header">
+                                <div class="node-name">
+                                    <i class="fas fa-server"></i> ${node.name}
+                                </div>
+                                <span class="node-status ${node.status === 'HEALTHY' ? 'active' : node.status === 'DRAINING' ? 'warning' : 'critical'}">${node.status}</span>
+                            </div>
+                            <div class="node-stats">
+                                <div class="node-stat">
+                                    <div class="node-stat-label">CPU</div>
+                                    <div class="node-stat-value">${Math.round(node.cpu || 0)}%</div>
+                                </div>
+                                <div class="node-stat">
+                                    <div class="node-stat-label">RAM</div>
+                                    <div class="node-stat-value">${Math.round(node.ram || 0)}%</div>
+                                </div>
+                            </div>
+                            <div class="node-actions">
+                                <button class="node-btn restart" data-node-id="${node.id}">
+                                    <i class="fas fa-redo"></i> Restart
+                                </button>
+                                <button class="node-btn stop" data-node-id="${node.id}">
+                                    <i class="fas fa-stop"></i> Drain
+                                </button>
+                                <button class="node-btn details" data-node-id="${node.id}">
+                                    <i class="fas fa-info"></i> Details
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // Update recent tasks sidebar
+                if (data.recent_tasks && data.recent_tasks.length > 0) {
+                    const tasksList = document.querySelector('.tasks-list');
+                    tasksList.innerHTML = data.recent_tasks.slice(0, 5).map(task => {
+                        const status = (task.status || '').toLowerCase();
+                        const statusClass = status === 'completed' ? 'completed'
+                            : status === 'running' || status === 'assigned' ? 'processing'
+                            : status === 'failed' || status === 'cancelled' ? 'failed'
+                            : 'processing';
+                        const displayStatus = status === 'running' ? `${Math.round(task.progress || 0)}%` : task.status;
+                        return `
+                            <div class="task-item ${statusClass}">
+                                <div class="task-info">
+                                    <div class="task-name">${task.type} #${String(task.id).slice(0, 8)}</div>
+                                    <div class="task-meta">
+                                        <span><i class="far fa-clock"></i> ${task.created_at ? new Date(task.created_at).toLocaleTimeString() : '—'}</span>
+                                        <span><i class="fas fa-server"></i> ${task.assigned_node || 'Unassigned'}</span>
+                                    </div>
+                                </div>
+                                <span class="task-status ${statusClass}">${displayStatus}</span>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                // Update network chart with node data
+                if (charts.networkChart && data.nodes && data.nodes.length > 0) {
+                    charts.networkChart.data.labels = data.nodes.map(n => n.name);
+                    charts.networkChart.data.datasets[0].data = data.nodes.map(n => Math.round(n.cpu || 0));
+                    charts.networkChart.update();
+                }
+
+                return data;
+            } catch (err) {
+                console.warn('Failed to fetch dashboard data:', err.detail || err);
+                return null;
+            }
+        }
+
         // ===== BUTTON FUNCTIONALITY =====
-        refreshBtn.addEventListener('click', () => {
+        refreshBtn.addEventListener('click', async () => {
             refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
             refreshBtn.disabled = true;
-            
-            // Simulate refresh delay
-            setTimeout(() => {
-                // Update random stats
-                document.getElementById('cpuUsage').textContent = `${Math.floor(Math.random() * 30) + 40}%`;
-                document.getElementById('memoryUsage').textContent = `${(Math.random() * 2 + 3).toFixed(1)} GB`;
-                document.getElementById('activeTasks').textContent = Math.floor(Math.random() * 100) + 100;
-                
-                // Update charts
-                if (charts.performanceChart) {
-                    const newData = charts.performanceChart.data.datasets[0].data.map(() => 
-                        Math.floor(Math.random() * 100)
-                    );
-                    charts.performanceChart.data.datasets[0].data = newData;
-                    charts.performanceChart.update();
-                }
-                
-                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
-                refreshBtn.disabled = false;
-                
-                alert('Dashboard data refreshed successfully!');
-            }, 1500);
+
+            const data = await fetchDashboardData();
+
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+            refreshBtn.disabled = false;
         });
 
         addNodeBtn.addEventListener('click', () => {
@@ -2274,68 +2367,38 @@
             }
         });
 
-        // ===== AUTO-UPDATE SIMULATION =====
-        function simulateLiveUpdates() {
-            // Randomly update CPU usage
-            if (Math.random() > 0.7) {
-                const cpuElement = document.getElementById('cpuUsage');
-                const currentCpu = parseInt(cpuElement.textContent);
-                const newCpu = Math.max(10, Math.min(95, currentCpu + (Math.random() * 10 - 5)));
-                cpuElement.textContent = `${Math.round(newCpu)}%`;
-                
-                // Update node CPU values
-                document.querySelectorAll('.node-stat-value').forEach((value, index) => {
-                    if (index % 2 === 0) { // CPU stats only (every other one)
-                        const current = parseInt(value.textContent);
-                        const newValue = Math.max(5, Math.min(100, current + (Math.random() * 20 - 10)));
-                        value.textContent = `${Math.round(newValue)}%`;
-                    }
-                });
-            }
-            
-            // Random task progress updates
-            document.querySelectorAll('.task-status.processing').forEach(status => {
-                if (Math.random() > 0.8 && status.textContent.includes('%')) {
-                    const current = parseInt(status.textContent);
-                    if (current < 100) {
-                        const newProgress = Math.min(100, current + Math.random() * 10);
-                        status.textContent = `${Math.round(newProgress)}%`;
-                        
-                        // Update progress bar
-                        const progressFill = status.closest('.task-item').querySelector('.progress-fill');
-                        if (progressFill) {
-                            progressFill.style.width = `${newProgress}%`;
-                        }
-                        
-                        if (newProgress === 100) {
-                            status.textContent = 'Completed';
-                            status.className = 'task-status completed';
-                            status.closest('.task-item').className = 'task-item completed';
-                        }
+        // ===== LIVE UPDATES VIA WEBSOCKET =====
+        let metricsWS = null;
+
+        function startLiveUpdates() {
+            metricsWS = connectMetricsWS((msg) => {
+                if (msg.type === 'cluster_update' && msg.data) {
+                    const d = msg.data;
+                    document.getElementById('activeTasks').textContent = d.working || 0;
+                    document.getElementById('activeNodes').textContent = d.nodes_online || 0;
+
+                    if (d.nodes && d.nodes.length > 0) {
+                        const avgCpu = Math.round(d.nodes.reduce((s, n) => s + (n.cpu || 0), 0) / d.nodes.length);
+                        document.getElementById('cpuUsage').textContent = `${avgCpu}%`;
                     }
                 }
             });
-            
-            // Random notification generation
-            if (Math.random() > 0.9) {
-                notificationCounter++;
-                updateNotificationCount(notificationCounter);
-            }
         }
 
         // ===== PAGE INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // Initialize charts
             initializeCharts();
-            
-            // Start live updates
-            setInterval(simulateLiveUpdates, 3000);
-            
-            // Auto-refresh every 30 seconds
-            setInterval(() => {
-                refreshBtn.click();
-            }, 30000);
-            
+
+            // Fetch initial data from backend
+            await fetchDashboardData();
+
+            // Start WebSocket live updates
+            startLiveUpdates();
+
+            // Auto-refresh every 15 seconds as fallback
+            setInterval(fetchDashboardData, 15000);
+
             // Initialize node action buttons
             document.querySelectorAll('.node-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {

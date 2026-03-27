@@ -68,7 +68,7 @@ async def ws_metrics(websocket: WebSocket):
         clients.discard(websocket)
 
 @router.websocket("/ws/tasks/{id}")
-async def ws_task(websocket: WebSocket, id: int):
+async def ws_task(websocket: WebSocket, id: str):
     await websocket.accept()
     try:
         while True:

@@ -869,6 +869,7 @@
     </style>
 </head>
 <body>
+    <script src="api-config.js"></script>
     <!-- Header -->
     <header class="header">
         <nav class="navbar">
@@ -1314,57 +1315,40 @@
 
         messageForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // Get form data
-            const formData = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                email: document.getElementById('email').value,
-                company: document.getElementById('company').value,
-                department: document.getElementById('department').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value,
-                priority: document.getElementById('priority').value,
-                timestamp: new Date().toISOString()
-            };
-            
-            // Validate required fields
-            if (!formData.firstName || !formData.lastName || !formData.email || !formData.department || !formData.subject || !formData.message) {
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            const department = document.getElementById('department').value;
+
+            // Validate
+            if (!firstName || !lastName || !email || !department || !subject || !message) {
                 showToast('Validation Error', 'Please fill in all required fields', 'error');
                 return;
             }
-            
-            // Email validation
+
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(formData.email)) {
+            if (!emailRegex.test(email)) {
                 showToast('Validation Error', 'Please enter a valid email address', 'error');
                 return;
             }
-            
-            // Show loading state
+
             submitBtn.disabled = true;
             submitText.style.display = 'none';
             submitSpinner.style.display = 'inline-block';
-            
+
             try {
-                // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Store form data in localStorage (simulating backend)
-                const existingMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
-                existingMessages.push(formData);
-                localStorage.setItem('contactMessages', JSON.stringify(existingMessages));
-                
-                // Show success message
-                showToast('Message Sent', 'We\'ll get back to you within 24 hours. Thank you!', 'success');
-                
-                // Reset form
+                // Call real backend API
+                const fullName = `${firstName} ${lastName}`;
+                const result = await apiSubmitContact(fullName, email, `[${department}] ${subject}`, message);
+
+                showToast('Message Sent', result.message || "We'll get back to you within 24 hours!", 'success');
                 messageForm.reset();
-                
             } catch (error) {
-                showToast('Submission Failed', 'An error occurred. Please try again.', 'error');
+                showToast('Submission Failed', error.detail || 'An error occurred. Please try again.', 'error');
             } finally {
-                // Reset button state
                 submitBtn.disabled = false;
                 submitText.style.display = 'inline-block';
                 submitSpinner.style.display = 'none';
