@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetConnect.Web | Blog - AI & Distributed Computing Insights</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* ===== CSS RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-blue: #60a5fa;
+            --accent-blue: #93c5fd;
+            --sky-blue: #dbeafe;
+            
+            --white: #ffffff;
+            --off-white: #f8fafc;
+            --light-gray: #f1f5f9;
+            --medium-gray: #e2e8f0;
+            --dark-gray: #64748b;
+            --text-dark: #334155;
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0ea5e9;
+            
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--off-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== LOGO ANIMATIONS ===== */
+        .logo-animation svg {
+            animation: floatPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes floatPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform var(--transition-normal);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-main {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-sub {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--primary-light);
+            margin-top: -2px;
+        }
+
+        /* ===== MODAL STYLES ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 450px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 1.5rem;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.75rem;
+            color: var(--primary-dark);
+            margin: 1rem 0 0.5rem;
+        }
+
+        .modal-header p {
+            color: var(--dark-gray);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--medium-gray);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: all var(--transition-normal);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: var(--primary-blue);
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+
+        .forgot-link:hover {
+            color: var(--primary-dark);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all var(--transition-normal);
+            margin-bottom: 1rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--dark-gray);
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--medium-gray);
+        }
+
+        .divider span {
+            padding: 0 1rem;
+        }
+
+        .btn-register-modal {
+            width: 100%;
+            padding: 14px;
+            background-color: transparent;
+            color: var(--primary-dark);
+            border: 2px solid var(--primary-blue);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-register-modal:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* ===== HEADER & NAVBAR ===== */
+        .header {
+            background-color: var(--white);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.98);
+        }
+
+        .navbar {
+            padding: 0.75rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Animated Navigation Menu */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            font-weight: 500;
+            color: var(--dark-gray);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+            transition: width var(--transition-normal);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-dark);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .nav-link.active {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        .nav-link i {
+            font-size: 1.1em;
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-notification {
+            position: relative;
+            background: none;
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-notification:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-dark);
+            transform: rotate(15deg);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-login-header, .btn-register {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-login-header {
+            background-color: transparent;
+            color: var(--primary-dark);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-login-header:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* ===== BLOG HERO SECTION ===== */
+        .blog-hero {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(219, 234, 254, 0.3) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 70%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.1) 0%, rgba(37, 99, 235, 0.05) 50%, transparent 70%);
+            z-index: 0;
+        }
+
+        .blog-hero-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .blog-hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+            line-height: 1.1;
+        }
+
+        .highlight {
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+
+        .blog-hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--dark-gray);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ===== BLOG CATEGORIES ===== */
+        .blog-categories {
+            padding: 2rem 2rem 0;
+            background-color: var(--white);
+        }
+
+        .categories-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .categories-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .category-btn {
+            padding: 10px 24px;
+            background-color: var(--off-white);
+            color: var(--text-dark);
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            transition: all var(--transition-normal);
+            border: 1px solid var(--sky-blue);
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ===== BLOG POSTS GRID ===== */
+        .blog-posts {
+            padding: 4rem 2rem;
+            background-color: var(--off-white);
+        }
+
+        .posts-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .blog-post-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            border: 1px solid var(--sky-blue);
+        }
+
+        .blog-post-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .post-image {
+            height: 200px;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-image i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .post-content {
+            padding: 1.5rem;
+        }
+
+        .post-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background-color: var(--sky-blue);
+            color: var(--primary-dark);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .post-excerpt {
+            color: var(--dark-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .author-name {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .post-date {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+
+        /* ===== FEATURED POST ===== */
+        .featured-post {
+            padding: 4rem 2rem;
+            background-color: var(--white);
+        }
+
+        .featured-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .featured-card {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(96, 165, 250, 0.1));
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--sky-blue);
+        }
+
+        .featured-image {
+            height: 100%;
+            min-height: 350px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-image i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 6rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .featured-content {
+            padding: 3rem;
+        }
+
+        .featured-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .featured-title {
+            font-size: 2.25rem;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .featured-excerpt {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        /* ===== POPULAR TOPICS ===== */
+        .popular-topics {
+            padding: 4rem 2rem;
+            background-color: var(--off-white);
+        }
+
+        .topics-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .topic-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            border: 1px solid var(--sky-blue);
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .topic-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(96, 165, 250, 0.2));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: var(--primary-blue);
+        }
+
+        .topic-title {
+            font-size: 1.25rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .topic-count {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+
+        /* ===== NEWSLETTER SECTION ===== */
+        .newsletter-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
+            color: white;
+            text-align: center;
+        }
+
+        .newsletter-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .newsletter-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            border: 2px solid transparent;
+            font-size: 1rem;
+            color: var(--text-dark);
+        }
+
+        .newsletter-input:focus {
+            outline: none;
+            border-color: white;
+        }
+
+        .newsletter-btn {
+            padding: 14px 32px;
+            background: white;
+            color: var(--primary-dark);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all var(--transition-normal);
+        }
+
+        .newsletter-btn:hover {
+            background: var(--sky-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo .logo-main {
+            color: white;
+        }
+
+        .footer-logo .logo-sub {
+            color: var(--secondary-blue);
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all var(--transition-normal);
+        }
+
+        .social-links a:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+        }
+
+        .footer-column h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: color var(--transition-fast);
+        }
+
+        .footer-column a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 300px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            border: 1px solid var(--sky-blue);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+        }
+
+        .toast-content h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+        }
+
+        .toast-content p {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+
+        .toast-close {
+            margin-left: auto;
+            background: none;
+            color: var(--dark-gray);
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .featured-card {
+                grid-template-columns: 1fr;
+            }
+            
+            .featured-image {
+                min-height: 250px;
+            }
+            
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .nav-actions .btn-login-header,
+            .nav-actions .btn-register {
+                display: none;
+            }
+            
+            .blog-hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .blog-hero-title {
+                font-size: 2rem;
+            }
+            
+            .featured-title {
+                font-size: 1.75rem;
+            }
+            
+            .featured-content {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal" style="display: none;">
+        <!-- Modal content removed since we're redirecting to login.html -->
+    </div>
+
+    <!-- Header with Animated Navbar -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <!-- Logo with Animation -->
+                <a href="index.html" class="logo">
+                    <div class="logo-animation">
+                        <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </a>
+
+                <!-- Animated Menu -->
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li class="nav-item"><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                    <li class="nav-item"><a href="blog.html" class="nav-link active"><i class="fas fa-blog"></i> Blog</a></li>
+                    <li class="nav-item"><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+                </ul>
+
+                <!-- Right Side Actions -->
+                <div class="nav-actions">
+                    <button class="btn-notification" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">2</span>
+                    </button>
+                    <!-- Updated Login Button - Now redirects to login.html -->
+                    <a href="login.html" class="btn-login-header" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <!-- Updated Register Button - Now redirects to register.html -->
+                    <a href="register.html" class="btn-register" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                    <div class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Blog Hero Section -->
+    <section class="blog-hero">
+        <div class="blog-hero-container">
+            <h1 class="blog-hero-title">
+                GetConnect <span class="highlight">Blog</span>
+            </h1>
+            <p class="blog-hero-subtitle">
+                Insights, tutorials, and latest developments in AI-powered distributed computing, load balancing, and task execution optimization.
+            </p>
+            <div class="hero-buttons" style="justify-content: center; margin-top: 2rem;">
+                <button class="btn-primary" id="subscribeBtn">
+                    <i class="fas fa-envelope"></i> Subscribe to Newsletter
+                </button>
+                <button class="btn-secondary" id="latestPostsBtn">
+                    <i class="fas fa-newspaper"></i> Latest Posts
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Categories -->
+    <section class="blog-categories">
+        <div class="categories-container">
+            <div class="section-header">
+                <h2><i class="fas fa-tags"></i> Categories</h2>
+                <p>Explore our content by topic</p>
+            </div>
+            <div class="categories-grid">
+                <button class="category-btn active" data-category="all">All Posts</button>
+                <button class="category-btn" data-category="ai">AI & Machine Learning</button>
+                <button class="category-btn" data-category="distributed">Distributed Computing</button>
+                <button class="category-btn" data-category="performance">Performance Optimization</button>
+                <button class="category-btn" data-category="tutorial">Tutorials</button>
+                <button class="category-btn" data-category="case-study">Case Studies</button>
+                <button class="category-btn" data-category="news">Industry News</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Post -->
+    <section class="featured-post">
+        <div class="featured-container">
+            <div class="section-header">
+                <h2><i class="fas fa-star"></i> Featured Post</h2>
+                <p>Don't miss our most popular article</p>
+            </div>
+            <div class="featured-card">
+                <div class="featured-image">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="featured-content">
+                    <span class="featured-badge">AI & Machine Learning</span>
+                    <h2 class="featured-title">How AI Load Balancing Revolutionizes Distributed Task Execution</h2>
+                    <p class="featured-excerpt">
+                        Discover how our AI algorithms analyze task complexity, resource requirements, and system load in real-time to optimize task distribution across hundreds of nodes. Learn about the 40% performance improvement and 60% cost reduction achieved by early adopters.
+                    </p>
+                    <div class="post-meta">
+                        <div class="post-author">
+                            <div class="author-avatar">JS</div>
+                            <span class="author-name">John Smith</span>
+                        </div>
+                        <div class="post-date">May 15, 2024 • 8 min read</div>
+                    </div>
+                    <button class="btn-primary" style="margin-top: 1.5rem;">
+                        <i class="fas fa-book-reader"></i> Read Full Article
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Posts Grid -->
+    <section class="blog-posts">
+        <div class="posts-container">
+            <div class="section-header">
+                <h2><i class="fas fa-newspaper"></i> Latest Articles</h2>
+                <p>Fresh insights on distributed computing and AI optimization</p>
+            </div>
+            <div class="posts-grid">
+                <!-- Post 1 -->
+                <div class="blog-post-card" data-category="tutorial">
+                    <div class="post-image" style="background: linear-gradient(135deg, #10b981, #0ea5e9);">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">Tutorial</span>
+                        <h3 class="post-title">Getting Started with GetConnect API: A Step-by-Step Guide</h3>
+                        <p class="post-excerpt">Learn how to integrate our distributed task engine into your applications with practical examples and best practices.</p>
+                        <div class="post-meta">
+                            <div class="post-author">
+                                <div class="author-avatar">AR</div>
+                                <span class="author-name">Alex Rivera</span>
+                            </div>
+                            <div class="post-date">Apr 28, 2024 • 6 min read</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post 2 -->
+                <div class="blog-post-card" data-category="case-study">
+                    <div class="post-image" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">Case Study</span>
+                        <h3 class="post-title">How TechCorp Reduced Processing Time by 90% with GetConnect</h3>
+                        <p class="post-excerpt">A detailed look at how a leading tech company transformed their data pipeline with our distributed computing platform.</p>
+                        <div class="post-meta">
+                            <div class="post-author">
+                                <div class="author-avatar">MR</div>
+                                <span class="author-name">Maria Rodriguez</span>
+                            </div>
+                            <div class="post-date">Apr 20, 2024 • 10 min read</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post 3 -->
+                <div class="blog-post-card" data-category="performance">
+                    <div class="post-image" style="background: linear-gradient(135deg, #f59e0b, #f97316);">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">Performance</span>
+                        <h3 class="post-title">Optimizing Node Performance: Advanced Configuration Tips</h3>
+                        <p class="post-excerpt">Discover advanced techniques for maximizing the performance of your distributed computing nodes and reducing latency.</p>
+                        <div class="post-meta">
+                            <div class="post-author">
+                                <div class="author-avatar">TC</div>
+                                <span class="author-name">Tom Chen</span>
+                            </div>
+                            <div class="post-date">Apr 12, 2024 • 7 min read</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post 4 -->
+                <div class="blog-post-card" data-category="ai">
+                    <div class="post-image" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">AI & ML</span>
+                        <h3 class="post-title">The Future of AI-Driven Load Balancing in 2024</h3>
+                        <p class="post-excerpt">Explore emerging trends in AI-powered load balancing and what they mean for the future of distributed computing.</p>
+                        <div class="post-meta">
+                            <div class="post-author">
+                                <div class="author-avatar">JS</div>
+                                <span class="author-name">John Smith</span>
+                            </div>
+                            <div class="post-date">Apr 5, 2024 • 9 min read</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post 5 -->
+                <div class="blog-post-card" data-category="distributed">
+                    <div class="post-image" style="background: linear-gradient(135deg, #0ea5e9, #0284c7);">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">Distributed Computing</span>
+                        <h3 class="post-title">Scalability Patterns for Modern Distributed Systems</h3>
+                        <p class="post-excerpt">Learn about architectural patterns that enable seamless scaling of distributed computing systems as workloads grow.</p>
+                        <div class="post-meta">
+                            <div class="post-author">
+                                <div class="author-avatar">KG</div>
+                                <span class="author-name">Kim Garcia</span>
+                            </div>
+                            <div class="post-date">Mar 28, 2024 • 8 min read</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post 6 -->
+                <div class="blog-post-card" data-category="news">
+                    <div class="post-image" style="background: linear-gradient(135deg, #84cc16, #22c55e);">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">Industry News</span>
+                        <h3 class="post-title">GetConnect.Web Wins 2024 Innovation Award</h3>
+                        <p class="post-excerpt">Our platform has been recognized for its innovative approach to distributed task execution and AI load balancing.</p>
+                        <div class="post-meta">
+                            <div class="post-author">
+                                <div class="author-avatar">AR</div>
+                                <span class="author-name">Alex Rivera</span>
+                            </div>
+                            <div class="post-date">Mar 20, 2024 • 5 min read</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Topics -->
+    <section class="popular-topics">
+        <div class="topics-container">
+            <div class="section-header">
+                <h2><i class="fas fa-fire"></i> Popular Topics</h2>
+                <p>What our readers are most interested in</p>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card">
+                    <div class="topic-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="topic-title">AI Algorithms</h3>
+                    <div class="topic-count">24 Articles</div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3 class="topic-title">Node Management</h3>
+                    <div class="topic-count">18 Articles</div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="topic-title">Performance</h3>
+                    <div class="topic-count">32 Articles</div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="topic-title">Security</h3>
+                    <div class="topic-count">15 Articles</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="newsletter-container">
+            <h2 class="newsletter-title">Stay Updated</h2>
+            <p class="newsletter-subtitle">
+                Subscribe to our newsletter to receive the latest articles, tutorials, and news about distributed computing and AI optimization.
+            </p>
+            <div class="newsletter-form">
+                <input type="email" class="newsletter-input" placeholder="Enter your email address">
+                <button class="newsletter-btn" id="subscribeNewsletterBtn">Subscribe</button>
+            </div>
+            <p style="margin-top: 1rem; opacity: 0.8; font-size: 0.9rem;">No spam, unsubscribe at any time.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <div class="logo-animation">
+                        <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </div>
+                <p class="footer-description">
+                    AI-powered distributed task execution engine with intelligent load balancing for modern computing needs. Scalable, secure, and efficient.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Product</h3>
+                <ul>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="api.html">API Documentation</a></li>
+                    <li><a href="tasks.html">Task Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="partners.html">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="docs.html">Documentation</a></li>
+                    <li><a href="tutorials.html">Tutorials</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="status.html">System Status</a></li>
+                    <li><a href="community.html">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="security.html">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ===== DOM ELEMENT REFERENCES =====
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.querySelector('.nav-menu');
+        const notificationBtn = document.getElementById('notificationBtn');
+        const subscribeBtn = document.getElementById('subscribeBtn');
+        const latestPostsBtn = document.getElementById('latestPostsBtn');
+        const subscribeNewsletterBtn = document.getElementById('subscribeNewsletterBtn');
+        const newsletterInput = document.querySelector('.newsletter-input');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const blogPosts = document.querySelectorAll('.blog-post-card');
+        const toastContainer = document.getElementById('toastContainer');
+        let notificationCount = 2;
+
+        // ===== NOTIFICATION SYSTEM =====
+        function showToast(title, message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' : 
+                        'fa-info-circle';
+            const color = type === 'success' ? 'var(--success)' : 
+                         type === 'error' ? 'var(--danger)' : 
+                         'var(--primary-blue)';
+            
+            toast.innerHTML = `
+                <div class="toast-icon" style="color: ${color}">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="toast-content">
+                    <h4>${title}</h4>
+                    <p>${message}</p>
+                </div>
+                <button class="toast-close">&times;</button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Close button
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            });
+            
+            // Auto remove
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        function updateNotificationCount(count) {
+            const notificationElement = document.querySelector('.notification-count');
+            notificationElement.textContent = count;
+            
+            if (count > 0) {
+                notificationElement.style.display = 'flex';
+            } else {
+                notificationElement.style.display = 'none';
+            }
+        }
+
+        // ===== MOBILE MENU TOGGLE =====
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileToggle.innerHTML = navMenu.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-container') && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // ===== CATEGORY FILTERING =====
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active button
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                const category = button.getAttribute('data-category');
+                
+                // Filter blog posts
+                blogPosts.forEach(post => {
+                    if (category === 'all' || post.getAttribute('data-category') === category) {
+                        post.style.display = 'block';
+                        setTimeout(() => {
+                            post.style.opacity = '1';
+                            post.style.transform = 'translateY(0)';
+                        }, 10);
+                    } else {
+                        post.style.opacity = '0';
+                        post.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            post.style.display = 'none';
+                        }, 300);
+                    }
+                });
+                
+                // Show notification
+                if (category !== 'all') {
+                    showToast('Category Filter', `Showing posts in: ${button.textContent}`, 'info');
+                }
+            });
+        });
+
+        // ===== NEWSLETTER SUBSCRIPTION =====
+        subscribeNewsletterBtn.addEventListener('click', () => {
+            const email = newsletterInput.value.trim();
+            
+            if (!email || !email.includes('@')) {
+                showToast('Invalid Email', 'Please enter a valid email address', 'error');
+                newsletterInput.focus();
+                return;
+            }
+            
+            // Simulate subscription
+            showToast('Subscribed!', 'You have been added to our newsletter list', 'success');
+            newsletterInput.value = '';
+            
+            // Update notification count
+            notificationCount++;
+            updateNotificationCount(notificationCount);
+        });
+
+        subscribeBtn.addEventListener('click', () => {
+            document.querySelector('.newsletter-section').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+            newsletterInput.focus();
+        });
+
+        // ===== BUTTON EVENT HANDLERS =====
+        latestPostsBtn.addEventListener('click', () => {
+            document.querySelector('.blog-posts').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+
+        notificationBtn.addEventListener('click', () => {
+            if (notificationCount > 0) {
+                showToast('Notifications', `You have ${notificationCount} unread notifications`, 'info');
+                notificationCount = 0;
+                updateNotificationCount(notificationCount);
+            } else {
+                showToast('Notifications', 'You have no new notifications', 'info');
+            }
+        });
+
+        // ===== ANIMATION ON SCROLL =====
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.blog-post-card, .topic-card, .featured-card');
+            
+            elements.forEach(element => {
+                const position = element.getBoundingClientRect();
+                if (position.top < window.innerHeight - 100) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        }
+
+        // Initialize elements with hidden state
+        document.querySelectorAll('.blog-post-card, .topic-card').forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        });
+
+        // ===== PAGE LOAD INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up scroll animation
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll(); // Initial check
+            
+            // Show welcome notification
+            setTimeout(() => {
+                showToast('Welcome to Our Blog', 'Explore the latest in distributed computing and AI', 'info');
+            }, 1000);
+            
+            // Simulate new article notification
+            setTimeout(() => {
+                showToast('New Article Published', 'Check out our latest post on AI load balancing', 'info');
+                notificationCount++;
+                updateNotificationCount(notificationCount);
+            }, 5000);
+        });
+
+        // ===== NAVIGATION ACTIVE STATE =====
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Close mobile menu if open
+                if (navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
+        // ===== ENTER KEY FOR NEWSLETTER =====
+        newsletterInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                subscribeNewsletterBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>

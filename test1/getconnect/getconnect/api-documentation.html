@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetConnect.Web | API Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <style>
+        /* ===== CSS RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-blue: #60a5fa;
+            --accent-blue: #93c5fd;
+            --sky-blue: #dbeafe;
+            
+            --white: #ffffff;
+            --off-white: #f8fafc;
+            --light-gray: #f1f5f9;
+            --medium-gray: #e2e8f0;
+            --dark-gray: #64748b;
+            --text-dark: #334155;
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0ea5e9;
+            
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            --code-bg: #1a1b26;
+            --code-text: #c0caf5;
+            --code-string: #9ece6a;
+            --code-number: #ff9e64;
+            --code-keyword: #7aa2f7;
+            --code-comment: #565f89;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--off-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== LOGO ANIMATIONS ===== */
+        .logo-animation svg {
+            animation: floatPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes floatPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform var(--transition-normal);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-main {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-sub {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--primary-light);
+            margin-top: -2px;
+        }
+
+        /* ===== HEADER & NAVBAR ===== */
+        .header {
+            background-color: var(--white);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.98);
+        }
+
+        .navbar {
+            padding: 0.75rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Animated Navigation Menu */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            font-weight: 500;
+            color: var(--dark-gray);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+            transition: width var(--transition-normal);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-dark);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .nav-link.active {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        .nav-link i {
+            font-size: 1.1em;
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-notification {
+            position: relative;
+            background: none;
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-notification:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-dark);
+            transform: rotate(15deg);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-login-header, .btn-register {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-login-header {
+            background-color: transparent;
+            color: var(--primary-dark);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-login-header:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* ===== API DOCUMENTATION STYLES ===== */
+        .api-hero {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(219, 234, 254, 0.3) 100%);
+            text-align: center;
+        }
+
+        .api-hero h1 {
+            font-size: 3.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+
+        .api-hero p {
+            font-size: 1.25rem;
+            color: var(--dark-gray);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .api-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .api-badge {
+            background: var(--white);
+            border: 1px solid var(--secondary-blue);
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-normal);
+        }
+
+        .api-badge:hover {
+            background: var(--sky-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .api-badge i {
+            color: var(--primary-blue);
+        }
+
+        .api-layout {
+            display: flex;
+            min-height: calc(100vh - 200px);
+            background: var(--white);
+        }
+
+        .api-sidebar {
+            width: 300px;
+            background: var(--off-white);
+            border-right: 1px solid var(--medium-gray);
+            padding: 2rem;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            display: none;
+        }
+
+        .api-sidebar.active {
+            display: block;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-blue);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+        }
+
+        .api-content {
+            flex: 1;
+            padding: 3rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .api-section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 100px;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--sky-blue);
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header p {
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar-nav h3 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-dark);
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--sky-blue);
+            color: var(--primary-dark);
+            border-left-color: var(--primary-blue);
+            padding-left: 15px;
+        }
+
+        .sidebar-nav a.active {
+            background: var(--sky-blue);
+            color: var(--primary-dark);
+            border-left-color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        /* Quick Start Section */
+        .quick-start-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .quick-start-card {
+            background: var(--off-white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--sky-blue);
+            transition: all var(--transition-normal);
+        }
+
+        .quick-start-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-blue);
+        }
+
+        .quick-start-card i {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .quick-start-card h4 {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-start-card p {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Code Examples */
+        .code-example {
+            background: var(--code-bg);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .code-header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-header span {
+            color: var(--code-text);
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+
+        .code-copy {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .code-copy:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .code-copy.copied {
+            background: var(--success);
+        }
+
+        pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .hljs {
+            background: transparent;
+            padding: 0;
+        }
+
+        /* Endpoint Cards */
+        .endpoint-card {
+            background: var(--off-white);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--sky-blue);
+            transition: all var(--transition-normal);
+        }
+
+        .endpoint-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-blue);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .endpoint-method {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .endpoint-method.get { background: var(--success); color: white; }
+        .endpoint-method.post { background: var(--info); color: white; }
+        .endpoint-method.put { background: var(--warning); color: white; }
+        .endpoint-method.delete { background: var(--danger); color: white; }
+
+        .endpoint-path {
+            font-family: 'Monaco', 'Consolas', monospace;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .endpoint-description {
+            color: var(--dark-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Parameter Tables */
+        .param-section {
+            margin: 2rem 0;
+        }
+
+        .param-section h4 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .param-table th {
+            background: var(--sky-blue);
+            color: var(--primary-dark);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .param-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--medium-gray);
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .param-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .param-table tr:hover {
+            background: var(--off-white);
+        }
+
+        .param-name {
+            font-family: 'Monaco', 'Consolas', monospace;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .param-type {
+            background: var(--sky-blue);
+            color: var(--primary-blue);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+
+        .param-required {
+            background: var(--danger);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .param-optional {
+            background: var(--success);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Response Examples */
+        .response-example {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--medium-gray);
+            margin-top: 1rem;
+        }
+
+        .response-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .response-status {
+            background: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .response-status.error {
+            background: var(--danger);
+        }
+
+        /* SDK Section */
+        .sdk-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .sdk-card {
+            background: var(--off-white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--sky-blue);
+            transition: all var(--transition-normal);
+        }
+
+        .sdk-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-blue);
+        }
+
+        .sdk-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-blue);
+        }
+
+        .sdk-name {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .sdk-version {
+            color: var(--dark-gray);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .sdk-install {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background var(--transition-normal);
+        }
+
+        .sdk-install:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Rate Limiting */
+        .rate-limits {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .rate-limit-card {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(96, 165, 250, 0.2));
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            border: 1px solid var(--secondary-blue);
+        }
+
+        .rate-limit-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .rate-limit-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rate-limit-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .rate-limit-label {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo .logo-main {
+            color: white;
+        }
+
+        .footer-logo .logo-sub {
+            color: var(--secondary-blue);
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all var(--transition-normal);
+        }
+
+        .social-links a:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+        }
+
+        .footer-column h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: color var(--transition-fast);
+        }
+
+        .footer-column a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .nav-menu {
+                gap: 1rem;
+            }
+            
+            .nav-link {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .api-layout {
+                flex-direction: column;
+            }
+            
+            .api-sidebar {
+                width: 100%;
+                position: static;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--medium-gray);
+                display: none;
+            }
+            
+            .api-sidebar.active {
+                display: block;
+            }
+            
+            .sidebar-toggle {
+                display: flex;
+            }
+            
+            .api-content {
+                padding: 2rem;
+            }
+            
+            .quick-start-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .sdk-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .nav-actions .btn-login-header,
+            .nav-actions .btn-register {
+                display: none;
+            }
+            
+            .api-hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .quick-start-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sdk-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .rate-limits {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .api-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .api-content {
+                padding: 1.5rem;
+            }
+            
+            .endpoint-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .api-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Animated Navbar -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <!-- Logo with Animation -->
+                <a href="index.html" class="logo">
+                    <div class="logo-animation">
+                        <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </a>
+
+                <!-- Animated Menu - CONNECTED TO ALL PAGES -->
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li class="nav-item"><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                    <li class="nav-item"><a href="api-documentation.html" class="nav-link active"><i class="fas fa-code"></i> API Docs</a></li>
+                    <li class="nav-item"><a href="pricing.html" class="nav-link"><i class="fas fa-tag"></i> Pricing</a></li>
+                    <li class="nav-item"><a href="careers.html" class="nav-link"><i class="fas fa-briefcase"></i> Careers</a></li>
+                    <li class="nav-item"><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+                </ul>
+
+                <!-- Right Side Actions -->
+                <div class="nav-actions">
+                    <button class="btn-notification" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </button>
+                    <!-- Updated Login Button - Now redirects to login.html -->
+                    <a href="login.html" class="btn-login-header" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <!-- Updated Register Button - Now redirects to register.html -->
+                    <a href="register.html" class="btn-register" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                    <div class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- API Hero Section -->
+    <section class="api-hero">
+        <div class="container">
+            <h1>API Documentation</h1>
+            <p>Complete API reference for GetConnect.Web distributed task execution platform. Build powerful applications with our RESTful API.</p>
+            
+            <div class="api-badges">
+                <div class="api-badge">
+                    <i class="fas fa-bolt"></i>
+                    RESTful API
+                </div>
+                <div class="api-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    OAuth 2.0 Authentication
+                </div>
+                <div class="api-badge">
+                    <i class="fas fa-code"></i>
+                    JSON Responses
+                </div>
+                <div class="api-badge">
+                    <i class="fas fa-globe"></i>
+                    HTTPS Only
+                </div>
+                <div class="api-badge">
+                    <i class="fas fa-rocket"></i>
+                    Rate Limiting
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Layout -->
+    <div class="api-layout">
+        <!-- Sidebar Navigation -->
+        <nav class="api-sidebar" id="apiSidebar">
+            <div class="sidebar-nav">
+                <h3><i class="fas fa-book"></i> Getting Started</h3>
+                <ul>
+                    <li><a href="#introduction" class="sidebar-link">Introduction</a></li>
+                    <li><a href="#authentication" class="sidebar-link">Authentication</a></li>
+                    <li><a href="#rate-limiting" class="sidebar-link">Rate Limiting</a></li>
+                    <li><a href="#error-handling" class="sidebar-link">Error Handling</a></li>
+                </ul>
+
+                <h3><i class="fas fa-server"></i> Core Endpoints</h3>
+                <ul>
+                    <li><a href="#tasks" class="sidebar-link">Tasks</a></li>
+                    <li><a href="#nodes" class="sidebar-link">Nodes</a></li>
+                    <li><a href="#queues" class="sidebar-link">Queues</a></li>
+                    <li><a href="#results" class="sidebar-link">Results</a></li>
+                </ul>
+
+                <h3><i class="fas fa-chart-line"></i> Monitoring</h3>
+                <ul>
+                    <li><a href="#metrics" class="sidebar-link">Metrics</a></li>
+                    <li><a href="#analytics" class="sidebar-link">Analytics</a></li>
+                    <li><a href="#logs" class="sidebar-link">Logs</a></li>
+                </ul>
+
+                <h3><i class="fas fa-code-branch"></i> SDKs & Libraries</h3>
+                <ul>
+                    <li><a href="#sdks" class="sidebar-link">Official SDKs</a></li>
+                    <li><a href="#community" class="sidebar-link">Community Libraries</a></li>
+                </ul>
+
+                <h3><i class="fas fa-question-circle"></i> Help & Support</h3>
+                <ul>
+                    <li><a href="#faq" class="sidebar-link">API FAQ</a></li>
+                    <li><a href="#support" class="sidebar-link">Support</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="api-content">
+            <!-- Introduction Section -->
+            <section id="introduction" class="api-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-rocket"></i> Getting Started</h2>
+                    <p>Learn how to integrate with GetConnect.Web API in minutes</p>
+                </div>
+
+                <div class="quick-start-grid">
+                    <div class="quick-start-card">
+                        <i class="fas fa-key"></i>
+                        <h4>Get API Key</h4>
+                        <p>Create an account and generate your API key from the dashboard</p>
+                    </div>
+                    <div class="quick-start-card">
+                        <i class="fas fa-code"></i>
+                        <h4>Make First Request</h4>
+                        <p>Use curl or your favorite HTTP client to make your first API call</p>
+                    </div>
+                    <div class="quick-start-card">
+                        <i class="fas fa-cogs"></i>
+                        <h4>Integrate</h4>
+                        <p>Use our SDKs or implement the REST API in your application</p>
+                    </div>
+                </div>
+
+                <h3>Base URL</h3>
+                <p>All API requests should be made to the following base URL:</p>
+                
+                <div class="code-example">
+                    <div class="code-header">
+                        <span>Base URL</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code class="language-bash">https://api.getconnect.web/v1</code></pre>
+                </div>
+
+                <h3>Quick Example</h3>
+                <p>Here's a quick example of submitting a task via API:</p>
+                
+                <div class="code-example">
+                    <div class="code-header">
+                        <span>cURL Example</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code class="language-bash">curl -X POST https://api.getconnect.web/v1/tasks \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "data_processing",
+    "payload": {
+      "dataset": "sensor_data.csv",
+      "operation": "aggregate"
+    },
+    "priority": "high"
+  }'</code></pre>
+                </div>
+            </section>
+
+            <!-- Authentication Section -->
+            <section id="authentication" class="api-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-shield-alt"></i> Authentication</h2>
+                    <p>Secure your API requests with Bearer token authentication</p>
+                </div>
+
+                <p>All API requests require authentication using a Bearer token. You can generate API keys from your account dashboard.</p>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method post">POST</span>
+                        <span class="endpoint-path">/auth/token</span>
+                    </div>
+                    <p class="endpoint-description">Generate a new access token using your API credentials.</p>
+
+                    <div class="param-section">
+                        <h4><i class="fas fa-list"></i> Request Parameters</h4>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">api_key</span></td>
+                                    <td><span class="param-type">string</span></td>
+                                    <td><span class="param-required">Required</span></td>
+                                    <td>Your API key from account settings</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="param-name">api_secret</span></td>
+                                    <td><span class="param-type">string</span></td>
+                                    <td><span class="param-required">Required</span></td>
+                                    <td>Your API secret from account settings</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="param-name">expires_in</span></td>
+                                    <td><span class="param-type">integer</span></td>
+                                    <td><span class="param-optional">Optional</span></td>
+                                    <td>Token expiry in seconds (default: 3600)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span>Request Example</span>
+                            <button class="code-copy">Copy</button>
+                        </div>
+                        <pre><code class="language-json">{
+  "api_key": "your_api_key_here",
+  "api_secret": "your_api_secret_here",
+  "expires_in": 7200
+}</code></pre>
+                    </div>
+
+                    <div class="response-example">
+                        <div class="response-header">
+                            <span class="response-status">200 OK</span>
+                            <span>Response</span>
+                        </div>
+                        <pre><code class="language-json">{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer",
+  "expires_in": 7200,
+  "scope": "tasks:read tasks:write nodes:read"
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>Using the Access Token</h3>
+                <p>Include the access token in the Authorization header of all subsequent requests:</p>
+                
+                <div class="code-example">
+                    <div class="code-header">
+                        <span>Authentication Header</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code class="language-bash">Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</code></pre>
+                </div>
+            </section>
+
+            <!-- Tasks Endpoint Section -->
+            <section id="tasks" class="api-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-tasks"></i> Tasks API</h2>
+                    <p>Manage distributed task execution through the API</p>
+                </div>
+
+                <!-- Create Task -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method post">POST</span>
+                        <span class="endpoint-path">/tasks</span>
+                    </div>
+                    <p class="endpoint-description">Submit a new task for distributed execution.</p>
+
+                    <div class="param-section">
+                        <h4><i class="fas fa-list"></i> Request Body</h4>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">type</span></td>
+                                    <td><span class="param-type">string</span></td>
+                                    <td><span class="param-required">Required</span></td>
+                                    <td>Task type identifier</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="param-name">payload</span></td>
+                                    <td><span class="param-type">object</span></td>
+                                    <td><span class="param-required">Required</span></td>
+                                    <td>Task data and parameters</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="param-name">priority</span></td>
+                                    <td><span class="param-type">string</span></td>
+                                    <td><span class="param-optional">Optional</span></td>
+                                    <td>low, medium, high (default: medium)</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="param-name">callback_url</span></td>
+                                    <td><span class="param-type">string</span></td>
+                                    <td><span class="param-optional">Optional</span></td>
+                                    <td>Webhook URL for task completion</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="param-name">metadata</span></td>
+                                    <td><span class="param-type">object</span></td>
+                                    <td><span class="param-optional">Optional</span></td>
+                                    <td>Additional task metadata</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span>Request Example</span>
+                            <button class="code-copy">Copy</button>
+                        </div>
+                        <pre><code class="language-json">{
+  "type": "data_processing",
+  "payload": {
+    "operation": "aggregate",
+    "data": [1, 2, 3, 4, 5],
+    "aggregation": "sum"
+  },
+  "priority": "high",
+  "callback_url": "https://your-app.com/webhooks/task-complete",
+  "metadata": {
+    "user_id": "12345",
+    "batch_id": "batch-001"
+  }
+}</code></pre>
+                    </div>
+
+                    <div class="response-example">
+                        <div class="response-header">
+                            <span class="response-status">201 Created</span>
+                            <span>Response</span>
+                        </div>
+                        <pre><code class="language-json">{
+  "task_id": "task_abc123def456",
+  "status": "queued",
+  "estimated_completion": "2024-12-15T10:30:00Z",
+  "node_assignment": "node-7",
+  "queue_position": 5,
+  "created_at": "2024-12-15T10:00:00Z"
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Get Task Status -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-path">/tasks/{task_id}</span>
+                    </div>
+                    <p class="endpoint-description">Retrieve the status and results of a specific task.</p>
+
+                    <div class="param-section">
+                        <h4><i class="fas fa-list"></i> Path Parameters</h4>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">task_id</span></td>
+                                    <td><span class="param-type">string</span></td>
+                                    <td><span class="param-required">Required</span></td>
+                                    <td>Unique identifier of the task</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="response-example">
+                        <div class="response-header">
+                            <span class="response-status">200 OK</span>
+                            <span>Response</span>
+                        </div>
+                        <pre><code class="language-json">{
+  "task_id": "task_abc123def456",
+  "status": "completed",
+  "progress": 100,
+  "result": {
+    "sum": 15,
+    "average": 3,
+    "count": 5
+  },
+  "execution_time": 1250,
+  "node": "node-7",
+  "started_at": "2024-12-15T10:00:05Z",
+  "completed_at": "2024-12-15T10:00:06.25Z",
+  "error": null
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SDKs Section -->
+            <section id="sdks" class="api-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-code-branch"></i> SDKs & Libraries</h2>
+                    <p>Official SDKs for popular programming languages</p>
+                </div>
+
+                <div class="sdk-grid">
+                    <div class="sdk-card">
+                        <div class="sdk-icon">
+                            <i class="fab fa-python"></i>
+                        </div>
+                        <div class="sdk-name">Python SDK</div>
+                        <div class="sdk-version">v2.3.1</div>
+                        <button class="sdk-install" data-package="pip install getconnect-sdk">Install</button>
+                    </div>
+                    
+                    <div class="sdk-card">
+                        <div class="sdk-icon">
+                            <i class="fab fa-js"></i>
+                        </div>
+                        <div class="sdk-name">JavaScript SDK</div>
+                        <div class="sdk-version">v3.0.2</div>
+                        <button class="sdk-install" data-package="npm install @getconnect/web-sdk">Install</button>
+                    </div>
+                    
+                    <div class="sdk-card">
+                        <div class="sdk-icon">
+                            <i class="fab fa-java"></i>
+                        </div>
+                        <div class="sdk-name">Java SDK</div>
+                        <div class="sdk-version">v1.5.0</div>
+                        <button class="sdk-install" data-package="<dependency>getconnect-sdk</dependency>">Install</button>
+                    </div>
+                    
+                    <div class="sdk-card">
+                        <div class="sdk-icon">
+                            <i class="fab fa-golang"></i>
+                        </div>
+                        <div class="sdk-name">Go SDK</div>
+                        <div class="sdk-version">v0.8.3</div>
+                        <button class="sdk-install" data-package="go get github.com/getconnect/web-sdk">Install</button>
+                    </div>
+                </div>
+
+                <h3>Python SDK Example</h3>
+                <div class="code-example">
+                    <div class="code-header">
+                        <span>Python Example</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code class="language-python">from getconnect import GetConnectClient
+
+# Initialize client
+client = GetConnectClient(api_key="your_api_key")
+
+# Submit a task
+task = client.submit_task(
+    type="data_processing",
+    payload={
+        "dataset": "sensor_data.csv",
+        "operation": "aggregate",
+        "aggregation": "average"
+    },
+    priority="high"
+)
+
+print(f"Task submitted: {task.id}")
+
+# Check task status
+status = client.get_task_status(task.id)
+print(f"Task status: {status.status}")
+print(f"Progress: {status.progress}%")
+
+# Get task result when completed
+if status.status == "completed":
+    result = client.get_task_result(task.id)
+    print(f"Result: {result}")</code></pre>
+                </div>
+
+                <h3>JavaScript SDK Example</h3>
+                <div class="code-example">
+                    <div class="code-header">
+                        <span>JavaScript Example</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code class="language-javascript">import { GetConnectClient } from '@getconnect/web-sdk';
+
+// Initialize client
+const client = new GetConnectClient({
+  apiKey: 'your_api_key',
+  baseURL: 'https://api.getconnect.web/v1'
+});
+
+// Submit a task
+const task = await client.submitTask({
+  type: 'image_processing',
+  payload: {
+    imageUrl: 'https://example.com/image.jpg',
+    operations: ['resize', 'compress'],
+    outputFormat: 'webp'
+  },
+  priority: 'medium'
+});
+
+console.log(`Task submitted: ${task.id}`);
+
+// Monitor task completion
+const checkStatus = setInterval(async () => {
+  const status = await client.getTaskStatus(task.id);
+  console.log(`Progress: ${status.progress}%`);
+  
+  if (status.status === 'completed') {
+    clearInterval(checkStatus);
+    const result = await client.getTaskResult(task.id);
+    console.log('Task completed:', result);
+  }
+}, 5000);</code></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Sidebar Toggle for Mobile -->
+    <div class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <!-- Footer - CONNECTED TO ALL PAGES -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <div class="logo-animation">
+                        <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </div>
+                <p class="footer-description">
+                    AI-powered distributed task execution engine with intelligent load balancing for modern computing needs. Scalable, secure, and efficient.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Product</h3>
+                <ul>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="api-documentation.html">API Documentation</a></li>
+                    <li><a href="tasks.html">Task Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="partners.html">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="docs.html">Documentation</a></li>
+                    <li><a href="tutorials.html">Tutorials</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="status.html">System Status</a></li>
+                    <li><a href="community.html">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="security.html">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== MOBILE MENU TOGGLE =====
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.querySelector('.nav-menu');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const apiSidebar = document.getElementById('apiSidebar');
+        
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileToggle.innerHTML = navMenu.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Sidebar toggle for mobile
+        sidebarToggle.addEventListener('click', () => {
+            apiSidebar.classList.toggle('active');
+            sidebarToggle.innerHTML = apiSidebar.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-container') && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // ===== NOTIFICATION SYSTEM =====
+        const notificationBtn = document.getElementById('notificationBtn');
+        let notificationCount = 3;
+
+        notificationBtn.addEventListener('click', () => {
+            if (notificationCount > 0) {
+                alert(`You have ${notificationCount} unread notifications`);
+                notificationCount = 0;
+                document.querySelector('.notification-count').textContent = '0';
+                document.querySelector('.notification-count').style.display = 'none';
+            } else {
+                alert('You have no new notifications');
+            }
+        });
+
+        // ===== SIDEBAR NAVIGATION =====
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const apiSections = document.querySelectorAll('.api-section');
+
+        // Highlight active section in sidebar
+        function updateActiveSidebarLink() {
+            let currentSection = '';
+            
+            apiSections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 150)) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            sidebarLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Smooth scroll for sidebar links
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    // Close sidebar on mobile after click
+                    if (window.innerWidth <= 1024) {
+                        apiSidebar.classList.remove('active');
+                        sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                    }
+                    
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Update URL
+                    history.pushState(null, null, targetId);
+                }
+            });
+        });
+
+        // ===== CODE COPY FUNCTIONALITY =====
+        const copyButtons = document.querySelectorAll('.code-copy');
+        
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.parentElement.nextElementSibling;
+                const code = codeBlock.textContent;
+                
+                navigator.clipboard.writeText(code).then(() => {
+                    button.textContent = 'Copied!';
+                    button.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        button.textContent = 'Copy';
+                        button.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            });
+        });
+
+        // ===== SDK INSTALL BUTTONS =====
+        const sdkInstallButtons = document.querySelectorAll('.sdk-install');
+        
+        sdkInstallButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const packageCommand = button.getAttribute('data-package');
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(packageCommand).then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    button.style.background = 'var(--success)';
+                    
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = 'var(--primary-blue)';
+                    }, 2000);
+                });
+            });
+        });
+
+        // ===== SYNTAX HIGHLIGHTING =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize highlight.js
+            hljs.highlightAll();
+            
+            // Add language class to code blocks
+            document.querySelectorAll('pre code').forEach((block) => {
+                if (!block.className) {
+                    if (block.textContent.includes('curl') || block.textContent.includes('https://')) {
+                        block.className = 'language-bash';
+                    } else if (block.textContent.trim().startsWith('{')) {
+                        block.className = 'language-json';
+                    } else if (block.textContent.includes('import') || block.textContent.includes('def ') || block.textContent.includes('print(')) {
+                        block.className = 'language-python';
+                    } else if (block.textContent.includes('const ') || block.textContent.includes('function') || block.textContent.includes('console.log')) {
+                        block.className = 'language-javascript';
+                    }
+                }
+                hljs.highlightElement(block);
+            });
+            
+            // Update sidebar on scroll
+            window.addEventListener('scroll', updateActiveSidebarLink);
+            
+            // Initial sidebar update
+            updateActiveSidebarLink();
+            
+            // Auto-open sidebar on desktop
+            if (window.innerWidth > 1024) {
+                apiSidebar.classList.add('active');
+            }
+            
+            // Set active nav link based on current page
+            const currentPage = 'api-documentation.html';
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // ===== RESPONSIVE SIDEBAR =====
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                apiSidebar.classList.add('active');
+                sidebarToggle.style.display = 'none';
+            } else {
+                apiSidebar.classList.remove('active');
+                sidebarToggle.style.display = 'flex';
+            }
+        });
+
+        // ===== NAVIGATION ACTIVE STATE =====
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Close mobile menu if open
+                if (navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
+        // ===== SEARCH FUNCTIONALITY =====
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Search API documentation...';
+        searchInput.style.cssText = `
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--medium-gray);
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            transition: all var(--transition-normal);
+        `;
+        
+        searchInput.addEventListener('focus', () => {
+            searchInput.style.borderColor = 'var(--primary-blue)';
+            searchInput.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+        });
+        
+        searchInput.addEventListener('blur', () => {
+            searchInput.style.borderColor = 'var(--medium-gray)';
+            searchInput.style.boxShadow = 'none';
+        });
+        
+        // Add search to sidebar
+        const sidebarNav = document.querySelector('.sidebar-nav');
+        if (sidebarNav) {
+            sidebarNav.insertBefore(searchInput, sidebarNav.firstChild);
+            
+            // Simple search functionality
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                sidebarLinks.forEach(link => {
+                    const text = link.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        link.style.display = 'block';
+                        link.parentElement.style.display = 'list-item';
+                    } else {
+                        link.style.display = 'none';
+                        link.parentElement.style.display = 'none';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
