@@ -11,6 +11,7 @@ import platform
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+from urllib.parse import urlparse
 from worker.gpu_detector import get_gpu_metrics
 from shared.config import settings
 
@@ -40,9 +41,17 @@ class HealthSentinel:
         """Get local IP address"""
         import socket
         try:
-            # Connect to master to determine which interface to use
+            # Connect to runtime master URL so the selected interface works
+            # for mixed topologies (e.g., main on Wi-Fi, workers on hotspot).
+            parsed = urlparse(self.master_url)
+            master_host = parsed.hostname or settings.MASTER_HOST
+            master_port = parsed.port or settings.MASTER_PORT
+
+            if not master_host:
+                return "127.0.0.1"
+
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect((settings.MASTER_HOST, settings.MASTER_PORT))
+            s.connect((master_host, master_port))
             ip = s.getsockname()[0]
             s.close()
             return ip

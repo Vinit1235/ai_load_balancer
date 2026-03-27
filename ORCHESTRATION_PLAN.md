@@ -703,6 +703,133 @@ Success Criteria:
 
 ---
 
+## WAVE 6: Simple API Status Display (No Complex AI)
+
+### Network Topology for Wave 6 (User Plan)
+```yaml
+Main Node Connectivity:
+  - Main node uses normal Wi-Fi for internet access
+  - Main node also enables mobile hotspot for worker connectivity
+
+Worker Connectivity:
+  - Workers connect to main node hotspot SSID
+  - Workers send heartbeat/status to master via hotspot gateway IP
+
+Addressing Example:
+  - Master API bind: 0.0.0.0:8000
+  - Hotspot gateway IP (master): 192.168.137.1
+  - Worker launch:
+      python worker/sentinel.py --master-url http://192.168.137.1:8000 --node-name worker-1
+```
+
+### Task 6.1: Status Snapshot API
+```yaml
+Agent: API Agent
+Priority: 🔵 HIGH
+Time: 20 minutes
+Dependencies: Task 3.1, Task 1.4
+
+Instructions:
+  Update master/main.py with a compact status snapshot endpoint:
+
+  Endpoints:
+    - GET /api/v1/display/status
+    - GET /api/v1/cluster/status
+
+  Response Fields:
+    - working: running + assigned tasks
+    - nodes_online: count of active nodes
+    - tasks_total: total tasks in DB
+    - task_status: pending/assigned/running/completed/failed/other
+    - nodes: active node list
+    - recent_tasks: latest tasks for display
+
+Success Criteria:
+  - Endpoint returns real data from SQLite state
+  - Response shape is stable for frontend polling
+  - No AI model dependency required
+  - Works when workers are connected via main-node hotspot
+```
+
+### Task 6.2: Heartbeat-to-Display Pipeline
+```yaml
+Agent: Integration Agent
+Priority: 🔵 HIGH
+Time: 20 minutes
+Dependencies: Task 2.1, Task 6.1
+
+Instructions:
+  Ensure worker heartbeats update node state in real time:
+
+  Endpoints:
+    - POST /api/v1/nodes/heartbeat
+
+  Behavior:
+    - Upsert node metrics (CPU/RAM/thermal/GPU)
+    - Keep node status current for display endpoint
+
+Success Criteria:
+  - Heartbeat updates visible within 1-2 seconds in status endpoint
+  - Missing required heartbeat fields return 400 with clear error
+  - Worker IP reflects the hotspot-facing interface used to reach master
+```
+
+### Task 6.4: Hotspot Connectivity Validation
+```yaml
+Agent: Network Validation Agent
+Priority: 🔵 HIGH
+Time: 15 minutes
+Dependencies: Task 6.2
+
+Instructions:
+  Validate mixed-network setup (Wi-Fi + hotspot):
+
+  Checks:
+    - Master reachable from workers on hotspot IP and port 8000
+    - Workers can POST /api/v1/nodes/heartbeat
+    - /api/v1/display/status shows workers with hotspot IP addresses
+
+Success Criteria:
+  - At least one worker visible in `/api/v1/nodes`
+  - `/api/v1/display/status` shows `nodes_online >= 1`
+  - `/ws/metrics` includes hotspot-connected worker metrics
+```
+
+### Task 6.3: WebSocket Live Display Stream
+```yaml
+Agent: Realtime Agent
+Priority: 🔵 MEDIUM
+Time: 25 minutes
+Dependencies: Task 3.3, Task 6.1
+
+Instructions:
+  Update websocket broadcaster to stream current state (not mock data):
+
+  Endpoint:
+    - /ws/metrics
+
+  Message Format:
+    {
+      "type": "cluster_update",
+      "timestamp": "ISO8601",
+      "data": {
+        "working": int,
+        "pending": int,
+        "completed": int,
+        "failed": int,
+        "nodes_online": int,
+        "nodes": []
+      }
+    }
+
+Success Criteria:
+  - Connected clients receive updates every second
+  - Multiple clients can subscribe concurrently
+  - Disconnects are handled gracefully without server errors
+```
+
+---
+
 ## 🔄 Execution Flow
 
 ```mermaid
@@ -712,7 +839,9 @@ graph LR
     W2 --> W3
     W3 --> W4[Wave 4: AI]
     W3 --> W5[Wave 5: Dashboard]
+    W3 --> W6[Wave 6: API Status Display]
     W4 --> W5
+    W6 --> W5
 ```
 
 ---
@@ -726,8 +855,9 @@ graph LR
 | 3 | 3.1-3.4 | Master Logic | ~2 hours |
 | 4 | 4.1-4.3 | AI/ML | ~1.5 hours |
 | 5 | 5.1-5.5 | Frontend/UI | ~2 hours |
+| 6 | 6.1-6.4 | API/Realtime/Network | ~1.25 hours |
 
-**Total Estimated Time: ~8.5 hours**
+**Total Estimated Time: ~9.75 hours**
 
 ---
 
@@ -762,6 +892,13 @@ After all tasks complete, verify:
 - [ ] UI renders completely
 - [ ] Real-time updates work
 - [ ] Controls function correctly
+
+### Wave 6 (Simple Status API)
+- [ ] `/api/v1/display/status` returns current working state
+- [ ] `/api/v1/nodes/heartbeat` updates node metrics in DB
+- [ ] `/ws/metrics` streams current cluster state for display
+- [ ] No LLM dependency required for status display
+- [ ] Worker nodes connected by hotspot are visible in status API
 
 ---
 

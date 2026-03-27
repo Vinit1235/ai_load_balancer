@@ -133,6 +133,87 @@ with st.expander("Corrupted Checkpoints"):
 
 ---
 
+## SOP 5: Wave 6 Simple API Status Display
+
+**Goal**: Provide live, display-ready cluster status using API + WebSocket only.
+
+### 5.0 Network Mode (Wi-Fi Main + Hotspot Workers)
+- Main node stays connected to normal Wi-Fi (internet/backhaul)
+- Main node enables hotspot; workers join this hotspot
+- Workers use hotspot gateway IP in `--master-url`
+
+Example:
+- Master hotspot IP: `192.168.137.1`
+- Worker command:
+    `python worker/sentinel.py --master-url http://192.168.137.1:8000 --node-name worker-1`
+
+### 5.1 Start Services
+```bash
+# Master API
+uvicorn master.main:app --host 0.0.0.0 --port 8000 --reload
+
+# Worker heartbeat (example)
+python worker/sentinel.py --master-url http://192.168.1.100:8000 --node-name worker-1
+```
+
+### 5.2 Verify API Status Endpoints
+```bash
+# Full status snapshot
+curl http://192.168.137.1:8000/api/v1/cluster/status
+
+# Display-focused snapshot
+curl http://192.168.137.1:8000/api/v1/display/status
+
+# Nodes list
+curl http://192.168.137.1:8000/api/v1/nodes
+```
+
+Expected fields in response:
+- `working`
+- `nodes_online`
+- `tasks_total`
+- `task_status`
+- `nodes`
+- `recent_tasks`
+
+### 5.3 Verify Real-Time Stream
+Use any WebSocket client and subscribe to:
+- `ws://192.168.137.1:8000/ws/metrics`
+
+Expected behavior:
+- Receives `cluster_update` messages every 1 second
+- Payload includes working/pending/completed/failed and nodes data
+
+### 5.4 Operator Actions (Simple Mode)
+- Submit tasks via `POST /api/v1/tasks`
+- Monitor live status via `GET /api/v1/display/status`
+- Watch real-time updates via `ws/metrics`
+
+### 5.5 Troubleshooting
+- If `nodes_online = 0`:
+    - Confirm sentinel is running with correct `--master-url`
+    - Check `POST /api/v1/nodes/heartbeat` reaches master
+    - Ensure worker is connected to hotspot SSID (not another network)
+- If `working = 0` but tasks exist:
+    - Verify task statuses in `/api/v1/tasks`
+    - Ensure tasks are `ASSIGNED` or `RUNNING` to count as working
+- If WebSocket is silent:
+    - Confirm master startup event launched background broadcaster
+    - Check firewall/port access to `8000`
+
+### 5.7 Hotspot Acceptance Check
+- `GET /api/v1/nodes` shows worker IPs from hotspot subnet
+- `GET /api/v1/display/status` returns `nodes_online >= 1`
+- `/ws/metrics` publishes hotspot worker metrics every second
+
+### 5.6 Scope Guardrail
+- Wave 6 in this project is intentionally simple:
+    - No complex chat assistant flows
+    - No autonomous LLM control actions
+    - Primary objective is accurate API current-state display
+
+---
+
 ## Dashboard Structure - NeuroCluster Control Console
 
 ### Core Philosophy
