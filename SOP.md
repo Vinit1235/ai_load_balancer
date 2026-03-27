@@ -280,7 +280,7 @@ for node in nodes:
 
 | Component | Critical Feature |
 |-----------|-----------------|
-| Live Table | Color-coded rows (migrated = yellow) |
+| Live Table | Color-coded rows (migrated = teal) |
 | Progress Bars | Shows checkpoint progress (e.g., "65%") |
 | Kill Button | Requires 2FA confirmation |
 
@@ -290,10 +290,10 @@ if task["migrated"]:
     st.markdown("""
     <style>
         .migrated-task { 
-            background-color: #FFF9C4 !important; 
+            background-color: #009988 !important; 
             animation: pulse 1s infinite;
         }
-        @keyframes pulse { 50% { background-color: #FFECB3; } }
+        @keyframes pulse { 50% { background-color: #00bfa5; } }
     </style>
     """, unsafe_allow_html=True)
     row_class = "migrated-task"
