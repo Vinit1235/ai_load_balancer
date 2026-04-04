@@ -249,6 +249,48 @@ class StateManager:
         """)
         return [dict(row) for row in cursor.fetchall()]
     
+    def assign_pending_task(self, node_id: str) -> Optional[Dict[str, Any]]:
+        """Atomically find exactly 1 pending task and assign it to the given node."""
+        cursor = self.conn.cursor()
+        
+        # We find the highest priority task using the same sorting as get_pending_tasks
+        cursor.execute("""
+            SELECT id FROM tasks 
+            WHERE status = 'PENDING'
+            ORDER BY 
+                CASE priority
+                    WHEN 'high' THEN 1
+                    WHEN 'medium' THEN 2
+                    WHEN 'low' THEN 3
+                END,
+                created_at ASC
+            LIMIT 1
+        """)
+        row = cursor.fetchone()
+        
+        if not row:
+            return None
+            
+        task_id = row['id']
+        now = datetime.now().isoformat()
+        
+        # Atomically try to claim it
+        cursor.execute("""
+            UPDATE tasks 
+            SET status = 'ASSIGNED', assigned_node = ?, started_at = ?
+            WHERE id = ? AND status = 'PENDING'
+        """, (node_id, now, task_id))
+        
+        if cursor.rowcount == 0:
+            return None
+            
+        self.conn.commit()
+        
+        # Return the newly assigned task
+        cursor.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))
+        task_row = cursor.fetchone()
+        return dict(task_row) if task_row else None
+        
     def get_node_tasks(self, node_id: str) -> List[Dict[str, Any]]:
         """Get all tasks assigned to a specific node"""
         cursor = self.conn.cursor()

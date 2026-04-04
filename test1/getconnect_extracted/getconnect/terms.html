@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetConnect.Web | Terms of Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reusing all the same CSS from index.html */
+        /* ===== CSS RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-blue: #60a5fa;
+            --accent-blue: #93c5fd;
+            --sky-blue: #dbeafe;
+            
+            --white: #ffffff;
+            --off-white: #f8fafc;
+            --light-gray: #f1f5f9;
+            --medium-gray: #e2e8f0;
+            --dark-gray: #64748b;
+            --text-dark: #334155;
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0ea5e9;
+            
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--off-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== LOGO ANIMATIONS ===== */
+        .logo-animation svg {
+            animation: floatPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes floatPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform var(--transition-normal);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-main {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-sub {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--primary-light);
+            margin-top: -2px;
+        }
+
+        /* ===== MODAL STYLES ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ===== HEADER & NAVBAR ===== */
+        .header {
+            background-color: var(--white);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.98);
+        }
+
+        .navbar {
+            padding: 0.75rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Animated Navigation Menu */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            font-weight: 500;
+            color: var(--dark-gray);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+            transition: width var(--transition-normal);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-dark);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .nav-link.active {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        .nav-link i {
+            font-size: 1.1em;
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-notification {
+            position: relative;
+            background: none;
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-notification:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-dark);
+            transform: rotate(15deg);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-login-header, .btn-register {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-login-header {
+            background-color: transparent;
+            color: var(--primary-dark);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-login-header:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* ===== TERMS OF SERVICE STYLES ===== */
+        .terms-hero {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(219, 234, 254, 0.3) 100%);
+            text-align: center;
+        }
+
+        .terms-hero h1 {
+            font-size: 3.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+
+        .terms-hero p {
+            font-size: 1.25rem;
+            color: var(--dark-gray);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .last-updated {
+            display: inline-block;
+            background: var(--sky-blue);
+            color: var(--primary-dark);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            margin-top: 2rem;
+            border: 1px solid var(--secondary-blue);
+        }
+
+        .acceptance-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(96, 165, 250, 0.2));
+            border: 2px solid var(--primary-blue);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .acceptance-box h3 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .acceptance-box p {
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-accept {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+            padding: 12px 30px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+
+        .btn-accept:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
+        }
+
+        .terms-content {
+            padding: 5rem 2rem;
+            background-color: var(--white);
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .terms-section {
+            margin-bottom: 3.5rem;
+            padding: 2.5rem;
+            background: var(--off-white);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--sky-blue);
+            transition: transform var(--transition-normal);
+            counter-increment: section;
+        }
+
+        .terms-section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .terms-section h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .terms-section h2:before {
+            content: counter(section) ".";
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .terms-section h3 {
+            color: var(--primary-dark);
+            margin: 2rem 0 1rem;
+            font-size: 1.3rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .terms-section p {
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .terms-section ul, .terms-section ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+        }
+
+        .terms-section li {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .legal-note {
+            background: var(--sky-blue);
+            border-left: 4px solid var(--warning);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            margin: 2rem 0;
+            font-style: italic;
+        }
+
+        .definition-box {
+            background: white;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .definition-box dt {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .definition-box dd {
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+            color: var(--text-dark);
+        }
+
+        .prohibited-list {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+            border: 1px solid var(--danger);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .prohibited-list h4 {
+            color: var(--danger);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo .logo-main {
+            color: white;
+        }
+
+        .footer-logo .logo-sub {
+            color: var(--secondary-blue);
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all var(--transition-normal);
+        }
+
+        .social-links a:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+        }
+
+        .footer-column h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: color var(--transition-fast);
+        }
+
+        .footer-column a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .nav-actions .btn-login-header,
+            .nav-actions .btn-register {
+                display: none;
+            }
+            
+            .terms-hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .terms-section {
+                padding: 1.5rem;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .terms-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .terms-section h2 {
+                font-size: 1.5rem;
+            }
+            
+            .acceptance-box {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Animated Navbar -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <!-- Logo with Animation -->
+                <a href="index.html" class="logo">
+                    <div class="logo-animation">
+                        <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </a>
+
+                <!-- Animated Menu -->
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li class="nav-item"><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                    <li class="nav-item"><a href="terms.html" class="nav-link active"><i class="fas fa-file-contract"></i> Terms</a></li>
+                </ul>
+
+                <!-- Right Side Actions -->
+                <div class="nav-actions">
+                    <button class="btn-notification" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </button>
+                    <!-- Updated Login Button - Now redirects to login.html -->
+                    <a href="login.html" class="btn-login-header" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <!-- Updated Register Button - Now redirects to register.html -->
+                    <a href="register.html" class="btn-register" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                    <div class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Terms Hero Section -->
+    <section class="terms-hero">
+        <div class="container">
+            <h1>Terms of Service</h1>
+            <p>Please read these terms carefully before using GetConnect.Web services. By accessing or using our platform, you agree to be bound by these terms.</p>
+            <div class="last-updated">
+                <i class="fas fa-calendar-alt"></i> Last Updated: December 15, 2024
+            </div>
+            
+            <div class="acceptance-box">
+                <h3><i class="fas fa-handshake"></i> Agreement to Terms</h3>
+                <p>By accessing or using GetConnect.Web, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree with these terms, you must not use our services.</p>
+                <button class="btn-accept" id="acceptTermsBtn">
+                    <i class="fas fa-check-circle"></i> I Understand and Accept These Terms
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terms Content -->
+    <section class="terms-content">
+        <div class="content-container">
+            <!-- Section Counter Reset -->
+            <style>
+                .content-container {
+                    counter-reset: section;
+                }
+            </style>
+
+            <!-- Section 1 -->
+            <div class="terms-section" id="definitions">
+                <h2>Definitions</h2>
+                <p>For the purposes of these Terms of Service:</p>
+                
+                <div class="definition-box">
+                    <dl>
+                        <dt>"Service" or "Platform"</dt>
+                        <dd>Refers to the GetConnect.Web distributed task execution platform, including all websites, applications, APIs, and related services.</dd>
+                        
+                        <dt>"User" or "You"</dt>
+                        <dd>Refers to any individual or entity that accesses or uses the Service.</dd>
+                        
+                        <dt>"Account"</dt>
+                        <dd>Refers to your registered user account with GetConnect.Web.</dd>
+                        
+                        <dt>"Content"</dt>
+                        <dd>Refers to any data, information, tasks, or materials submitted to or processed through the Service.</dd>
+                        
+                        <dt>"AI Load Balancer"</dt>
+                        <dd>Refers to our proprietary artificial intelligence system that distributes computational tasks across nodes.</dd>
+                        
+                        <dt>"Node"</dt>
+                        <dd>Refers to a computing instance within our distributed network that processes tasks.</dd>
+                        
+                        <dt>"Subscription"</dt>
+                        <dd>Refers to your chosen pricing plan and billing cycle for using the Service.</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="terms-section" id="account-registration">
+                <h2>Account Registration and Security</h2>
+                
+                <h3>Eligibility</h3>
+                <p>You must be at least 16 years old to use our Service. By using the Service, you represent and warrant that you meet this age requirement and have the legal capacity to enter into these terms.</p>
+                
+                <h3>Account Creation</h3>
+                <p>To access certain features, you must register for an account. You agree to:</p>
+                <ul>
+                    <li>Provide accurate, current, and complete information during registration</li>
+                    <li>Maintain and promptly update your account information</li>
+                    <li>Maintain the security of your account credentials</li>
+                    <li>Accept responsibility for all activities that occur under your account</li>
+                    <li>Notify us immediately of any unauthorized access or security breach</li>
+                </ul>
+                
+                <h3>Account Security</h3>
+                <p>You are responsible for safeguarding your password and for all activities that occur under your account. We recommend using strong passwords and enabling two-factor authentication when available.</p>
+                
+                <div class="legal-note">
+                    <p><strong>Important:</strong> We reserve the right to disable any user account at our sole discretion if we believe there has been a violation of these Terms or for security reasons.</p>
+                </div>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="terms-section" id="service-description">
+                <h2>Service Description</h2>
+                
+                <h3>What We Provide</h3>
+                <p>GetConnect.Web provides a distributed task execution platform with AI-powered load balancing. Our Service includes:</p>
+                <ul>
+                    <li>Distributed computing infrastructure for task execution</li>
+                    <li>AI-based load balancing and task distribution</li>
+                    <li>Real-time monitoring and analytics dashboard</li>
+                    <li>API access for programmatic task submission</li>
+                    <li>Data processing and storage as per your subscription plan</li>
+                </ul>
+                
+                <h3>Service Levels</h3>
+                <p>We strive to maintain 99.9% uptime for our core services. Actual service levels may vary based on:</p>
+                <ul>
+                    <li>Your selected subscription plan</li>
+                    <li>Network conditions and third-party service availability</li>
+                    <li>Scheduled maintenance and updates</li>
+                    <li>Force majeure events</li>
+                </ul>
+                
+                <h3>Changes to Service</h3>
+                <p>We reserve the right to modify, suspend, or discontinue any aspect of the Service at any time, with or without notice. We will make reasonable efforts to notify users of significant changes that may affect their use of the Service.</p>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="terms-section" id="acceptable-use">
+                <h2>Acceptable Use Policy</h2>
+                
+                <h3>Permitted Use</h3>
+                <p>You may use our Service only for lawful purposes and in accordance with these Terms. Your use must comply with all applicable laws and regulations.</p>
+                
+                <h3>Prohibited Activities</h3>
+                <p>You agree not to use the Service for any of the following:</p>
+                
+                <div class="prohibited-list">
+                    <h4><i class="fas fa-ban"></i> Strictly Prohibited</h4>
+                    <ul>
+                        <li>Any illegal, fraudulent, or harmful purpose</li>
+                        <li>Violating intellectual property rights of others</li>
+                        <li>Distributing malware, viruses, or harmful code</li>
+                        <li>Attempting to breach security or access unauthorized systems</li>
+                        <li>Spamming, phishing, or other deceptive practices</li>
+                        <li>Mining cryptocurrency without explicit permission</li>
+                        <li>Processing content related to child exploitation</li>
+                        <li>Engaging in denial-of-service attacks</li>
+                        <li>Violating export control laws or sanctions</li>
+                        <li>Processing data that violates privacy laws</li>
+                    </ul>
+                </div>
+                
+                <h3>Content Restrictions</h3>
+                <p>You are solely responsible for all content you submit to the Service. You must ensure that your content:</p>
+                <ul>
+                    <li>Does not infringe any third-party rights</li>
+                    <li>Complies with all applicable laws</li>
+                    <li>Does not contain sensitive personal information without proper consent</li>
+                    <li>Is not offensive, defamatory, or harmful</li>
+                </ul>
+                
+                <div class="legal-note">
+                    <p><strong>Enforcement:</strong> We reserve the right to investigate and take appropriate legal action against anyone who violates this Acceptable Use Policy, including removing content, suspending or terminating accounts, and reporting to law enforcement authorities.</p>
+                </div>
+            </div>
+
+            <!-- Section 5 -->
+            <div class="terms-section" id="intellectual-property">
+                <h2>Intellectual Property Rights</h2>
+                
+                <h3>Our Intellectual Property</h3>
+                <p>The Service and its original content, features, and functionality are and will remain the exclusive property of GetConnect.Web and its licensors. Our intellectual property includes:</p>
+                <ul>
+                    <li>The GetConnect.Web platform and software</li>
+                    <li>AI load balancing algorithms and models</li>
+                    <li>User interface designs and graphics</li>
+                    <li>Trademarks, logos, and brand elements</li>
+                    <li>Documentation and technical materials</li>
+                </ul>
+                
+                <h3>Your Content</h3>
+                <p>You retain all intellectual property rights to the content you submit to the Service. By submitting content, you grant us a worldwide, non-exclusive, royalty-free license to:</p>
+                <ul>
+                    <li>Process and distribute your content as necessary to provide the Service</li>
+                    <li>Use aggregated, anonymized data for service improvement and analytics</li>
+                    <li>Store and backup your content as part of normal service operations</li>
+                </ul>
+                
+                <h3>License to Use Service</h3>
+                <p>Subject to these Terms, we grant you a limited, non-exclusive, non-transferable, revocable license to access and use the Service for your internal business purposes according to your subscription plan.</p>
+                
+                <h3>Feedback</h3>
+                <p>Any feedback, comments, or suggestions you provide regarding the Service may be used by us without any obligation to you.</p>
+            </div>
+
+            <!-- Section 6 -->
+            <div class="terms-section" id="billing-payment">
+                <h2>Billing and Payment Terms</h2>
+                
+                <h3>Subscription Plans</h3>
+                <p>We offer various subscription plans as described on our Pricing page. You select your plan during registration and may change it at any time through your account settings.</p>
+                
+                <h3>Payment Terms</h3>
+                <p>By subscribing to a paid plan, you agree to:</p>
+                <ul>
+                    <li>Pay all fees associated with your selected plan</li>
+                    <li>Provide accurate billing information</li>
+                    <li>Authorize us to charge your chosen payment method</li>
+                    <li>Keep your payment information current</li>
+                </ul>
+                
+                <h3>Billing Cycle</h3>
+                <p>Fees are billed in advance on a monthly or annual basis, depending on your chosen billing cycle. Your subscription will automatically renew at the end of each billing period unless you cancel.</p>
+                
+                <h3>Price Changes</h3>
+                <p>We reserve the right to change our prices at any time. We will provide at least 30 days' notice for price changes affecting existing subscriptions.</p>
+                
+                <h3>Refunds</h3>
+                <p>All fees are non-refundable except as required by law. If you cancel your subscription, you will continue to have access to the Service until the end of your current billing period.</p>
+                
+                <div class="legal-note">
+                    <p><strong>Taxes:</strong> All fees are exclusive of taxes, levies, or duties imposed by taxing authorities. You are responsible for payment of all such taxes.</p>
+                </div>
+            </div>
+
+            <!-- Section 7 -->
+            <div class="terms-section" id="termination">
+                <h2>Termination</h2>
+                
+                <h3>Termination by You</h3>
+                <p>You may terminate your account at any time by accessing your account settings or contacting our support team. Termination will be effective at the end of your current billing period.</p>
+                
+                <h3>Termination by Us</h3>
+                <p>We may suspend or terminate your access to the Service immediately, without prior notice or liability, for any reason, including if you breach these Terms.</p>
+                
+                <h3>Effect of Termination</h3>
+                <p>Upon termination:</p>
+                <ul>
+                    <li>Your right to use the Service will immediately cease</li>
+                    <li>You must stop all use of the Service</li>
+                    <li>We may delete your content and data according to our data retention policy</li>
+                    <li>You will not be entitled to any refunds</li>
+                </ul>
+                
+                <h3>Survival</h3>
+                <p>Provisions of these Terms that by their nature should survive termination will survive, including ownership provisions, warranty disclaimers, indemnity, and limitations of liability.</p>
+            </div>
+
+            <!-- Section 8 -->
+            <div class="terms-section" id="disclaimers">
+                <h2>Disclaimers and Limitations</h2>
+                
+                <h3>Service "As Is"</h3>
+                <p>The Service is provided on an "AS IS" and "AS AVAILABLE" basis. We disclaim all warranties of any kind, whether express or implied, including but not limited to implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+                
+                <h3>No Guarantees</h3>
+                <p>We do not warrant that:</p>
+                <ul>
+                    <li>The Service will meet your specific requirements</li>
+                    <li>The Service will be uninterrupted, timely, secure, or error-free</li>
+                    <li>The results from using the Service will be accurate or reliable</li>
+                    <li>Any errors in the Service will be corrected</li>
+                </ul>
+                
+                <h3>Limitation of Liability</h3>
+                <p>To the maximum extent permitted by law, GetConnect.Web shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:</p>
+                <ul>
+                    <li>Your access to or use of or inability to access or use the Service</li>
+                    <li>Any conduct or content of any third party on the Service</li>
+                    <li>Any content obtained from the Service</li>
+                    <li>Unauthorized access, use, or alteration of your transmissions or content</li>
+                </ul>
+                
+                <div class="legal-note">
+                    <p><strong>Maximum Liability:</strong> Our total liability to you for all claims arising out of or relating to these Terms or the Service shall not exceed the amount you have paid us in the twelve (12) months preceding the claim.</p>
+                </div>
+            </div>
+
+            <!-- Section 9 -->
+            <div class="terms-section" id="indemnification">
+                <h2>Indemnification</h2>
+                
+                <p>You agree to defend, indemnify, and hold harmless GetConnect.Web and its affiliates, officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses, including without limitation reasonable attorney's fees, arising out of or in any way connected with:</p>
+                
+                <ul>
+                    <li>Your access to or use of the Service</li>
+                    <li>Your violation of these Terms</li>
+                    <li>Your violation of any third-party right, including intellectual property or privacy rights</li>
+                    <li>Any content you submit to the Service</li>
+                    <li>Your violation of any applicable laws or regulations</li>
+                </ul>
+                
+                <p>We reserve the right to assume the exclusive defense and control of any matter subject to indemnification by you, in which event you will cooperate with us in asserting any available defenses.</p>
+            </div>
+
+            <!-- Section 10 -->
+            <div class="terms-section" id="governing-law">
+                <h2>Governing Law and Dispute Resolution</h2>
+                
+                <h3>Governing Law</h3>
+                <p>These Terms shall be governed by and construed in accordance with the laws of the State of California, United States, without regard to its conflict of law provisions.</p>
+                
+                <h3>Dispute Resolution</h3>
+                <p>Any dispute arising from or relating to these Terms or the Service shall be resolved as follows:</p>
+                <ol>
+                    <li><strong>Informal Negotiation:</strong> Parties shall first attempt to resolve the dispute through informal negotiation</li>
+                    <li><strong>Mediation:</strong> If negotiation fails, parties shall attempt to resolve the dispute through mediation</li>
+                    <li><strong>Arbitration:</strong> If mediation fails, the dispute shall be resolved by binding arbitration in San Francisco, California</li>
+                    <li><strong>Court Proceedings:</strong> Either party may seek injunctive relief in any court of competent jurisdiction</li>
+                </ol>
+                
+                <h3>Class Action Waiver</h3>
+                <p>You agree that any arbitration or proceeding shall be conducted on an individual basis and not as a class, consolidated, or representative action.</p>
+                
+                <h3>Time Limitation</h3>
+                <p>Any cause of action or claim you may have arising out of or relating to these Terms or the Service must be commenced within one (1) year after the cause of action accrues.</p>
+            </div>
+
+            <!-- Section 11 -->
+            <div class="terms-section" id="miscellaneous">
+                <h2>Miscellaneous Provisions</h2>
+                
+                <h3>Entire Agreement</h3>
+                <p>These Terms, together with our Privacy Policy and any other legal notices published by us, constitute the entire agreement between you and GetConnect.Web regarding the Service.</p>
+                
+                <h3>Severability</h3>
+                <p>If any provision of these Terms is held to be invalid or unenforceable, that provision will be enforced to the maximum extent permissible, and the other provisions will remain in full force and effect.</p>
+                
+                <h3>Waiver</h3>
+                <p>Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights.</p>
+                
+                <h3>Assignment</h3>
+                <p>You may not assign or transfer these Terms without our prior written consent. We may assign or transfer these Terms without restriction.</p>
+                
+                <h3>Notices</h3>
+                <p>We may provide notices to you via email, in-service notifications, or by posting on our website. Notices will be deemed given when sent or posted.</p>
+                
+                <h3>Force Majeure</h3>
+                <p>We shall not be liable for any failure to perform due to causes beyond our reasonable control, including natural disasters, acts of government, pandemics, or internet service failures.</p>
+            </div>
+
+            <!-- Section 12 -->
+            <div class="terms-section" id="contact">
+                <h2>Contact Information</h2>
+                
+                <p>If you have any questions about these Terms, please contact us:</p>
+                
+                <div class="definition-box">
+                    <dl>
+                        <dt>Legal Department</dt>
+                        <dd>GetConnect.Web Inc.<br>
+                            123 Innovation Drive<br>
+                            San Francisco, CA 94107<br>
+                            United States</dd>
+                        
+                        <dt>Email</dt>
+                        <dd>legal@getconnect.web</dd>
+                        
+                        <dt>Phone</dt>
+                        <dd>+1 (555) 123-4567 (Legal Inquiries Only)</dd>
+                        
+                        <dt>Hours</dt>
+                        <dd>Monday-Friday, 9:00 AM - 5:00 PM PST</dd>
+                    </dl>
+                </div>
+                
+                <div class="legal-note">
+                    <p><strong>Legal Notice:</strong> For service of legal process, please use the address above and copy legal@getconnect.web. We do not accept service via email alone.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <div class="logo-animation">
+                        <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </div>
+                <p class="footer-description">
+                    AI-powered distributed task execution engine with intelligent load balancing for modern computing needs. Scalable, secure, and efficient.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Product</h3>
+                <ul>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="api.html">API Documentation</a></li>
+                    <li><a href="tasks.html">Task Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="partners.html">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="docs.html">Documentation</a></li>
+                    <li><a href="tutorials.html">Tutorials</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="status.html">System Status</a></li>
+                    <li><a href="community.html">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="security.html">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== MOBILE MENU TOGGLE =====
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileToggle.innerHTML = navMenu.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-container') && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // ===== NOTIFICATION SYSTEM =====
+        const notificationBtn = document.getElementById('notificationBtn');
+        let notificationCount = 3;
+
+        notificationBtn.addEventListener('click', () => {
+            if (notificationCount > 0) {
+                alert(`You have ${notificationCount} unread notifications`);
+                notificationCount = 0;
+                document.querySelector('.notification-count').textContent = '0';
+                document.querySelector('.notification-count').style.display = 'none';
+            } else {
+                alert('You have no new notifications');
+            }
+        });
+
+        // ===== TERMS ACCEPTANCE =====
+        const acceptTermsBtn = document.getElementById('acceptTermsBtn');
+        
+        acceptTermsBtn.addEventListener('click', () => {
+            acceptTermsBtn.innerHTML = '<i class="fas fa-check"></i> Terms Accepted';
+            acceptTermsBtn.style.backgroundColor = 'var(--success)';
+            acceptTermsBtn.style.borderColor = 'var(--success)';
+            acceptTermsBtn.disabled = true;
+            
+            // Store acceptance in localStorage
+            localStorage.setItem('termsAccepted', 'true');
+            
+            // Show confirmation message
+            const confirmation = document.createElement('div');
+            confirmation.style.cssText = `
+                background: var(--success);
+                color: white;
+                padding: 1rem;
+                border-radius: var(--radius-md);
+                margin-top: 1rem;
+                text-align: center;
+                animation: fadeIn 0.5s ease;
+            `;
+            confirmation.innerHTML = `
+                <i class="fas fa-check-circle"></i> Thank you for accepting our Terms of Service. You may now proceed to use GetConnect.Web.
+            `;
+            
+            const acceptanceBox = document.querySelector('.acceptance-box');
+            acceptanceBox.appendChild(confirmation);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                confirmation.style.opacity = '0';
+                confirmation.style.transition = 'opacity 0.5s';
+                setTimeout(() => confirmation.remove(), 500);
+            }, 5000);
+        });
+
+        // ===== NAVIGATION ACTIVE STATE =====
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Close mobile menu if open
+                if (navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
+        // ===== SMOOTH SCROLL FOR ANCHORS =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add anchor links to section headers
+            const sections = document.querySelectorAll('.terms-section');
+            sections.forEach(section => {
+                const id = section.id;
+                const header = section.querySelector('h2');
+                if (header && id) {
+                    const anchor = document.createElement('a');
+                    anchor.href = `#${id}`;
+                    anchor.className = 'section-anchor';
+                    anchor.innerHTML = '<i class="fas fa-link"></i>';
+                    anchor.style.marginLeft = '10px';
+                    anchor.style.color = 'var(--primary-blue)';
+                    anchor.style.opacity = '0.5';
+                    anchor.style.transition = 'opacity 0.3s';
+                    
+                    anchor.addEventListener('mouseenter', () => {
+                        anchor.style.opacity = '1';
+                    });
+                    
+                    anchor.addEventListener('mouseleave', () => {
+                        anchor.style.opacity = '0.5';
+                    });
+                    
+                    header.appendChild(anchor);
+                }
+            });
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') return;
+                    
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        e.preventDefault();
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        // Update URL without page jump
+                        history.pushState(null, null, href);
+                    }
+                });
+            });
+
+            // Check if terms were already accepted
+            if (localStorage.getItem('termsAccepted') === 'true') {
+                acceptTermsBtn.innerHTML = '<i class="fas fa-check"></i> Terms Accepted';
+                acceptTermsBtn.style.backgroundColor = 'var(--success)';
+                acceptTermsBtn.style.borderColor = 'var(--success)';
+                acceptTermsBtn.disabled = true;
+            }
+        });
+
+        // ===== ANIMATE SECTIONS ON SCROLL =====
+        function animateOnScroll() {
+            const sections = document.querySelectorAll('.terms-section');
+            
+            sections.forEach(section => {
+                const position = section.getBoundingClientRect();
+                if (position.top < window.innerHeight - 100) {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }
+            });
+        }
+
+        // Initialize sections with hidden state
+        document.querySelectorAll('.terms-section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        });
+
+        // Set up scroll animation
+        window.addEventListener('scroll', animateOnScroll);
+        
+        // Initial animation check
+        setTimeout(animateOnScroll, 100);
+
+        // ===== TABLE OF CONTENTS GENERATOR =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.terms-section');
+            const contentContainer = document.querySelector('.content-container');
+            
+            if (sections.length > 0) {
+                const toc = document.createElement('div');
+                toc.className = 'table-of-contents';
+                toc.style.background = 'var(--sky-blue)';
+                toc.style.padding = '1.5rem';
+                toc.style.borderRadius = 'var(--radius-lg)';
+                toc.style.margin = '2rem 0';
+                toc.style.border = '1px solid var(--secondary-blue)';
+                
+                toc.innerHTML = `
+                    <h3 style="color: var(--primary-dark); margin-bottom: 1rem; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-list-ol"></i> Table of Contents
+                    </h3>
+                    <nav>
+                        <ol style="list-style: none; padding-left: 0;">
+                            ${Array.from(sections).map((section, index) => {
+                                const id = section.id;
+                                const title = section.querySelector('h2').textContent.replace(/[^a-zA-Z0-9 ]/g, '');
+                                if (!id || !title) return '';
+                                return `
+                                    <li style="margin-bottom: 0.75rem; padding-left: 1rem; position: relative;">
+                                        <span style="position: absolute; left: 0; top: 0; background: var(--primary-blue); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">${index + 1}</span>
+                                        <a href="#${id}" 
+                                           style="color: var(--primary-blue); text-decoration: none; display: block; padding-left: 30px; transition: color 0.3s;"
+                                           onmouseover="this.style.color='var(--primary-dark)'"
+                                           onmouseout="this.style.color='var(--primary-blue)'">
+                                            ${title}
+                                        </a>
+                                    </li>
+                                `;
+                            }).join('')}
+                        </ol>
+                    </nav>
+                `;
+                
+                // Insert after acceptance box
+                const acceptanceBox = document.querySelector('.acceptance-box');
+                if (acceptanceBox) {
+                    acceptanceBox.parentNode.insertBefore(toc, acceptanceBox.nextSibling);
+                } else {
+                    contentContainer.insertBefore(toc, contentContainer.firstChild);
+                }
+            }
+        });
+
+        // ===== PRINT FUNCTIONALITY =====
+        const printBtn = document.createElement('button');
+        printBtn.innerHTML = '<i class="fas fa-print"></i> Print These Terms';
+        printBtn.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all var(--transition-normal);
+        `;
+        
+        printBtn.addEventListener('mouseenter', () => {
+            printBtn.style.transform = 'translateY(-2px)';
+            printBtn.style.boxShadow = 'var(--shadow-lg)';
+        });
+        
+        printBtn.addEventListener('mouseleave', () => {
+            printBtn.style.transform = 'translateY(0)';
+            printBtn.style.boxShadow = 'var(--shadow-md)';
+        });
+        
+        printBtn.addEventListener('click', () => {
+            window.print();
+        });
+        
+        document.body.appendChild(printBtn);
+    </script>
+</body>
+</html>

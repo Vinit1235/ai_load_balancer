@@ -146,6 +146,25 @@ async def submit_task(payload: TaskCreateRequest):
     )
     return {"ok": True, "task_id": task_id, "status": "PENDING"}
 
+@api_router.post("/tasks/assign")
+async def assign_task(payload: dict):
+    node_id = payload.get("node_id")
+    if not node_id:
+        raise HTTPException(status_code=400, detail="node_id is required")
+        
+    task = state_manager.assign_pending_task(node_id)
+    if not task:
+        return {"ok": False, "message": "No pending tasks"}
+        
+    return {"ok": True, "task": task}
+
+@api_router.post("/tasks/{id}/progress")
+async def update_task_progress(id: str, payload: dict):
+    status = payload.get("status", "RUNNING")
+    progress = payload.get("progress")
+    state_manager.update_task_status(id, status, progress)
+    return {"ok": True, "task_id": id, "status": status}
+
 @api_router.get("/tasks")
 async def list_tasks():
     return {"tasks": state_manager.get_all_tasks()}

@@ -232,12 +232,81 @@ class HealthSentinel:
             try:
                 await self.send_heartbeat()
                 await asyncio.sleep(1)  # Send heartbeat every second
-            except KeyboardInterrupt:
-                logger.info("Health sentinel stopped by user")
-                break
             except Exception as e:
                 logger.error(f"Unexpected error in monitoring loop: {e}")
                 await asyncio.sleep(5)  # Back off on errors
+
+
+class TaskConsumer:
+    """Polls master for tasks and executes them"""
+    
+    def __init__(self, master_url: str, node_id: str):
+        self.master_url = master_url
+        self.node_id = node_id
+        from worker.executor import TaskExecutor
+        self.executor = TaskExecutor()
+        
+    async def run(self):
+        logger.info(f"Task consumer waiting for heavy computational tasks...")
+        while True:
+            try:
+                # 1. Ask for a task
+                async with httpx.AsyncClient(timeout=5.0) as client:
+                    resp = await client.post(
+                        f"{self.master_url}/api/v1/tasks/assign",
+                        json={"node_id": self.node_id}
+                    )
+                    
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        if data.get("ok") and data.get("task"):
+                            task = data["task"]
+                            await self.execute_task(task)
+                            continue  # check for another immediately
+            except Exception as e:
+                logger.debug(f"Task polling error: {e}")
+                
+            await asyncio.sleep(3)
+            
+    async def execute_task(self, task: dict):
+        task_id = task.get("id")
+        task_type = task.get("type", "synthetic_load")
+        params = {"input_size": task.get("input_size", 1000)}
+        
+        logger.info(f"[Task Acquired] Received {task_type} task #{task_id[:8]} - Spinning up CPU!")
+        
+        try:
+            # 2. Run the TaskExecutor generator
+            progress_generator = self.executor.execute_task(task_id, task_type, params)
+            
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                for step in progress_generator:
+                    prog = step.get("progress", 0)
+                    status = step.get("status", "RUNNING")
+                    
+                    # 3. Stream progress updates back to master dashboard
+                    await client.post(
+                        f"{self.master_url}/api/v1/tasks/{task_id}/progress",
+                        json={"status": status, "progress": prog}
+                    )
+                    
+                    if status == "completed":
+                        logger.info(f"[Task Completed] Finished {task_type} task #{task_id[:8]} successfully.")
+                        break
+                    elif status == "failed":
+                        logger.error(f"[Task Failed] Task #{task_id[:8]} crashed.")
+                        break
+                        
+        except Exception as e:
+            logger.error(f"[Task Crash] {task_id[:8]} failed: {e}")
+            try:
+                async with httpx.AsyncClient(timeout=5.0) as client:
+                    await client.post(
+                        f"{self.master_url}/api/v1/tasks/{task_id}/progress",
+                        json={"status": "FAILED", "progress": 0}
+                    )
+            except:
+                pass
 
 
 async def main():
@@ -264,8 +333,23 @@ async def main():
         node_name=args.node_name
     )
     
-    await sentinel.run()
+    consumer = TaskConsumer(
+        master_url=args.master_url,
+        node_id=node_id
+    )
+    
+    # Run both simultaneously
+    try:
+        await asyncio.gather(
+            sentinel.run(),
+            consumer.run()
+        )
+    except KeyboardInterrupt:
+        logger.info("Worker gracefully stopped by user")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass
