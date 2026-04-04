@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice Status Assistant</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(13, 24, 41, 0.86);
+      --panel-strong: #0f1b31;
+      --text: #ecf2ff;
+      --muted: #94a3b8;
+      --accent: #7dd3fc;
+      --accent-2: #f59e0b;
+      --border: rgba(125, 211, 252, 0.18);
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(125, 211, 252, 0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.18), transparent 24%),
+        linear-gradient(135deg, #03101d 0%, #08192c 45%, #0b1120 100%);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .shell {
+      width: min(980px, 100%);
+      display: grid;
+      gap: 20px;
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    .hero, .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero {
+      padding: 30px;
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.75rem;
+      margin: 0 0 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      line-height: 0.95;
+    }
+
+    .lead {
+      margin: 18px 0 0;
+      max-width: 58ch;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.6;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .metric {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .metric .label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+    }
+
+    .metric .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .primary {
+      background: linear-gradient(135deg, var(--accent), #38bdf8);
+      color: #02111e;
+      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.25);
+    }
+
+    .secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .microphone {
+      display: inline-grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-2), #fb7185);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+
+    .field {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    input, textarea {
+      width: 100%;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--panel-strong);
+      color: var(--text);
+      padding: 14px 16px;
+      font: inherit;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      border: 1px solid rgba(125, 211, 252, 0.22);
+      background: rgba(125, 211, 252, 0.08);
+      color: var(--text);
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    .output {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .answer {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--text);
+      min-height: 92px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 920px) {
+      .shell { grid-template-columns: 1fr; }
+      .status-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">Voice cluster assistant</p>
+      <h1>Ask the cluster out loud.</h1>
+      <p class="lead">
+        Use your microphone to ask about worker health, task counts, and overload status.
+        The browser handles speech recognition and speech playback, so this stays free.
+      </p>
+
+      <div class="status-row">
+        <div class="metric">
+          <span class="label">Listening</span>
+          <div class="value" id="listeningState">Idle</div>
+        </div>
+        <div class="metric">
+          <span class="label">Assistant</span>
+          <div class="value" id="assistantState">Local</div>
+        </div>
+        <div class="metric">
+          <span class="label">Support</span>
+          <div class="value">Voice + Text</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="primary" id="startBtn"><span class="microphone">●</span> Start Listening</button>
+        <button class="secondary" id="stopBtn" disabled>Stop</button>
+        <button class="secondary" id="speakBtn">Speak Response</button>
+      </div>
+
+      <div class="chips">
+        <button class="chip" data-prompt="What is the cluster status?">Cluster status</button>
+        <button class="chip" data-prompt="How many nodes are online?">Nodes online</button>
+        <button class="chip" data-prompt="Which worker is the hottest?">Hottest worker</button>
+        <button class="chip" data-prompt="How many tasks are running?">Running tasks</button>
+      </div>
+
+      <div class="field">
+        <label for="queryInput">Manual question</label>
+        <input id="queryInput" type="text" placeholder="Say or type a question about status..." />
+        <button class="primary" id="askBtn">Ask Status</button>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="output">
+        <div class="card">
+          <h2>Transcript</h2>
+          <div class="small" id="transcript">No speech captured yet.</div>
+        </div>
+        <div class="card">
+          <h2>Answer</h2>
+          <div class="answer" id="answer">Ask a question to get a spoken cluster update.</div>
+        </div>
+        <div class="card">
+          <h2>Snapshot</h2>
+          <div class="small" id="snapshot">Waiting for data.</div>
+        </div>
+      </div>
+      <div class="footer-note">
+        Browser speech support varies by browser. Chrome or Edge on Windows usually works best.
+        If Gemini is configured, the backend will use it for wording; otherwise it will answer from the live cluster snapshot.
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const speakBtn = document.getElementById("speakBtn");
+    const askBtn = document.getElementById("askBtn");
+    const queryInput = document.getElementById("queryInput");
+    const transcriptNode = document.getElementById("transcript");
+    const answerNode = document.getElementById("answer");
+    const snapshotNode = document.getElementById("snapshot");
+    const listeningState = document.getElementById("listeningState");
+    const assistantState = document.getElementById("assistantState");
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let lastAnswer = "";
+
+    function setListening(active) {
+      listeningState.textContent = active ? "Listening" : "Idle";
+      startBtn.disabled = active;
+      stopBtn.disabled = !active;
+    }
+
+    function speak(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.lang = "en-US";
+      window.speechSynthesis.speak(utterance);
+    }
+
+    async function askStatus(query) {
+      if (!query || !query.trim()) return;
+      transcriptNode.textContent = query.trim();
+      answerNode.textContent = "Thinking...";
+      snapshotNode.textContent = "Fetching live cluster snapshot...";
+
+      try {
+        const response = await fetch("/api/v1/assistant/status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: query.trim(), use_ai: true }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        lastAnswer = data.answer || "No answer returned.";
+        answerNode.textContent = lastAnswer;
+        assistantState.textContent = data.provider || "Local";
+        snapshotNode.textContent = JSON.stringify(data.snapshot || {}, null, 2);
+      } catch (error) {
+        answerNode.textContent = `Request failed: ${error.message}`;
+        snapshotNode.textContent = "Unable to reach the assistant endpoint.";
+      }
+    }
+
+    function startRecognition() {
+      if (!SpeechRecognition) {
+        answerNode.textContent = "Speech recognition is not supported in this browser. Use the text box instead.";
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => setListening(true);
+      recognition.onend = () => setListening(false);
+      recognition.onerror = () => setListening(false);
+      recognition.onresult = event => {
+        const transcript = event.results[0][0].transcript;
+        queryInput.value = transcript;
+        askStatus(transcript);
+      };
+
+      recognition.start();
+    }
+
+    startBtn.addEventListener("click", startRecognition);
+    stopBtn.addEventListener("click", () => {
+      if (recognition) {
+        recognition.stop();
+      }
+    });
+    askBtn.addEventListener("click", () => askStatus(queryInput.value));
+    speakBtn.addEventListener("click", () => speak(lastAnswer || answerNode.textContent));
+
+    queryInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        askStatus(queryInput.value);
+      }
+    });
+
+    document.querySelectorAll(".chip").forEach(button => {
+      button.addEventListener("click", () => {
+        const prompt = button.getAttribute("data-prompt") || "What is the cluster status?";
+        queryInput.value = prompt;
+        askStatus(prompt);
+      });
+    });
+  </script>
+</body>
+</html>

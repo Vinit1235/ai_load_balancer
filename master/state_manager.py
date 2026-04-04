@@ -250,10 +250,47 @@ class StateManager:
         return [dict(row) for row in cursor.fetchall()]
     
     def assign_pending_task(self, node_id: str) -> Optional[Dict[str, Any]]:
-        """Atomically find exactly 1 pending task and assign it to the given node."""
+        """
+        Atomically find exactly 1 pending task and assign it to the given node,
+        but ONLY if this node is the absolute best candidate based on heuristic load.
+        """
+        # ==========================================================
+        # 1. HEURISTIC LEAST-LOAD EVALUATION
+        # ==========================================================
+        active_nodes = self.get_active_nodes()
+        if not active_nodes:
+            return None
+            
+        best_node_id = None
+        lowest_score = float('inf')
+        
+        for n in active_nodes:
+            if n.get("status", "").upper() == "DRAINING":
+                continue
+                
+            cpu = n.get("cpu", 0)
+            ram = n.get("ram", 0)
+            active_tasks = n.get("active_tasks", 0)
+            
+            # Hardware Telemetry Stress Score Equation
+            # Prioritizes free CPU, punishes active concurrent tasks heavily
+            score = (cpu * 0.5) + (ram * 0.3) + (active_tasks * 20)
+            
+            if score < lowest_score:
+                lowest_score = score
+                best_node_id = n.get("id")
+                
+        # GATEKEEPER CHECK: 
+        # Is the node asking for the task truly the least stressed?
+        if best_node_id != node_id:
+            return None  # Reject the pull request; force a better node to claim it.
+
+        # ==========================================================
+        # 2. ATOMIC ASSIGNMENT
+        # ==========================================================
         cursor = self.conn.cursor()
         
-        # We find the highest priority task using the same sorting as get_pending_tasks
+        # We find the highest priority task
         cursor.execute("""
             SELECT id FROM tasks 
             WHERE status = 'PENDING'

@@ -1432,7 +1432,7 @@
                 if (rememberMe) localStorage.setItem('rememberMe', 'true');
                 setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
             } catch (error) {
-                showToast('Login Failed', error.message || 'Invalid email or password', 'error');
+                showToast('Login Failed', error.detail || error.message || 'Invalid email or password', 'error');
             } finally {
                 // Reset button state
                 submitBtn.disabled = false;
@@ -1521,15 +1521,7 @@
         document.querySelectorAll('.btn-social').forEach(btn => {
             btn.addEventListener('click', () => {
                 const provider = btn.querySelector('span').textContent;
-                showToast('Social Login', `Connecting with ${provider}...`, 'info');
-                
-                // Simulate social login
-                setTimeout(() => {
-                    showToast('Login Successful', `Connected with ${provider}`, 'success');
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                }, 1500);
+                showToast('Coming Soon', `${provider} login is not available yet. Please use email/password.`, 'warning');
             });
         });
 

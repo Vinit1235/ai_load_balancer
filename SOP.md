@@ -212,6 +212,12 @@ Expected behavior:
     - No autonomous LLM control actions
     - Primary objective is accurate API current-state display
 
+### 5.8 Free Voice Status Assistant
+- Open `/app/voice-assistant.html` in the browser for voice input and spoken replies.
+- Browser speech recognition and speech synthesis handle the microphone and playback for free.
+- The backend uses `POST /api/v1/assistant/status` to answer status questions from the live cluster snapshot.
+- If `GEMINI_API_KEY` is set, the assistant can refine the wording with Gemini; otherwise it falls back to local status summarization.
+
 ---
 
 ## Dashboard Structure - NeuroCluster Control Console

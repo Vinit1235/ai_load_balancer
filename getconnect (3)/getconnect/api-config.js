@@ -162,6 +162,20 @@ function connectMetricsWS(onMessage) {
     return { close() { if (reconnectTimer) clearTimeout(reconnectTimer); if (ws) ws.close(); } };
 }
 
+// ===== AUTH GUARD =====
+
+/**
+ * Redirect to login if user is not authenticated.
+ * Call on any page that requires login.
+ */
+function requireAuth() {
+    if (!isLoggedIn()) {
+        window.location.href = 'login.html';
+        return false;
+    }
+    return true;
+}
+
 // ===== CONNECTION STATUS BANNER =====
 
 function showConnectionStatus() {
@@ -198,7 +212,7 @@ function showConnectionStatus() {
     setInterval(check, 15000);
 }
 
-// Auto-show connection status on key pages
+// Auto-show connection status on key pages + enforce auth guards
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApiConfig);
 } else {
@@ -207,7 +221,18 @@ if (document.readyState === 'loading') {
 
 function initApiConfig() {
     const page = window.location.pathname;
-    if (page.includes('dashboard') || page.includes('tasks') || page.includes('analytics')) {
+    const protectedPages = ['dashboard', 'tasks', 'analytics'];
+    const isProtected = protectedPages.some(p => page.includes(p));
+
+    // Auth guard on protected pages
+    if (isProtected && !isLoggedIn()) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Show connection status on data-driven pages
+    if (isProtected) {
         showConnectionStatus();
     }
 }
+

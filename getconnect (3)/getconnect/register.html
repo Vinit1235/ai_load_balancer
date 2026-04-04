@@ -1869,29 +1869,22 @@
             });
         }
 
-        // Email availability check (simulated)
+        // Email availability check (validated on actual registration)
         function checkEmailAvailability(email) {
-            // Simulate API call
-            setTimeout(() => {
-                const emailInput = document.getElementById('email');
-                if (email.includes('@') && !email.includes('taken')) {
-                    showSuccess(emailInput, 'Email is available');
-                }
-            }, 500);
+            // Client-side format check only — real duplicate check happens
+            // when the backend returns 409 on POST /auth/register
+            const emailInput = document.getElementById('email');
+            if (email.includes('@') && email.includes('.')) {
+                showSuccess(emailInput, 'Email format valid');
+            }
         }
 
-        // Username availability check (simulated)
+        // Username availability check (client-side only — backend uses email as key)
         function checkUsernameAvailability(username) {
-            // Simulate API call
-            setTimeout(() => {
-                const usernameInput = document.getElementById('username');
-                const takenUsernames = ['admin', 'root', 'test', 'demo'];
-                if (!takenUsernames.includes(username.toLowerCase())) {
-                    showSuccess(usernameInput, 'Username is available');
-                } else {
-                    showError(usernameInput, 'Username is already taken');
-                }
-            }, 500);
+            const usernameInput = document.getElementById('username');
+            if (username.length >= 3) {
+                showSuccess(usernameInput, 'Username looks good');
+            }
         }
 
         // Promo code application

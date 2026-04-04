@@ -11,6 +11,10 @@ import os
 import json
 from datetime import datetime
 from master.state_manager import state_manager
+from master.scheduler import Scheduler
+
+# Global scheduler instance
+scheduler = Scheduler(state_manager)
 
 app = FastAPI(title="AI Load Balancer Master Node", docs_url="/docs")
 
@@ -74,6 +78,11 @@ class ContactRequest(BaseModel):
     email: str
     subject: str = "General Inquiry"
     message: str
+
+
+class VoiceAssistantRequest(BaseModel):
+    query: str = Field(min_length=1)
+    use_ai: bool = True
 
 
 # Simple in-memory user store (for demo; production should use DB)
@@ -229,6 +238,18 @@ async def display_status():
     """Simple endpoint for dashboards/UI display."""
     return build_cluster_snapshot()
 
+
+@api_router.post("/assistant/status")
+async def assistant_status(payload: VoiceAssistantRequest):
+    from shared.voice_assistant import build_voice_status_response
+
+    snapshot = build_cluster_snapshot()
+    return build_voice_status_response(
+        query=payload.query,
+        snapshot=snapshot,
+        use_ai=payload.use_ai,
+    )
+
 @api_router.post("/control/drain/{node_id}")
 async def drain_node(node_id: str):
     state_manager.update_node_status(node_id, "DRAINING")
@@ -242,7 +263,14 @@ async def force_migration():
 @api_router.post("/control/scheduler/mode")
 async def toggle_scheduler_mode(payload: dict = {}):
     mode = payload.get("mode", "heuristic")
-    return {"ok": True, "mode": mode, "message": f"Scheduler switched to {mode} mode"}
+    result = scheduler.switch_mode(mode)
+    return {"ok": True, **result}
+
+
+@api_router.get("/scheduler/status")
+async def scheduler_status():
+    """Get current scheduler mode, model info, and prediction accuracy."""
+    return scheduler.get_status()
 
 
 @api_router.get("/analytics")
@@ -347,3 +375,15 @@ if os.path.isdir(_frontend_dir):
 @app.on_event("startup")
 async def startup_event():
     websocket_router.start_background_task(app)
+
+    # Seed demo user so login works out of the box
+    users = _load_users()
+    if "demo@getconnect.web" not in users:
+        users["demo@getconnect.web"] = {
+            "name": "Demo User",
+            "email": "demo@getconnect.web",
+            "password": _hash_password("password123"),
+            "created_at": datetime.now().isoformat(),
+        }
+        _save_users(users)
+        logging.getLogger("uvicorn").info("Seeded demo user: demo@getconnect.web / password123")
