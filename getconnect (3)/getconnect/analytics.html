@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics | GetConnect.Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="api-config.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --purple:#c084fc;--cyan:#22d3ee;--pink:#f472b6;
+            --card:rgba(15,25,45,0.65);--border:rgba(192,132,252,0.3);
+            --text:#e2e8ff;--muted:#94a3b8;
+            --success:#10b981;--warning:#f59e0b;--danger:#ef4444;
+            --r:16px;--tr:250ms ease;
+        }
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0f172a}::-webkit-scrollbar-thumb{background:#c084fc;border-radius:8px}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;color:var(--text);background:radial-gradient(circle at 10% 20%,#0a0f2a,#020617);line-height:1.6;overflow-x:hidden;min-height:100vh}
+        h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;line-height:1.2}
+        a{text-decoration:none;color:inherit}
+        button{font-family:'Inter',sans-serif;cursor:pointer;border:none;outline:none}
+
+        /* NAV */
+        .header{position:sticky;top:0;z-index:1000;background:rgba(5,10,30,0.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+        .nav-container{max-width:1400px;margin:0 auto;padding:.85rem 2rem;display:flex;justify-content:space-between;align-items:center}
+        .logo{display:flex;align-items:center;gap:10px}
+        .logo-main{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,#fff,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent}
+        .logo-sub{color:#c084fc;font-size:.85rem}
+        .nav-menu{display:flex;list-style:none;gap:1.2rem;align-items:center}
+        .nav-link{display:flex;align-items:center;gap:6px;padding:8px 14px;font-weight:500;color:#e2e8ff;border-radius:10px;transition:var(--tr);position:relative}
+        .nav-link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(90deg,#c084fc,#22d3ee);transition:width var(--tr);border-radius:2px}
+        .nav-link:hover::after,.nav-link.active::after{width:100%}
+        .nav-link:hover,.nav-link.active{color:#22d3ee;background:rgba(192,132,252,0.1)}
+        .nav-actions{display:flex;align-items:center;gap:.8rem}
+        .btn-notif{position:relative;background:none;color:#94a3b8;font-size:1.2rem;padding:8px;border-radius:50%;transition:var(--tr)}
+        .btn-notif:hover{background:rgba(192,132,252,0.15);color:#c084fc}
+        .notif-dot{position:absolute;top:-3px;right:-3px;background:#ef4444;color:#fff;font-size:.65rem;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+        .btn-login{padding:8px 18px;border-radius:40px;border:1px solid rgba(192,132,252,0.5);color:#e2e8ff;background:transparent;font-weight:500;transition:var(--tr)}
+        .btn-login:hover{background:rgba(192,132,252,0.15)}
+        .btn-reg{padding:9px 20px;border-radius:40px;background:linear-gradient(90deg,#c084fc,#06b6d4);color:#0f0f2a;font-weight:700;transition:var(--tr)}
+        .btn-reg:hover{transform:scale(1.03);box-shadow:0 0 18px #a855f7}
+        .mobile-toggle{display:none;font-size:1.4rem;color:#e2e8ff;cursor:pointer;padding:8px}
+        @media(max-width:900px){
+            .nav-menu{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(5,10,30,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:1rem;border-bottom:1px solid var(--border)}
+            .nav-menu.active{display:flex}.mobile-toggle{display:block}
+            .nav-actions .btn-login,.nav-actions .btn-reg{display:none}
+        }
+
+        /* GLASS CARD */
+        .card{background:var(--card);backdrop-filter:blur(12px);border-radius:var(--r);border:1px solid var(--border);box-shadow:0 20px 40px rgba(0,0,0,0.4),0 0 15px rgba(168,85,247,0.08);transition:transform var(--tr),border-color var(--tr)}
+        .card:hover{transform:translateY(-4px);border-color:rgba(192,132,252,0.5)}
+
+        /* PAGE */
+        .page{padding:2rem;max-width:1400px;margin:0 auto}
+        .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+        .page-header h1{font-size:2rem;font-weight:800;background:linear-gradient(135deg,#fff,#c084fc,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;display:flex;align-items:center;gap:.8rem}
+        .page-header h1 i{background:rgba(168,85,247,0.2);padding:10px;border-radius:50%;font-size:1.2rem;color:#c084fc;-webkit-text-fill-color:#c084fc}
+        .hdr-right{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap}
+
+        /* BUTTONS */
+        .btn-primary{padding:10px 22px;border-radius:40px;background:linear-gradient(90deg,#c084fc,#06b6d4);color:#0f0f2a;font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:6px;transition:var(--tr)}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 18px #a855f7}
+        .btn-secondary{padding:10px 22px;border-radius:40px;background:transparent;color:#e2e8ff;border:1px solid rgba(192,132,252,0.5);font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:6px;transition:var(--tr)}
+        .btn-secondary:hover{background:rgba(192,132,252,0.15);transform:translateY(-2px)}
+        .date-select{padding:9px 16px;border-radius:40px;background:rgba(255,255,255,0.05);border:1px solid rgba(192,132,252,0.4);color:#e2e8ff;font-size:.88rem;cursor:pointer;outline:none}
+        .date-select option{background:#0f172a;color:#e2e8ff}
+
+        /* LIVE BADGE */
+        .live-badge{padding:4px 10px;background:rgba(16,185,129,0.15);color:#10b981;border-radius:20px;font-size:.72rem;font-weight:700;border:1px solid rgba(16,185,129,0.3);animation:blink 2s infinite}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:.6}}
+
+        /* KPI STATS */
+        .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-bottom:1.5rem}
+        @media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.kpi-grid{grid-template-columns:1fr}}
+        .kpi-card{padding:1.6rem;text-align:center}
+        .kpi-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;margin:0 auto .9rem}
+        .kpi-icon.a{background:linear-gradient(135deg,#a855f7,#c084fc)}
+        .kpi-icon.b{background:linear-gradient(135deg,#10b981,#34d399)}
+        .kpi-icon.c{background:linear-gradient(135deg,#f59e0b,#fbbf24)}
+        .kpi-icon.d{background:linear-gradient(135deg,#22d3ee,#38bdf8)}
+        .kpi-icon.e{background:linear-gradient(135deg,#f472b6,#fb7185)}
+        .kpi-icon.f{background:linear-gradient(135deg,#6366f1,#818cf8)}
+        .kpi-val{font-size:2rem;font-weight:800;color:#e2e8ff;font-family:'Space Grotesk',sans-serif;line-height:1}
+        .kpi-lbl{font-size:.82rem;color:#94a3b8;margin:.3rem 0 .5rem}
+        .kpi-delta{font-size:.78rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:3px}
+        .kpi-delta.up{color:#10b981}.kpi-delta.down{color:#ef4444}
+
+        /* CHART CARDS */
+        .charts-2col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+        .charts-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+        .chart-full{margin-bottom:1.5rem}
+        @media(max-width:900px){.charts-2col,.charts-3col{grid-template-columns:1fr}}
+        .chart-card{padding:1.5rem}
+        .chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;gap:.5rem}
+        .chart-head h3{font-size:1.05rem;color:#e2e8ff;display:flex;align-items:center;gap:8px}
+        .chart-head h3 i{color:#c084fc}
+        .chart-wrap{position:relative}
+        .h260{height:260px}.h220{height:220px}.h300{height:300px}
+        .chart-opts{display:flex;gap:.4rem}
+        .copt{padding:5px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:.78rem;color:#94a3b8;cursor:pointer;transition:var(--tr)}
+        .copt:hover,.copt.active{background:rgba(192,132,252,0.2);border-color:#c084fc;color:#c084fc}
+
+        /* TABLE */
+        .table-wrap{overflow-x:auto;margin-top:1rem}
+        table{width:100%;border-collapse:collapse}
+        thead th{padding:.85rem 1rem;text-align:left;font-weight:600;color:#c084fc;font-size:.82rem;border-bottom:1px solid rgba(192,132,252,0.2);background:rgba(168,85,247,0.06);white-space:nowrap}
+        tbody td{padding:.85rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#e2e8ff;font-size:.86rem}
+        tbody tr:hover{background:rgba(192,132,252,0.05)}
+        .t-badge{padding:3px 8px;border-radius:6px;font-size:.72rem;font-weight:700;text-transform:uppercase}
+        .t-badge.done{background:rgba(16,185,129,0.15);color:#10b981}
+        .t-badge.fail{background:rgba(239,68,68,0.15);color:#ef4444}
+        .t-badge.proc{background:rgba(245,158,11,0.15);color:#f59e0b}
+        .bar-mini{height:6px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;width:80px}
+        .bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#c084fc,#22d3ee)}
+
+        /* INSIGHT CARDS */
+        .insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:1.5rem}
+        @media(max-width:900px){.insights-grid{grid-template-columns:1fr}}
+        .insight-card{padding:1.5rem;display:flex;gap:1rem;align-items:flex-start}
+        .ins-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#fff;flex-shrink:0}
+        .ins-icon.purple{background:linear-gradient(135deg,#a855f7,#c084fc)}
+        .ins-icon.cyan{background:linear-gradient(135deg,#22d3ee,#38bdf8)}
+        .ins-icon.green{background:linear-gradient(135deg,#10b981,#34d399)}
+        .ins-icon.orange{background:linear-gradient(135deg,#f59e0b,#fbbf24)}
+        .ins-icon.pink{background:linear-gradient(135deg,#f472b6,#fb7185)}
+        .ins-icon.indigo{background:linear-gradient(135deg,#6366f1,#818cf8)}
+        .ins-title{font-weight:700;color:#e2e8ff;font-size:.95rem;margin-bottom:.3rem}
+        .ins-text{color:#94a3b8;font-size:.85rem;line-height:1.5}
+        .ins-val{font-size:1.4rem;font-weight:800;color:#c084fc;font-family:'Space Grotesk',sans-serif;margin-top:.3rem}
+
+        /* FOOTER */
+        .footer{background:#030617;color:#fff;padding:3rem 2rem 2rem;border-top:1px solid rgba(192,132,252,0.2);margin-top:3rem}
+        .footer-container{display:grid;grid-template-columns:repeat(4,1fr);gap:3rem;max-width:1400px;margin:0 auto}
+        .footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+        .footer-desc{color:rgba(255,255,255,0.65);font-size:.88rem;line-height:1.6;margin-bottom:1.2rem}
+        .social-links{display:flex;gap:.7rem}
+        .social-links a{width:34px;height:34px;background:rgba(255,255,255,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;transition:var(--tr)}
+        .social-links a:hover{background:#c084fc;transform:translateY(-3px)}
+        .footer-column h3{font-size:1rem;margin-bottom:1rem;color:#e2e8ff}
+        .footer-column ul{list-style:none}
+        .footer-column li{margin-bottom:.5rem}
+        .footer-column a{color:rgba(255,255,255,0.65);font-size:.88rem;transition:color var(--tr)}
+        .footer-column a:hover{color:#c084fc}
+        .footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:1.5rem;margin-top:2rem;display:flex;justify-content:space-between;align-items:center;max-width:1400px;margin-left:auto;margin-right:auto;flex-wrap:wrap;gap:1rem}
+        .footer-links{display:flex;gap:1.5rem}
+        .footer-links a{color:rgba(255,255,255,0.55);font-size:.85rem}
+        .footer-links a:hover{color:#c084fc}
+        @media(max-width:1024px){.footer-container{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.footer-container{grid-template-columns:1fr}.footer-bottom{flex-direction:column;text-align:center}}
+
+        /* TOAST */
+        .toast-container{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px}
+        .toast{background:rgba(15,25,45,0.97);backdrop-filter:blur(10px);border-radius:12px;padding:.9rem 1.4rem;box-shadow:0 10px 30px rgba(0,0,0,0.5);border-left:4px solid #c084fc;display:flex;align-items:center;gap:.9rem;min-width:270px;transform:translateX(400px);transition:transform .3s ease;border:1px solid rgba(192,132,252,0.3);border-left:4px solid #c084fc}
+        .toast.show{transform:translateX(0)}
+        .toast-icon{color:#c084fc;font-size:1.2rem}
+        .toast h4{color:#e2e8ff;font-size:.9rem;margin-bottom:.15rem}
+        .toast p{color:#94a3b8;font-size:.82rem}
+        .toast-close{margin-left:auto;background:none;color:#94a3b8;font-size:1rem;cursor:pointer}
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                    <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z" fill="url(#g1)" opacity="0.95"/>
+                    <circle cx="42" cy="45" r="8" fill="#fff"/><path d="M30 80 C35 60,50 60,55 75" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+                    <circle cx="78" cy="45" r="8" fill="#fff"/><path d="M90 80 C85 60,70 60,65 75" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+                    <path d="M42 65 L55 78 L78 52" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="logo-text">
+                    <span class="logo-main">GetConnect</span>
+                    <span class="logo-sub">.web</span>
+                </div>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                <li><a href="analytics.html" class="nav-link active"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn-notif" id="notifBtn"><i class="fas fa-bell"></i><span class="notif-dot">3</span></button>
+                <a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="register.html" class="btn-reg"><i class="fas fa-user-plus"></i> Register</a>
+                <div class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- PAGE -->
+    <div class="page">
+
+        <!-- Header -->
+        <div class="page-header">
+            <h1><i class="fas fa-chart-pie"></i> Analytics &amp; Monitoring</h1>
+            <div class="hdr-right">
+                <select class="date-select" id="rangeSelect">
+                    <option value="7">Last 7 Days</option>
+                    <option value="30" selected>Last 30 Days</option>
+                    <option value="90">Last 90 Days</option>
+                </select>
+                <button class="btn-secondary" id="exportBtn"><i class="fas fa-download"></i> Export</button>
+                <button class="btn-primary" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="card kpi-card">
+                <div class="kpi-icon a"><i class="fas fa-bolt"></i></div>
+                <div class="kpi-val" id="kpi1">154,892</div>
+                <div class="kpi-lbl">Total Tasks Executed</div>
+                <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> +18.4% this month</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-icon b"><i class="fas fa-check-circle"></i></div>
+                <div class="kpi-val">99.2%</div>
+                <div class="kpi-lbl">Success Rate</div>
+                <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> +0.4% vs last month</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-icon c"><i class="fas fa-clock"></i></div>
+                <div class="kpi-val">124ms</div>
+                <div class="kpi-lbl">Avg Response Time</div>
+                <div class="kpi-delta up"><i class="fas fa-arrow-down"></i> -12ms improved</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-icon d"><i class="fas fa-server"></i></div>
+                <div class="kpi-val">324</div>
+                <div class="kpi-lbl">Active Nodes</div>
+                <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> +28 new nodes</div>
+            </div>
+        </div>
+
+        <!-- Row 2 KPIs -->
+        <div class="kpi-grid" style="margin-bottom:1.5rem">
+            <div class="card kpi-card">
+                <div class="kpi-icon e"><i class="fas fa-users"></i></div>
+                <div class="kpi-val">2,847</div>
+                <div class="kpi-lbl">Active Users</div>
+                <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> +342 this month</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-icon f"><i class="fas fa-microchip"></i></div>
+                <div class="kpi-val">72%</div>
+                <div class="kpi-lbl">Avg CPU Usage</div>
+                <div class="kpi-delta down"><i class="fas fa-arrow-down"></i> -3.2% optimized</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-icon a"><i class="fas fa-dollar-sign"></i></div>
+                <div class="kpi-val">40%</div>
+                <div class="kpi-lbl">Cost Reduction</div>
+                <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> vs traditional</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-icon b"><i class="fas fa-network-wired"></i></div>
+                <div class="kpi-val">0.4ms</div>
+                <div class="kpi-lbl">Network Latency</div>
+                <div class="kpi-delta up"><i class="fas fa-arrow-down"></i> -0.1ms improved</div>
+            </div>
+        </div>
+
+        <!-- Main Charts -->
+        <div class="charts-2col">
+            <div class="card chart-card">
+                <div class="chart-head">
+                    <h3><i class="fas fa-chart-area"></i> Task Throughput Over Time</h3>
+                    <div class="chart-opts">
+                        <span class="copt" onclick="switchRange(this,'7')">7D</span>
+                        <span class="copt active" onclick="switchRange(this,'30')">30D</span>
+                        <span class="copt" onclick="switchRange(this,'90')">90D</span>
+                    </div>
+                </div>
+                <div class="chart-wrap h300"><canvas id="throughputChart"></canvas></div>
+            </div>
+            <div class="card chart-card">
+                <div class="chart-head">
+                    <h3><i class="fas fa-chart-pie"></i> Task Status Breakdown</h3>
+                    <span class="live-badge"><i class="fas fa-circle"></i> LIVE</span>
+                </div>
+                <div class="chart-wrap h300"><canvas id="statusChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="charts-2col">
+            <div class="card chart-card">
+                <div class="chart-head">
+                    <h3><i class="fas fa-microchip"></i> CPU Usage Per Node</h3>
+                    <span class="live-badge">LIVE</span>
+                </div>
+                <div class="chart-wrap h260"><canvas id="cpuChart"></canvas></div>
+            </div>
+            <div class="card chart-card">
+                <div class="chart-head">
+                    <h3><i class="fas fa-memory"></i> Memory Utilization</h3>
+                    <div class="chart-opts">
+                        <span class="copt active">Avg</span>
+                        <span class="copt">Peak</span>
+                    </div>
+                </div>
+                <div class="chart-wrap h260"><canvas id="memChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="charts-3col">
+            <div class="card chart-card">
+                <div class="chart-head"><h3><i class="fas fa-clock"></i> Response Time Trend</h3></div>
+                <div class="chart-wrap h220"><canvas id="respChart"></canvas></div>
+            </div>
+            <div class="card chart-card">
+                <div class="chart-head"><h3><i class="fas fa-users"></i> User Growth</h3></div>
+                <div class="chart-wrap h220"><canvas id="userChart"></canvas></div>
+            </div>
+            <div class="card chart-card">
+                <div class="chart-head"><h3><i class="fas fa-exclamation-triangle"></i> Error Rate</h3></div>
+                <div class="chart-wrap h220"><canvas id="errChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="card" style="padding:1.5rem;margin-bottom:1.5rem">
+            <div class="chart-head" style="margin-bottom:1.2rem">
+                <h3><i class="fas fa-brain"></i> AI-Powered Insights</h3>
+                <span class="live-badge">AUTO-UPDATED</span>
+            </div>
+            <div class="insights-grid" style="margin-bottom:0">
+                <div class="card insight-card" style="background:rgba(168,85,247,0.06)">
+                    <div class="ins-icon purple"><i class="fas fa-bolt"></i></div>
+                    <div><div class="ins-title">Peak Load Detected</div><div class="ins-text">Node cluster 7 is approaching 92% CPU. AI recommends redistributing 34 tasks to nodes 2 and 5.</div><div class="ins-val">+34 tasks</div></div>
+                </div>
+                <div class="card insight-card" style="background:rgba(16,185,129,0.06)">
+                    <div class="ins-icon green"><i class="fas fa-check-circle"></i></div>
+                    <div><div class="ins-title">Efficiency Improved</div><div class="ins-text">ML model retrained with 2,400 new data points. Average task completion time reduced by 18%.</div><div class="ins-val">-18% time</div></div>
+                </div>
+                <div class="card insight-card" style="background:rgba(34,211,238,0.06)">
+                    <div class="ins-icon cyan"><i class="fas fa-network-wired"></i></div>
+                    <div><div class="ins-title">Network Optimized</div><div class="ins-text">Routing algorithm updated. Cross-region latency reduced from 0.5ms to 0.4ms across all nodes.</div><div class="ins-val">0.4ms avg</div></div>
+                </div>
+                <div class="card insight-card" style="background:rgba(245,158,11,0.06)">
+                    <div class="ins-icon orange"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div><div class="ins-title">Anomaly Detected</div><div class="ins-text">Unusual spike in failed tasks on Node 12. Possible memory leak. Auto-restart scheduled in 5 min.</div><div class="ins-val">Node 12</div></div>
+                </div>
+                <div class="card insight-card" style="background:rgba(244,114,182,0.06)">
+                    <div class="ins-icon pink"><i class="fas fa-users"></i></div>
+                    <div><div class="ins-title">User Surge</div><div class="ins-text">342 new users onboarded this month. Predicted 15% increase in task volume next week.</div><div class="ins-val">+342 users</div></div>
+                </div>
+                <div class="card insight-card" style="background:rgba(99,102,241,0.06)">
+                    <div class="ins-icon indigo"><i class="fas fa-dollar-sign"></i></div>
+                    <div><div class="ins-title">Cost Savings</div><div class="ins-text">Intelligent scheduling saved $12,400 in compute costs this month vs baseline infrastructure.</div><div class="ins-val">$12,400</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Nodes Table -->
+        <div class="card" style="padding:1.5rem;margin-bottom:1.5rem">
+            <div class="chart-head">
+                <h3><i class="fas fa-server"></i> Top Performing Nodes</h3>
+                <button class="btn-secondary" style="font-size:.8rem;padding:7px 14px"><i class="fas fa-download"></i> Export CSV</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Node</th><th>Tasks Completed</th><th>CPU Avg</th><th>Memory</th><th>Uptime</th><th>Efficiency</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td style="color:#22d3ee;font-weight:600">Node 3</td><td>18,420</td><td>45%</td><td>40%</td><td>99.9%</td><td><div class="bar-mini"><div class="bar-fill" style="width:95%"></div></div></td><td><span class="t-badge done">Optimal</span></td></tr>
+                        <tr><td style="color:#22d3ee;font-weight:600">Node 1</td><td>16,890</td><td>65%</td><td>58%</td><td>99.7%</td><td><div class="bar-mini"><div class="bar-fill" style="width:88%"></div></div></td><td><span class="t-badge done">Optimal</span></td></tr>
+                        <tr><td style="color:#22d3ee;font-weight:600">Node 5</td><td>15,340</td><td>34%</td><td>30%</td><td>99.8%</td><td><div class="bar-mini"><div class="bar-fill" style="width:92%"></div></div></td><td><span class="t-badge done">Optimal</span></td></tr>
+                        <tr><td style="color:#22d3ee;font-weight:600">Node 2</td><td>14,210</td><td>78%</td><td>55%</td><td>99.5%</td><td><div class="bar-mini"><div class="bar-fill" style="width:80%"></div></div></td><td><span class="t-badge proc">Good</span></td></tr>
+                        <tr><td style="color:#22d3ee;font-weight:600">Node 6</td><td>12,780</td><td>67%</td><td>61%</td><td>99.4%</td><td><div class="bar-mini"><div class="bar-fill" style="width:76%"></div></div></td><td><span class="t-badge proc">Good</span></td></tr>
+                        <tr><td style="color:#22d3ee;font-weight:600">Node 4</td><td>9,640</td><td>92%</td><td>88%</td><td>98.1%</td><td><div class="bar-mini"><div class="bar-fill" style="width:52%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div></td><td><span class="t-badge fail">High Load</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div><!-- /page -->
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <svg width="34" height="34" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                        <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z" fill="url(#g2)" opacity="0.95"/>
+                        <circle cx="42" cy="45" r="8" fill="#fff"/><circle cx="78" cy="45" r="8" fill="#fff"/>
+                        <path d="M42 65 L55 78 L78 52" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="logo-text"><span class="logo-main">GetConnect</span><span class="logo-sub">.web</span></div>
+                </div>
+                <p class="footer-desc">AI-powered distributed task execution engine with intelligent load balancing.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a><a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column"><h3>Product</h3><ul><li><a href="features.html">Features</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="api-documentation.html">API Docs</a></li></ul></div>
+            <div class="footer-column"><h3>Company</h3><ul><li><a href="about.html">About Us</a></li><li><a href="careers.html">Careers</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+            <div class="footer-column"><h3>Legal</h3><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Service</a></li><li><a href="Support.html">Support</a></li></ul></div>
+        </div>
+        <div class="footer-bottom">
+            <p style="color:rgba(255,255,255,0.55);font-size:.85rem">&copy; 2025 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="Support.html">Support</a></div>
+        </div>
+    </footer>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Mobile nav
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            const m = document.getElementById('navMenu');
+            m.classList.toggle('active');
+            this.innerHTML = m.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Toast
+        function toast(title, msg, color='#c084fc') {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.style.borderLeftColor = color;
+            t.innerHTML = `<div class="toast-icon" style="color:${color}"><i class="fas fa-chart-pie"></i></div><div><h4>${title}</h4><p>${msg}</p></div><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>`;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 4000);
+        }
+
+        const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const last30 = Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);return `${d.getDate()} ${MONTHS[d.getMonth()]}`;});
+        const rand = (min,max,n=30) => Array.from({length:n},()=>Math.floor(Math.random()*(max-min)+min));
+
+        const defaults = { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+            scales:{ y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#94a3b8'}}, x:{grid:{display:false},ticks:{color:'#94a3b8',maxTicksLimit:8}} }
+        };
+
+        // Throughput
+        const tpCtx = document.getElementById('throughputChart').getContext('2d');
+        const tpChart = new Chart(tpCtx, {
+            type:'line',
+            data:{ labels:last30, datasets:[
+                {label:'Tasks',data:rand(3000,8000),borderColor:'#c084fc',backgroundColor:'rgba(168,85,247,0.12)',borderWidth:2.5,fill:true,tension:0.4,pointRadius:0},
+                {label:'Completed',data:rand(2800,7800),borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,0.06)',borderWidth:2,fill:true,tension:0.4,pointRadius:0}
+            ]},
+            options:{...defaults, plugins:{legend:{display:true,labels:{color:'#94a3b8',usePointStyle:true}}}}
+        });
+
+        // Status pie
+        new Chart(document.getElementById('statusChart').getContext('2d'),{
+            type:'doughnut',
+            data:{labels:['Completed','Processing','Queued','Failed'],datasets:[{data:[68,18,10,4],backgroundColor:['#10b981','#c084fc','#f59e0b','#ef4444'],borderWidth:2,borderColor:'#0a0f2a'}]},
+            options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',padding:14,usePointStyle:true}}}}
+        });
+
+        // CPU bar
+        new Chart(document.getElementById('cpuChart').getContext('2d'),{
+            type:'bar',
+            data:{labels:['Node 1','Node 2','Node 3','Node 4','Node 5','Node 6','Node 7'],
+                datasets:[{label:'CPU %',data:[65,78,45,92,34,67,88],backgroundColor:['rgba(168,85,247,0.7)','rgba(168,85,247,0.7)','rgba(34,211,238,0.7)','rgba(239,68,68,0.7)','rgba(34,211,238,0.7)','rgba(168,85,247,0.7)','rgba(245,158,11,0.7)'],borderRadius:8}]},
+            options:{...defaults,scales:{y:{...defaults.scales.y,max:100,ticks:{...defaults.scales.y.ticks,callback:v=>v+'%'}},x:{...defaults.scales.x}}}
+        });
+
+        // Memory line
+        new Chart(document.getElementById('memChart').getContext('2d'),{
+            type:'line',
+            data:{labels:last30,datasets:[{label:'Memory %',data:rand(30,85),borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,0.1)',borderWidth:2.5,fill:true,tension:0.4,pointRadius:0}]},
+            options:{...defaults,scales:{y:{...defaults.scales.y,max:100,ticks:{...defaults.scales.y.ticks,callback:v=>v+'%'}},x:{...defaults.scales.x}}}
+        });
+
+        // Response time
+        new Chart(document.getElementById('respChart').getContext('2d'),{
+            type:'line',
+            data:{labels:last30,datasets:[{label:'ms',data:rand(80,200),borderColor:'#f472b6',backgroundColor:'rgba(244,114,182,0.1)',borderWidth:2,fill:true,tension:0.4,pointRadius:0}]},
+            options:{...defaults,scales:{y:{...defaults.scales.y,ticks:{...defaults.scales.y.ticks,callback:v=>v+'ms'}},x:{...defaults.scales.x}}}
+        });
+
+        // User growth
+        new Chart(document.getElementById('userChart').getContext('2d'),{
+            type:'bar',
+            data:{labels:MONTHS.slice(0,8),datasets:[{label:'Users',data:[1200,1450,1680,1890,2100,2340,2580,2847],backgroundColor:'rgba(99,102,241,0.7)',borderRadius:8}]},
+            options:{...defaults}
+        });
+
+        // Error rate
+        new Chart(document.getElementById('errChart').getContext('2d'),{
+            type:'line',
+            data:{labels:last30,datasets:[{label:'Errors %',data:rand(0,3,30).map(v=>v/10),borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,0.1)',borderWidth:2,fill:true,tension:0.4,pointRadius:0}]},
+            options:{...defaults,scales:{y:{...defaults.scales.y,ticks:{...defaults.scales.y.ticks,callback:v=>v+'%'}},x:{...defaults.scales.x}}}
+        });
+
+        // Live KPI update from API or fallback counter
+        let statusChartInst, cpuChartInst;
+
+        async function refreshAnalytics() {
+            try {
+                const status = await apiGetClusterStatus();
+                const nodes = status.nodes || [];
+                const ts = status.task_status || {};
+
+                // Update live KPIs
+                document.getElementById('kpi1').textContent = (status.tasks_total || 0).toLocaleString();
+                // nodes count KPI (4th card)
+                const nodeKpi = document.querySelectorAll('.kpi-val')[3];
+                if (nodeKpi) nodeKpi.textContent = nodes.length;
+                // avg CPU (6th card)
+                const cpuKpi = document.querySelectorAll('.kpi-val')[5];
+                if (cpuKpi && nodes.length > 0) {
+                    const avg = Math.round(nodes.reduce((s,n) => s+(n.cpu||0),0)/nodes.length);
+                    cpuKpi.textContent = avg + '%';
+                }
+
+                // Rebuild live status pie with real counts
+                if (statusChartInst) statusChartInst.destroy();
+                statusChartInst = new Chart(document.getElementById('statusChart').getContext('2d'), {
+                    type:'doughnut',
+                    data:{
+                        labels:['Completed','Running','Queued','Failed'],
+                        datasets:[{data:[
+                            ts.completed||0,
+                            (ts.running||0)+(ts.assigned||0),
+                            ts.pending||0,
+                            ts.failed||0
+                        ],backgroundColor:['#10b981','#c084fc','#f59e0b','#ef4444'],borderWidth:2,borderColor:'#0a0f2a'}]
+                    },
+                    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',padding:14,usePointStyle:true}}}}
+                });
+
+                // Rebuild CPU bar with real nodes
+                if (cpuChartInst) cpuChartInst.destroy();
+                if (nodes.length > 0) {
+                    const cpuColors = nodes.map(n => (n.cpu||0) > 85 ? 'rgba(239,68,68,0.7)' : (n.cpu||0) > 70 ? 'rgba(245,158,11,0.7)' : 'rgba(168,85,247,0.7)');
+                    cpuChartInst = new Chart(document.getElementById('cpuChart').getContext('2d'), {
+                        type:'bar',
+                        data:{labels:nodes.map(n=>n.name||n.id),datasets:[{label:'CPU %',data:nodes.map(n=>Math.round(n.cpu||0)),backgroundColor:cpuColors,borderRadius:8}]},
+                        options:{...defaults,scales:{y:{...defaults.scales.y,max:100,ticks:{...defaults.scales.y.ticks,callback:v=>v+'%'}},x:{...defaults.scales.x}}}
+                    });
+                }
+
+                toast('Refreshed', `${nodes.length} nodes · ${status.tasks_total||0} tasks`, '#22d3ee');
+            } catch(e) {
+                toast('Offline', 'Backend unreachable — showing cached data', '#ef4444');
+            }
+        }
+
+        document.getElementById('refreshBtn').addEventListener('click', refreshAnalytics);
+        document.getElementById('exportBtn').addEventListener('click', async () => {
+            try {
+                const status = await apiGetClusterStatus();
+                const rows = [['Node','CPU%','RAM%','Active Tasks','Status']];
+                (status.nodes||[]).forEach(n => rows.push([n.name||n.id, n.cpu||0, n.ram||0, n.active_tasks||0, n.status||'UNKNOWN']));
+                const csv = rows.map(r => r.join(',')).join('\n');
+                const a = document.createElement('a');
+                a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                a.download = `cluster-analytics-${new Date().toISOString().slice(0,10)}.csv`;
+                a.click();
+                toast('Exported', 'CSV downloaded', '#10b981');
+            } catch(e) {
+                toast('Export Failed', 'Could not reach backend', '#ef4444');
+            }
+        });
+        document.getElementById('notifBtn').addEventListener('click', () => toast('Notifications','3 system alerts pending review','#f59e0b'));
+
+        function switchRange(el, days) {
+            document.querySelectorAll('.copt').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            const newData = Array.from({length:parseInt(days)},()=>Math.floor(Math.random()*5000+2000));
+            const newLabels = Array.from({length:parseInt(days)},(_,i)=>{const d=new Date();d.setDate(d.getDate()-parseInt(days)+1+i);return `${d.getDate()} ${MONTHS[d.getMonth()]}`;});
+            tpChart.data.labels = newLabels;
+            tpChart.data.datasets[0].data = newData;
+            tpChart.data.datasets[1].data = newData.map(v=>v-Math.floor(Math.random()*200));
+            tpChart.update();
+            toast('Range Updated', `Showing last ${days} days of data`);
+        }
+
+        // Initial live refresh
+        refreshAnalytics();
+        // Auto-refresh every 15s
+        setInterval(refreshAnalytics, 15000);
+
+        setTimeout(() => toast('Analytics Ready','Charts loaded · auto-refreshing every 15s'), 600);
+    </script>
+</body>
+</html>

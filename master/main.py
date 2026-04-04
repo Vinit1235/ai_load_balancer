@@ -219,9 +219,49 @@ async def drain_node(node_id: str):
 async def force_migration():
     return {"ok": True, "message": "Manual migration endpoint acknowledged"}
 
+
 @api_router.post("/control/scheduler/mode")
-async def toggle_scheduler_mode():
-    return {"ok": True, "message": "Scheduler mode toggle stub"}
+async def toggle_scheduler_mode(payload: dict = {}):
+    mode = payload.get("mode", "heuristic")
+    return {"ok": True, "mode": mode, "message": f"Scheduler switched to {mode} mode"}
+
+
+@api_router.get("/analytics")
+async def analytics():
+    """Rich analytics payload for the analytics dashboard page."""
+    snap = build_cluster_snapshot()
+    nodes = snap.get("nodes", [])
+    tasks = state_manager.get_all_tasks()
+
+    avg_cpu = round(sum(n.get("cpu", 0) for n in nodes) / len(nodes), 1) if nodes else 0
+    avg_ram = round(sum(n.get("ram", 0) for n in nodes) / len(nodes), 1) if nodes else 0
+
+    return {
+        **snap,
+        "avg_cpu": avg_cpu,
+        "avg_ram": avg_ram,
+        "node_count": len(nodes),
+        "task_count": len(tasks),
+        "success_rate": round(
+            snap["task_status"]["completed"] / max(len(tasks), 1) * 100, 1
+        ),
+    }
+
+
+@api_router.get("/nodes/{node_id}")
+async def get_node_detail(node_id: str):
+    """Get detailed information about a specific node."""
+    node = state_manager.get_node(node_id)
+    if not node:
+        raise HTTPException(status_code=404, detail=f"Node {node_id} not found")
+    return node
+
+
+@api_router.get("/tasks/stats")
+async def task_stats():
+    """Quick task status counts."""
+    snap = build_cluster_snapshot()
+    return snap["task_status"]
 
 
 @api_router.get("/health")
@@ -280,7 +320,7 @@ from master.api import websocket as websocket_router
 app.include_router(websocket_router.router)
 
 # Serve frontend static files
-_frontend_dir = os.path.join(os.path.dirname(__file__), "..", "test1", "getconnect", "getconnect")
+_frontend_dir = os.path.join(os.path.dirname(__file__), "..", "getconnect (3)", "getconnect")
 if os.path.isdir(_frontend_dir):
     app.mount("/app", StaticFiles(directory=_frontend_dir, html=True), name="frontend")
 

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | GetConnect.Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="api-config.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --purple:#c084fc;--cyan:#22d3ee;--pink:#f472b6;
+            --bg-card:rgba(15,25,45,0.65);--border:rgba(192,132,252,0.3);
+            --text:#e2e8ff;--muted:#94a3b8;
+            --success:#10b981;--warning:#f59e0b;--danger:#ef4444;
+            --r:16px;--tr:250ms ease;
+        }
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0f172a}::-webkit-scrollbar-thumb{background:#c084fc;border-radius:8px}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;color:var(--text);background:radial-gradient(circle at 10% 20%,#0a0f2a,#020617);line-height:1.6;overflow-x:hidden;min-height:100vh}
+        h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;line-height:1.2}
+        a{text-decoration:none;color:inherit}
+        button{font-family:'Inter',sans-serif;cursor:pointer;border:none;outline:none}
+
+        /* NAV */
+        .header{position:sticky;top:0;z-index:1000;background:rgba(5,10,30,0.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+        .nav-container{max-width:1400px;margin:0 auto;padding:.85rem 2rem;display:flex;justify-content:space-between;align-items:center}
+        .logo{display:flex;align-items:center;gap:10px}
+        .logo-main{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,#fff,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent}
+        .logo-sub{color:#c084fc;font-size:.85rem}
+        .nav-menu{display:flex;list-style:none;gap:1.2rem;align-items:center}
+        .nav-link{display:flex;align-items:center;gap:6px;padding:8px 14px;font-weight:500;color:#e2e8ff;border-radius:10px;transition:var(--tr);position:relative}
+        .nav-link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(90deg,#c084fc,#22d3ee);transition:width var(--tr);border-radius:2px}
+        .nav-link:hover::after,.nav-link.active::after{width:100%}
+        .nav-link:hover,.nav-link.active{color:#22d3ee;background:rgba(192,132,252,0.1)}
+        .nav-actions{display:flex;align-items:center;gap:.8rem}
+        .btn-notif{position:relative;background:none;color:#94a3b8;font-size:1.2rem;padding:8px;border-radius:50%;transition:var(--tr)}
+        .btn-notif:hover{background:rgba(192,132,252,0.15);color:#c084fc}
+        .notif-dot{position:absolute;top:-3px;right:-3px;background:#ef4444;color:#fff;font-size:.65rem;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+        .btn-login{padding:8px 18px;border-radius:40px;border:1px solid rgba(192,132,252,0.5);color:#e2e8ff;background:transparent;font-weight:500;transition:var(--tr)}
+        .btn-login:hover{background:rgba(192,132,252,0.15)}
+        .btn-reg{padding:9px 20px;border-radius:40px;background:linear-gradient(90deg,#c084fc,#06b6d4);color:#0f0f2a;font-weight:700;transition:var(--tr)}
+        .btn-reg:hover{transform:scale(1.03);box-shadow:0 0 18px #a855f7}
+        .mobile-toggle{display:none;font-size:1.4rem;color:#e2e8ff;cursor:pointer;padding:8px}
+        @media(max-width:900px){
+            .nav-menu{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(5,10,30,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:1rem;border-bottom:1px solid var(--border)}
+            .nav-menu.active{display:flex}
+            .mobile-toggle{display:block}
+            .nav-actions .btn-login,.nav-actions .btn-reg{display:none}
+        }
+
+        /* GLASS CARD */
+        .card{background:var(--bg-card);backdrop-filter:blur(12px);border-radius:var(--r);border:1px solid var(--border);box-shadow:0 20px 40px rgba(0,0,0,0.4),0 0 15px rgba(168,85,247,0.08);transition:transform var(--tr),border-color var(--tr)}
+        .card:hover{transform:translateY(-4px);border-color:rgba(192,132,252,0.5)}
+
+        /* DASHBOARD LAYOUT */
+        .dashboard{padding:2rem;max-width:1400px;margin:0 auto}
+        .dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+        .dash-header h1{font-size:2rem;font-weight:800;background:linear-gradient(135deg,#fff,#c084fc,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;display:flex;align-items:center;gap:.8rem}
+        .dash-header h1 i{background:rgba(168,85,247,0.2);padding:10px;border-radius:50%;font-size:1.2rem;color:#c084fc;-webkit-text-fill-color:#c084fc}
+        .dash-controls{display:flex;gap:.8rem;flex-wrap:wrap}
+        .btn-primary{padding:10px 22px;border-radius:40px;background:linear-gradient(90deg,#c084fc,#06b6d4);color:#0f0f2a;font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:6px;transition:var(--tr)}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 18px #a855f7}
+        .btn-secondary{padding:10px 22px;border-radius:40px;background:transparent;color:#e2e8ff;border:1px solid rgba(192,132,252,0.5);font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:6px;transition:var(--tr)}
+        .btn-secondary:hover{background:rgba(192,132,252,0.15);transform:translateY(-2px)}
+        .btn-danger{padding:10px 22px;border-radius:40px;background:linear-gradient(135deg,#ef4444,#f87171);color:#fff;font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:6px;transition:var(--tr)}
+        .btn-danger:hover{transform:translateY(-2px);box-shadow:0 0 14px rgba(239,68,68,0.5)}
+
+        /* QUICK STATS */
+        .quick-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-bottom:1.5rem}
+        @media(max-width:900px){.quick-stats{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.quick-stats{grid-template-columns:1fr}}
+        .stat-card{padding:1.5rem;display:flex;align-items:center;gap:1.2rem}
+        .stat-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#fff;flex-shrink:0}
+        .stat-icon.cpu{background:linear-gradient(135deg,#a855f7,#c084fc)}
+        .stat-icon.mem{background:linear-gradient(135deg,#10b981,#34d399)}
+        .stat-icon.tasks{background:linear-gradient(135deg,#f59e0b,#fbbf24)}
+        .stat-icon.nodes{background:linear-gradient(135deg,#22d3ee,#38bdf8)}
+        .stat-val{font-size:1.9rem;font-weight:800;color:#e2e8ff;line-height:1;font-family:'Space Grotesk',sans-serif}
+        .stat-lbl{font-size:.85rem;color:#94a3b8;margin:.2rem 0 .4rem}
+        .stat-change{font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:3px}
+        .stat-change.up{color:#10b981}.stat-change.down{color:#ef4444}
+
+        /* CHARTS ROW */
+        .charts-row{display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+        @media(max-width:900px){.charts-row{grid-template-columns:1fr}}
+        .chart-card{padding:1.5rem}
+        .chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}
+        .chart-head h3{font-size:1.1rem;color:#e2e8ff;display:flex;align-items:center;gap:8px}
+        .chart-head h3 i{color:#c084fc}
+        .chart-wrap{height:260px;position:relative}
+        .chart-opts{display:flex;gap:.4rem}
+        .copt{padding:5px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:.8rem;color:#94a3b8;cursor:pointer;transition:var(--tr)}
+        .copt:hover,.copt.active{background:rgba(192,132,252,0.2);border-color:#c084fc;color:#c084fc}
+        .live-badge{padding:4px 10px;background:rgba(16,185,129,0.15);color:#10b981;border-radius:20px;font-size:.72rem;font-weight:700;border:1px solid rgba(16,185,129,0.3);animation:blink 2s infinite}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:.6}}
+
+        /* BOTTOM ROW */
+        .bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+        @media(max-width:900px){.bottom-row{grid-template-columns:1fr}}
+
+        /* SYSTEM STATUS */
+        .status-list{display:flex;flex-direction:column;gap:.8rem;margin-top:1rem}
+        .status-item{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1rem;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.07)}
+        .status-left{display:flex;align-items:center;gap:.8rem}
+        .s-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.9rem}
+        .s-icon.ok{background:#10b981}.s-icon.warn{background:#f59e0b}.s-icon.crit{background:#ef4444}
+        .s-name{font-weight:500;color:#e2e8ff;font-size:.9rem}
+        .s-val{font-weight:700;font-size:.95rem}
+        .s-val.ok{color:#10b981}.s-val.warn{color:#f59e0b}.s-val.crit{color:#ef4444}
+
+        /* RECENT TASKS */
+        .tasks-list{display:flex;flex-direction:column;gap:.7rem;max-height:320px;overflow-y:auto;padding-right:4px;margin-top:1rem}
+        .task-item{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1rem;background:rgba(255,255,255,0.04);border-radius:12px;border-left:3px solid #c084fc;border:1px solid rgba(255,255,255,0.07);border-left:3px solid #c084fc;transition:var(--tr)}
+        .task-item:hover{transform:translateX(4px);background:rgba(192,132,252,0.06)}
+        .task-item.done{border-left-color:#10b981}.task-item.fail{border-left-color:#ef4444}.task-item.proc{border-left-color:#f59e0b}
+        .task-name{font-weight:500;color:#e2e8ff;font-size:.9rem;margin-bottom:.2rem}
+        .task-meta{font-size:.78rem;color:#94a3b8;display:flex;gap:.8rem}
+        .t-badge{padding:3px 8px;border-radius:6px;font-size:.72rem;font-weight:700;text-transform:uppercase}
+        .t-badge.done{background:rgba(16,185,129,0.15);color:#10b981}
+        .t-badge.fail{background:rgba(239,68,68,0.15);color:#ef4444}
+        .t-badge.proc{background:rgba(245,158,11,0.15);color:#f59e0b}
+        .t-badge.queue{background:rgba(34,211,238,0.15);color:#22d3ee}
+
+        /* NODE GRID */
+        .node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;margin-top:1rem}
+        .node-card{padding:1.5rem;position:relative}
+        .node-card.ok{border-color:rgba(16,185,129,0.4)}.node-card.warn{border-color:rgba(245,158,11,0.4)}.node-card.crit{border-color:rgba(239,68,68,0.4)}
+        .node-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+        .node-name{font-weight:700;color:#e2e8ff;font-size:1rem;display:flex;align-items:center;gap:6px}
+        .node-name i{color:#22d3ee}
+        .n-badge{padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase}
+        .n-badge.ok{background:rgba(16,185,129,0.15);color:#10b981}
+        .n-badge.warn{background:rgba(245,158,11,0.15);color:#f59e0b}
+        .n-badge.crit{background:rgba(239,68,68,0.15);color:#ef4444}
+        .node-stats{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem}
+        .n-stat{text-align:center;padding:.7rem;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.07)}
+        .n-stat-lbl{font-size:.75rem;color:#94a3b8;margin-bottom:.2rem}
+        .n-stat-val{font-size:1.2rem;font-weight:700;color:#e2e8ff;font-family:'Space Grotesk',sans-serif}
+        .progress-bar{height:6px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;margin:.5rem 0}
+        .progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#c084fc,#22d3ee);transition:width .4s ease}
+        .progress-fill.warn{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+        .progress-fill.crit{background:linear-gradient(90deg,#ef4444,#f87171)}
+        .node-actions{display:flex;gap:.5rem;margin-top:.8rem}
+        .n-btn{flex:1;padding:7px 10px;border-radius:8px;font-size:.8rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:5px;transition:var(--tr)}
+        .n-btn.restart{background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)}
+        .n-btn.restart:hover{background:rgba(245,158,11,0.2)}
+        .n-btn.stop{background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25)}
+        .n-btn.stop:hover{background:rgba(239,68,68,0.2)}
+        .n-btn.info{background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.25)}
+        .n-btn.info:hover{background:rgba(34,211,238,0.2)}
+
+        /* TASK TABLE */
+        .table-wrap{overflow-x:auto;margin-top:1rem}
+        table{width:100%;border-collapse:collapse}
+        thead th{padding:.9rem 1rem;text-align:left;font-weight:600;color:#c084fc;font-size:.85rem;border-bottom:1px solid rgba(192,132,252,0.2);background:rgba(168,85,247,0.06);white-space:nowrap}
+        tbody td{padding:.9rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#e2e8ff;font-size:.88rem}
+        tbody tr:hover{background:rgba(192,132,252,0.05)}
+        .task-id{font-family:'Courier New',monospace;color:#22d3ee;font-weight:600}
+        .pri{padding:3px 8px;border-radius:6px;font-size:.72rem;font-weight:700;text-transform:uppercase}
+        .pri.high{background:rgba(239,68,68,0.15);color:#ef4444}
+        .pri.med{background:rgba(245,158,11,0.15);color:#f59e0b}
+        .pri.low{background:rgba(16,185,129,0.15);color:#10b981}
+
+        /* FOOTER */
+        .footer{background:#030617;color:#fff;padding:3rem 2rem 2rem;border-top:1px solid rgba(192,132,252,0.2);margin-top:3rem}
+        .footer-container{display:grid;grid-template-columns:repeat(4,1fr);gap:3rem;max-width:1400px;margin:0 auto}
+        .footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+        .footer-desc{color:rgba(255,255,255,0.65);font-size:.88rem;line-height:1.6;margin-bottom:1.2rem}
+        .social-links{display:flex;gap:.7rem}
+        .social-links a{width:34px;height:34px;background:rgba(255,255,255,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;transition:var(--tr)}
+        .social-links a:hover{background:#c084fc;transform:translateY(-3px)}
+        .footer-column h3{font-size:1rem;margin-bottom:1rem;color:#e2e8ff}
+        .footer-column ul{list-style:none}
+        .footer-column li{margin-bottom:.5rem}
+        .footer-column a{color:rgba(255,255,255,0.65);font-size:.88rem;transition:color var(--tr)}
+        .footer-column a:hover{color:#c084fc}
+        .footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:1.5rem;margin-top:2rem;display:flex;justify-content:space-between;align-items:center;max-width:1400px;margin-left:auto;margin-right:auto;flex-wrap:wrap;gap:1rem}
+        .footer-links{display:flex;gap:1.5rem}
+        .footer-links a{color:rgba(255,255,255,0.55);font-size:.85rem}
+        .footer-links a:hover{color:#c084fc}
+        @media(max-width:1024px){.footer-container{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.footer-container{grid-template-columns:1fr}.footer-bottom{flex-direction:column;text-align:center}}
+
+        /* TOAST */
+        .toast-container{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px}
+        .toast{background:rgba(15,25,45,0.97);backdrop-filter:blur(10px);border-radius:12px;padding:.9rem 1.4rem;box-shadow:0 10px 30px rgba(0,0,0,0.5);border-left:4px solid #c084fc;display:flex;align-items:center;gap:.9rem;min-width:270px;transform:translateX(400px);transition:transform .3s ease;border:1px solid rgba(192,132,252,0.3);border-left:4px solid #c084fc}
+        .toast.show{transform:translateX(0)}
+        .toast-icon{color:#c084fc;font-size:1.2rem}
+        .toast h4{color:#e2e8ff;font-size:.9rem;margin-bottom:.15rem}
+        .toast p{color:#94a3b8;font-size:.82rem}
+        .toast-close{margin-left:auto;background:none;color:#94a3b8;font-size:1rem;cursor:pointer}
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                    <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z" fill="url(#g1)" opacity="0.95"/>
+                    <circle cx="42" cy="45" r="8" fill="#fff"/><path d="M30 80 C35 60,50 60,55 75" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+                    <circle cx="78" cy="45" r="8" fill="#fff"/><path d="M90 80 C85 60,70 60,65 75" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+                    <path d="M42 65 L55 78 L78 52" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="logo-text">
+                    <span class="logo-main">GetConnect</span>
+                    <span class="logo-sub">.web</span>
+                </div>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="dashboard.html" class="nav-link active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                <li><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn-notif" id="notifBtn"><i class="fas fa-bell"></i><span class="notif-dot">3</span></button>
+                <a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="register.html" class="btn-reg"><i class="fas fa-user-plus"></i> Register</a>
+                <div class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard">
+        <!-- Header -->
+        <div class="dash-header">
+            <h1><i class="fas fa-chart-network"></i> Neural Mesh Dashboard</h1>
+            <div class="dash-controls">
+                <button class="btn-primary" id="startDemoBtn"><i class="fas fa-play"></i> Live Demo</button>
+                <button class="btn-secondary" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+                <button class="btn-danger" id="alertBtn"><i class="fas fa-exclamation-triangle"></i> Alerts</button>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="card stat-card">
+                <div class="stat-icon cpu"><i class="fas fa-microchip"></i></div>
+                <div>
+                    <div class="stat-val" id="cpuVal">72%</div>
+                    <div class="stat-lbl">CPU Utilization</div>
+                    <div class="stat-change up"><i class="fas fa-arrow-up"></i> +4.2% vs last hour</div>
+                </div>
+            </div>
+            <div class="card stat-card">
+                <div class="stat-icon mem"><i class="fas fa-memory"></i></div>
+                <div>
+                    <div class="stat-val" id="memVal">58%</div>
+                    <div class="stat-lbl">Memory Usage</div>
+                    <div class="stat-change down"><i class="fas fa-arrow-down"></i> -1.8% vs last hour</div>
+                </div>
+            </div>
+            <div class="card stat-card">
+                <div class="stat-icon tasks"><i class="fas fa-tasks"></i></div>
+                <div>
+                    <div class="stat-val" id="taskVal">45.2K</div>
+                    <div class="stat-lbl">Tasks / Hour</div>
+                    <div class="stat-change up"><i class="fas fa-arrow-up"></i> +12.5% vs last hour</div>
+                </div>
+            </div>
+            <div class="card stat-card">
+                <div class="stat-icon nodes"><i class="fas fa-server"></i></div>
+                <div>
+                    <div class="stat-val" id="nodeVal">324</div>
+                    <div class="stat-lbl">Active Nodes</div>
+                    <div class="stat-change up"><i class="fas fa-arrow-up"></i> +8 new nodes</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-row">
+            <div class="card chart-card">
+                <div class="chart-head">
+                    <h3><i class="fas fa-chart-line"></i> CPU Utilization Across Nodes</h3>
+                    <span class="live-badge"><i class="fas fa-circle"></i> LIVE</span>
+                </div>
+                <div class="chart-wrap"><canvas id="cpuChart"></canvas></div>
+            </div>
+            <div class="card chart-card">
+                <div class="chart-head">
+                    <h3><i class="fas fa-chart-pie"></i> Task Distribution</h3>
+                    <div class="chart-opts">
+                        <span class="copt active">Today</span>
+                        <span class="copt">Week</span>
+                    </div>
+                </div>
+                <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Bottom Row -->
+        <div class="bottom-row">
+            <!-- System Status -->
+            <div class="card" style="padding:1.5rem">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <h3 style="color:#e2e8ff;font-size:1.1rem;display:flex;align-items:center;gap:8px"><i class="fas fa-heartbeat" style="color:#c084fc"></i> System Status</h3>
+                    <span class="live-badge">ALL SYSTEMS GO</span>
+                </div>
+                <div class="status-list">
+                    <div class="status-item"><div class="status-left"><div class="s-icon ok"><i class="fas fa-check"></i></div><span class="s-name">API Gateway</span></div><span class="s-val ok">Healthy</span></div>
+                    <div class="status-item"><div class="status-left"><div class="s-icon ok"><i class="fas fa-check"></i></div><span class="s-name">Load Balancer</span></div><span class="s-val ok">98.7% Uptime</span></div>
+                    <div class="status-item"><div class="status-left"><div class="s-icon warn"><i class="fas fa-exclamation"></i></div><span class="s-name">Node Cluster 7</span></div><span class="s-val warn">High Load</span></div>
+                    <div class="status-item"><div class="status-left"><div class="s-icon ok"><i class="fas fa-check"></i></div><span class="s-name">Database</span></div><span class="s-val ok">124ms Latency</span></div>
+                    <div class="status-item"><div class="status-left"><div class="s-icon ok"><i class="fas fa-check"></i></div><span class="s-name">AI Engine</span></div><span class="s-val ok">Optimizing</span></div>
+                </div>
+            </div>
+
+            <!-- Recent Tasks -->
+            <div class="card" style="padding:1.5rem">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <h3 style="color:#e2e8ff;font-size:1.1rem;display:flex;align-items:center;gap:8px"><i class="fas fa-history" style="color:#c084fc"></i> Recent Activity</h3>
+                    <a href="tasks.html" style="color:#22d3ee;font-size:.85rem">View All →</a>
+                </div>
+                <div class="tasks-list" id="taskFeed">
+                    <div class="task-item done"><div><div class="task-name">Data Processing #4892</div><div class="task-meta"><span>Node 3</span><span>2 min ago</span></div></div><span class="t-badge done">Done</span></div>
+                    <div class="task-item proc"><div><div class="task-name">ML Training Batch #4891</div><div class="task-meta"><span>Node 7</span><span>5 min ago</span></div></div><span class="t-badge proc">Running</span></div>
+                    <div class="task-item done"><div><div class="task-name">Image Render #4890</div><div class="task-meta"><span>Node 1</span><span>12 min ago</span></div></div><span class="t-badge done">Done</span></div>
+                    <div class="task-item fail"><div><div class="task-name">API Sync #4889</div><div class="task-meta"><span>Node 12</span><span>18 min ago</span></div></div><span class="t-badge fail">Failed</span></div>
+                    <div class="task-item queue"><div><div class="task-name">Video Encode #4888</div><div class="task-meta"><span>Queued</span><span>22 min ago</span></div></div><span class="t-badge queue">Queue</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Node Management -->
+        <div class="card" style="padding:1.5rem;margin-bottom:1.5rem">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+                <h3 style="color:#e2e8ff;font-size:1.2rem;display:flex;align-items:center;gap:8px"><i class="fas fa-server" style="color:#c084fc"></i> Node Management</h3>
+                <button class="btn-primary" style="font-size:.82rem;padding:8px 16px"><i class="fas fa-plus"></i> Add Node</button>
+            </div>
+            <div class="node-grid" id="nodeGrid">
+                <!-- nodes injected by JS -->
+            </div>
+        </div>
+
+        <!-- Task Queue Table -->
+        <div class="card" style="padding:1.5rem;margin-bottom:1.5rem">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+                <h3 style="color:#e2e8ff;font-size:1.2rem;display:flex;align-items:center;gap:8px"><i class="fas fa-list" style="color:#c084fc"></i> Task Queue</h3>
+                <button class="btn-secondary" style="font-size:.82rem;padding:8px 16px"><i class="fas fa-filter"></i> Filter</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Task ID</th><th>Name</th><th>Node</th><th>Priority</th><th>Progress</th><th>Status</th><th>Time</th></tr></thead>
+                    <tbody id="taskTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <svg width="34" height="34" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                        <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z" fill="url(#g2)" opacity="0.95"/>
+                        <circle cx="42" cy="45" r="8" fill="#fff"/><circle cx="78" cy="45" r="8" fill="#fff"/>
+                        <path d="M42 65 L55 78 L78 52" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="logo-text"><span class="logo-main">GetConnect</span><span class="logo-sub">.web</span></div>
+                </div>
+                <p class="footer-desc">AI-powered distributed task execution engine with intelligent load balancing.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a><a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column"><h3>Product</h3><ul><li><a href="features.html">Features</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="api-documentation.html">API Docs</a></li></ul></div>
+            <div class="footer-column"><h3>Company</h3><ul><li><a href="about.html">About Us</a></li><li><a href="careers.html">Careers</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+            <div class="footer-column"><h3>Legal</h3><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Service</a></li><li><a href="Support.html">Support</a></li></ul></div>
+        </div>
+        <div class="footer-bottom">
+            <p style="color:rgba(255,255,255,0.55);font-size:.85rem">&copy; 2025 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="Support.html">Support</a></div>
+        </div>
+    </footer>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+        // Mobile nav
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            const m = document.getElementById('navMenu');
+            m.classList.toggle('active');
+            this.innerHTML = m.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Toast
+        function toast(title, msg, color='#c084fc') {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.style.borderLeftColor = color;
+            t.innerHTML = `<div class="toast-icon" style="color:${color}"><i class="fas fa-robot"></i></div><div><h4>${title}</h4><p>${msg}</p></div><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>`;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 4000);
+        }
+
+        // ===== CHARTS =====
+        const cpuCtx = document.getElementById('cpuChart').getContext('2d');
+        const cpuChart = new Chart(cpuCtx, {
+            type: 'line',
+            data: {
+                labels: ['--','--','--','--','--','--','--'],
+                datasets: [{
+                    label: 'CPU %', data: [0,0,0,0,0,0,0],
+                    borderColor: '#c084fc', backgroundColor: 'rgba(168,85,247,0.12)',
+                    borderWidth: 2.5, fill: true, tension: 0.4,
+                    pointBackgroundColor: '#22d3ee', pointBorderColor: '#c084fc', pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', callback: v => v + '%' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+
+        let pieChart;
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        function buildPie(data) {
+            if (pieChart) pieChart.destroy();
+            pieChart = new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Processing','Completed','Queued','Failed'],
+                    datasets: [{ data, backgroundColor: ['#a855f7','#10b981','#f59e0b','#ef4444'], borderWidth: 2, borderColor: '#0a0f2a' }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '68%',
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 16, usePointStyle: true, font: { size: 12 } } } }
+                }
+            });
+        }
+        buildPie([0,0,0,0]);
+
+        // ===== RENDER NODES FROM API =====
+        const grid = document.getElementById('nodeGrid');
+        const cpuFillClass = cpu => cpu > 85 ? 'crit' : cpu > 70 ? 'warn' : '';
+
+        function renderNodes(nodes) {
+            if (!nodes || nodes.length === 0) {
+                grid.innerHTML = '<p style="color:#94a3b8;padding:1rem">No worker nodes connected yet. Start a worker with: <code style="color:#22d3ee">python worker/sentinel.py --master-url http://localhost:8000 --node-name worker-1</code></p>';
+                return;
+            }
+            grid.innerHTML = '';
+            nodes.forEach(n => {
+                const cpu = Math.round(n.cpu || 0);
+                const mem = Math.round(n.ram || 0);
+                const tasks = n.active_tasks || 0;
+                const status = (n.status || 'HEALTHY').toLowerCase() === 'healthy' ? 'ok' : 'warn';
+                grid.innerHTML += `
+                <div class="card node-card ${status}">
+                    <div class="node-head">
+                        <div class="node-name"><i class="fas fa-server"></i> ${n.name || n.id}</div>
+                        <span class="n-badge ${status}">${status === 'ok' ? 'Active' : n.status}</span>
+                    </div>
+                    <div class="node-stats">
+                        <div class="n-stat"><div class="n-stat-lbl">CPU</div><div class="n-stat-val">${cpu}%</div></div>
+                        <div class="n-stat"><div class="n-stat-lbl">Memory</div><div class="n-stat-val">${mem}%</div></div>
+                        <div class="n-stat"><div class="n-stat-lbl">Tasks</div><div class="n-stat-val">${tasks}</div></div>
+                        <div class="n-stat"><div class="n-stat-lbl">IP</div><div class="n-stat-val" style="font-size:.85rem">${n.ip || '—'}</div></div>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill ${cpuFillClass(cpu)}" style="width:${cpu}%"></div></div>
+                    <div class="node-actions">
+                        <button class="n-btn restart" onclick="drainNode('${n.id}')"><i class="fas fa-stop-circle"></i> Drain</button>
+                        <button class="n-btn info"><i class="fas fa-info"></i> Details</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // ===== RENDER TASK FEED FROM API =====
+        function renderTaskFeed(tasks) {
+            const feed = document.getElementById('taskFeed');
+            if (!tasks || tasks.length === 0) {
+                feed.innerHTML = '<div style="color:#94a3b8;padding:1rem;text-align:center">No tasks yet</div>';
+                return;
+            }
+            const stMap = { COMPLETED:'done', RUNNING:'proc', FAILED:'fail', PENDING:'queue', ASSIGNED:'proc', CANCELLED:'fail' };
+            const lbl = { done:'Done', proc:'Running', fail:'Failed', queue:'Queued' };
+            feed.innerHTML = tasks.slice(0,8).map(t => {
+                const s = stMap[(t.status||'').toUpperCase()] || 'queue';
+                const ago = t.created_at ? timeAgo(t.created_at) : '';
+                return `<div class="task-item ${s}"><div><div class="task-name">${t.type || 'Task'} #${(t.id||'').slice(-6)}</div><div class="task-meta"><span>${t.assigned_node || 'Unassigned'}</span><span>${ago}</span></div></div><span class="t-badge ${s}">${lbl[s]}</span></div>`;
+            }).join('');
+        }
+
+        // ===== RENDER TASK TABLE FROM API =====
+        function renderTaskTable(tasks) {
+            const tb = document.getElementById('taskTable');
+            if (!tasks || tasks.length === 0) {
+                tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#94a3b8">No tasks in queue</td></tr>';
+                return;
+            }
+            const stMap = { COMPLETED:'done', RUNNING:'proc', FAILED:'fail', PENDING:'queue', ASSIGNED:'proc', CANCELLED:'fail' };
+            const stLbl = { done:'Completed', proc:'Processing', fail:'Failed', queue:'Queued' };
+            const priCls = p => p === 'high' ? 'high' : p === 'low' ? 'low' : 'med';
+            tb.innerHTML = tasks.slice(0,15).map(t => {
+                const s = stMap[(t.status||'').toUpperCase()] || 'queue';
+                const prog = s === 'done' ? 100 : s === 'proc' ? 60 : 0;
+                return `<tr>
+                    <td><span class="task-id">#${(t.id||'').slice(-8)}</span></td>
+                    <td style="color:#e2e8ff">${t.type || 'synthetic_load'}</td>
+                    <td style="color:#94a3b8">${t.assigned_node || '—'}</td>
+                    <td><span class="pri ${priCls(t.priority||'medium')}">${t.priority||'medium'}</span></td>
+                    <td><div class="progress-bar" style="width:100px"><div class="progress-fill" style="width:${prog}%"></div></div></td>
+                    <td><span class="t-badge ${s}">${stLbl[s]}</span></td>
+                    <td style="color:#94a3b8">${t.created_at ? timeAgo(t.created_at) : '—'}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function timeAgo(iso) {
+            const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+            if (diff < 60) return `${diff}s ago`;
+            if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+            return `${Math.floor(diff/3600)}h ago`;
+        }
+
+        async function drainNode(nodeId) {
+            try {
+                await apiDrainNode(nodeId);
+                toast('Node Draining', `Node ${nodeId} is being drained`, '#f59e0b');
+            } catch(e) {
+                toast('Error', e.detail || 'Failed to drain node', '#ef4444');
+            }
+        }
+
+        // ===== LIVE POLLING =====
+        async function refreshDashboard() {
+            try {
+                const status = await apiGetClusterStatus();
+                const nodes = status.nodes || [];
+                const tasks = status.recent_tasks || [];
+                const taskStatus = status.task_status || {};
+
+                // Update stat cards
+                document.getElementById('nodeVal').textContent = status.nodes_online || 0;
+                document.getElementById('taskVal').textContent = status.tasks_total || 0;
+
+                // Compute avg CPU across nodes
+                if (nodes.length > 0) {
+                    const avgCpu = Math.round(nodes.reduce((s,n) => s + (n.cpu||0), 0) / nodes.length);
+                    const avgMem = Math.round(nodes.reduce((s,n) => s + (n.ram||0), 0) / nodes.length);
+                    document.getElementById('cpuVal').textContent = avgCpu + '%';
+                    document.getElementById('memVal').textContent = avgMem + '%';
+
+                    // Update CPU chart with real node cpus
+                    cpuChart.data.labels = nodes.map(n => n.name || n.id);
+                    cpuChart.data.datasets[0].data = nodes.map(n => Math.round(n.cpu || 0));
+                    cpuChart.update('none');
+                }
+
+                // Update pie chart with real task counts
+                buildPie([
+                    (taskStatus.running||0) + (taskStatus.assigned||0),
+                    taskStatus.completed || 0,
+                    taskStatus.pending || 0,
+                    taskStatus.failed || 0
+                ]);
+
+                renderNodes(nodes);
+                renderTaskFeed(tasks);
+                renderTaskTable(tasks);
+            } catch(e) {
+                console.warn('Dashboard refresh failed:', e);
+            }
+        }
+
+        // Initial load + poll every 5s
+        refreshDashboard();
+        setInterval(refreshDashboard, 5000);
+
+        // Buttons
+        document.getElementById('startDemoBtn').addEventListener('click', async () => {
+            try {
+                await apiCreateTask({ type: 'synthetic_load', input_size: 1000, priority: 'high' });
+                toast('Task Submitted', 'New synthetic load task sent to cluster');
+            } catch(e) { toast('Error', e.detail || 'Failed to submit task', '#ef4444'); }
+        });
+        document.getElementById('refreshBtn').addEventListener('click', () => { refreshDashboard(); toast('Refreshed', 'Dashboard data updated', '#22d3ee'); });
+        document.getElementById('alertBtn').addEventListener('click', () => toast('Alerts', 'Check node statuses in the grid below', '#ef4444'));
+        document.getElementById('notifBtn').addEventListener('click', () => toast('Notifications', 'System monitoring active', '#f59e0b'));
+
+        setTimeout(() => toast('Dashboard Live', 'Polling cluster every 5 seconds...'), 800);
+    </script>
+</body>
+</html>

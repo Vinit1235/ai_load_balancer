@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | GetConnect.Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --purple:#c084fc;--cyan:#22d3ee;--pink:#f472b6;
+            --card:rgba(15,25,45,0.65);--border:rgba(192,132,252,0.3);
+            --text:#e2e8ff;--muted:#94a3b8;
+            --success:#10b981;--warning:#f59e0b;--danger:#ef4444;
+            --r:20px;--tr:250ms ease;
+        }
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0f172a}::-webkit-scrollbar-thumb{background:#c084fc;border-radius:8px}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;color:var(--text);background:radial-gradient(circle at 10% 20%,#0a0f2a,#020617);line-height:1.6;overflow-x:hidden;min-height:100vh}
+        h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;line-height:1.2}
+        a{text-decoration:none;color:inherit}
+        button{font-family:'Inter',sans-serif;cursor:pointer;border:none;outline:none}
+
+        /* NAV */
+        .header{position:sticky;top:0;z-index:1000;background:rgba(5,10,30,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+        .nav-container{max-width:1280px;margin:0 auto;padding:.85rem 2rem;display:flex;justify-content:space-between;align-items:center}
+        .logo{display:flex;align-items:center;gap:10px}
+        .logo-main{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,#fff,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent}
+        .logo-sub{color:#c084fc;font-size:.85rem}
+        .nav-menu{display:flex;list-style:none;gap:1.2rem;align-items:center}
+        .nav-link{display:flex;align-items:center;gap:6px;padding:8px 14px;font-weight:500;color:#e2e8ff;border-radius:10px;transition:var(--tr);position:relative}
+        .nav-link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(90deg,#c084fc,#22d3ee);transition:width var(--tr);border-radius:2px}
+        .nav-link:hover::after,.nav-link.active::after{width:100%}
+        .nav-link:hover,.nav-link.active{color:#22d3ee;background:rgba(192,132,252,0.1)}
+        .nav-actions{display:flex;align-items:center;gap:.8rem}
+        .btn-login{padding:8px 18px;border-radius:40px;border:1px solid rgba(192,132,252,0.5);color:#e2e8ff;background:transparent;font-weight:500;transition:var(--tr)}
+        .btn-login:hover{background:rgba(192,132,252,0.15)}
+        .btn-reg{padding:9px 20px;border-radius:40px;background:linear-gradient(90deg,#c084fc,#06b6d4);color:#0f0f2a;font-weight:700;transition:var(--tr)}
+        .btn-reg:hover{transform:scale(1.03);box-shadow:0 0 18px #a855f7}
+        .mobile-toggle{display:none;font-size:1.4rem;color:#e2e8ff;cursor:pointer;padding:8px}
+        @media(max-width:900px){
+            .nav-menu{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(5,10,30,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:1rem;border-bottom:1px solid var(--border)}
+            .nav-menu.active{display:flex}.mobile-toggle{display:block}
+            .nav-actions .btn-login,.nav-actions .btn-reg{display:none}
+        }
+
+        /* GLASS CARD */
+        .card{background:var(--card);backdrop-filter:blur(12px);border-radius:var(--r);border:1px solid var(--border);box-shadow:0 20px 40px rgba(0,0,0,0.35),0 0 15px rgba(168,85,247,0.07);transition:transform var(--tr),border-color var(--tr)}
+        .card:hover{transform:translateY(-5px);border-color:rgba(192,132,252,0.5)}
+
+        /* PAGE */
+        .page{max-width:1280px;margin:0 auto;padding:3rem 2rem}
+
+        /* HERO */
+        .blog-hero{text-align:center;padding:4rem 2rem 3rem;position:relative;overflow:hidden}
+        .blog-hero::before{content:'';position:absolute;top:-40%;right:-10%;width:55%;height:130%;background:radial-gradient(circle,rgba(168,85,247,0.1),transparent 70%);z-index:0}
+        .blog-hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+        .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,85,247,0.15);border:1px solid rgba(192,132,252,0.4);padding:.4rem 1.1rem;border-radius:40px;font-size:.82rem;color:#c084fc;margin-bottom:1.2rem}
+        .blog-hero h1{font-size:3rem;font-weight:800;background:linear-gradient(135deg,#fff,#c084fc,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:1rem}
+        .blog-hero p{color:#b9c7e6;font-size:1.1rem;max-width:560px;margin:0 auto 2rem}
+
+        /* SEARCH + FILTER */
+        .search-bar{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem}
+        .search-input{padding:.75rem 1.2rem;border-radius:40px;background:rgba(255,255,255,0.06);border:1px solid rgba(192,132,252,0.35);color:#e2e8ff;font-size:.92rem;width:320px;outline:none;transition:var(--tr)}
+        .search-input::placeholder{color:#94a3b8}
+        .search-input:focus{border-color:#c084fc;box-shadow:0 0 0 3px rgba(192,132,252,0.15)}
+        .filter-tabs{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem}
+        .ftab{padding:7px 18px;border-radius:40px;font-size:.85rem;font-weight:600;cursor:pointer;border:1px solid rgba(192,132,252,0.3);color:#94a3b8;background:transparent;transition:var(--tr)}
+        .ftab:hover,.ftab.active{background:rgba(192,132,252,0.15);border-color:#c084fc;color:#c084fc}
+
+        /* FEATURED POST */
+        .featured{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:3rem;align-items:center;padding:2rem}
+        @media(max-width:768px){.featured{grid-template-columns:1fr}}
+        .featured-img{height:260px;border-radius:16px;background:linear-gradient(135deg,rgba(168,85,247,0.25),rgba(34,211,238,0.15));display:flex;align-items:center;justify-content:center;font-size:5rem;border:1px solid rgba(192,132,252,0.2)}
+        .featured-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(168,85,247,0.2);border:1px solid rgba(192,132,252,0.4);padding:.3rem .9rem;border-radius:40px;font-size:.75rem;color:#c084fc;font-weight:700;margin-bottom:.8rem}
+        .featured h2{font-size:1.7rem;color:#e2e8ff;margin-bottom:.8rem;line-height:1.3}
+        .featured p{color:#94a3b8;font-size:.93rem;line-height:1.7;margin-bottom:1.2rem}
+        .post-meta{display:flex;align-items:center;gap:1rem;font-size:.82rem;color:#94a3b8;margin-bottom:1rem;flex-wrap:wrap}
+        .post-meta .author{display:flex;align-items:center;gap:.4rem}
+        .avatar-sm{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff}
+        .tag{padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;background:rgba(34,211,238,0.12);color:#22d3ee;border:1px solid rgba(34,211,238,0.25)}
+        .tag.purple{background:rgba(192,132,252,0.12);color:#c084fc;border-color:rgba(192,132,252,0.25)}
+        .tag.pink{background:rgba(244,114,182,0.12);color:#f472b6;border-color:rgba(244,114,182,0.25)}
+        .tag.green{background:rgba(16,185,129,0.12);color:#10b981;border-color:rgba(16,185,129,0.25)}
+        .btn-read{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:40px;background:linear-gradient(90deg,#c084fc,#06b6d4);color:#0f0f2a;font-weight:700;font-size:.88rem;transition:var(--tr)}
+        .btn-read:hover{transform:translateY(-2px);box-shadow:0 0 18px #a855f7}
+
+        /* BLOG GRID */
+        .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:.8rem}
+        .section-header h2{font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,#e2e8ff,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent}
+        .blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem;margin-bottom:3rem}
+        @media(max-width:1024px){.blog-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:600px){.blog-grid{grid-template-columns:1fr}}
+        .blog-card{overflow:hidden;cursor:pointer}
+        .blog-card:hover .card-img{transform:scale(1.04)}
+        .card-img-wrap{overflow:hidden;border-radius:14px 14px 0 0;height:180px}
+        .card-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3.5rem;transition:transform .4s ease}
+        .card-body{padding:1.3rem}
+        .card-body h3{font-size:1.05rem;color:#e2e8ff;margin:.6rem 0 .5rem;line-height:1.4}
+        .card-body p{color:#94a3b8;font-size:.85rem;line-height:1.6;margin-bottom:1rem}
+        .card-footer{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1.3rem;border-top:1px solid rgba(255,255,255,0.06)}
+        .read-more{color:#22d3ee;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:4px;transition:var(--tr)}
+        .read-more:hover{color:#c084fc;gap:8px}
+        .read-time{color:#94a3b8;font-size:.78rem;display:flex;align-items:center;gap:4px}
+
+        /* NEWSLETTER */
+        .newsletter{background:linear-gradient(135deg,#3a0ca3,#0e7490);border-radius:32px;padding:3rem 2rem;text-align:center;margin-bottom:3rem;position:relative;overflow:hidden}
+        .newsletter::before{content:'';position:absolute;top:-30%;right:-10%;width:50%;height:160%;background:radial-gradient(circle,rgba(255,255,255,0.06),transparent 70%)}
+        .newsletter h2{font-size:1.9rem;color:#fff;margin-bottom:.7rem}
+        .newsletter p{color:rgba(255,255,255,0.8);margin-bottom:1.8rem;font-size:.97rem}
+        .nl-form{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+        .nl-input{padding:.8rem 1.4rem;border-radius:40px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:.92rem;width:280px;outline:none}
+        .nl-input::placeholder{color:rgba(255,255,255,0.6)}
+        .nl-btn{padding:.8rem 1.8rem;border-radius:40px;background:#fff;color:#1e1a3a;font-weight:700;font-size:.92rem;transition:var(--tr)}
+        .nl-btn:hover{background:#e2e8ff;transform:translateY(-2px)}
+
+        /* SIDEBAR TOPICS */
+        .blog-layout{display:grid;grid-template-columns:1fr 300px;gap:2rem;margin-bottom:3rem}
+        @media(max-width:900px){.blog-layout{grid-template-columns:1fr}}
+        .sidebar-widget{padding:1.5rem;margin-bottom:1.5rem}
+        .widget-title{font-size:1rem;font-weight:700;color:#e2e8ff;margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
+        .widget-title i{color:#c084fc}
+        .topic-list{display:flex;flex-direction:column;gap:.5rem}
+        .topic-item{display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:var(--tr)}
+        .topic-item:hover{background:rgba(192,132,252,0.1);border-color:rgba(192,132,252,0.3)}
+        .topic-name{color:#e2e8ff;font-size:.88rem;display:flex;align-items:center;gap:.5rem}
+        .topic-name i{color:#c084fc;font-size:.8rem}
+        .topic-count{background:rgba(192,132,252,0.15);color:#c084fc;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:20px}
+        .popular-post{display:flex;gap:.8rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+        .popular-post:last-child{border-bottom:none}
+        .pop-num{font-size:1.4rem;font-weight:800;color:rgba(192,132,252,0.3);font-family:'Space Grotesk',sans-serif;min-width:28px}
+        .pop-title{color:#e2e8ff;font-size:.85rem;font-weight:500;line-height:1.4;margin-bottom:.2rem}
+        .pop-meta{color:#94a3b8;font-size:.75rem}
+
+        /* FOOTER */
+        .footer{background:#030617;color:#fff;padding:3rem 2rem 2rem;border-top:1px solid rgba(192,132,252,0.2);margin-top:2rem}
+        .footer-container{display:grid;grid-template-columns:repeat(4,1fr);gap:3rem;max-width:1280px;margin:0 auto}
+        .footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+        .footer-desc{color:rgba(255,255,255,0.65);font-size:.88rem;line-height:1.6;margin-bottom:1.2rem}
+        .social-links{display:flex;gap:.7rem}
+        .social-links a{width:34px;height:34px;background:rgba(255,255,255,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;transition:var(--tr)}
+        .social-links a:hover{background:#c084fc;transform:translateY(-3px)}
+        .footer-column h3{font-size:1rem;margin-bottom:1rem;color:#e2e8ff}
+        .footer-column ul{list-style:none}
+        .footer-column li{margin-bottom:.5rem}
+        .footer-column a{color:rgba(255,255,255,0.65);font-size:.88rem;transition:color var(--tr)}
+        .footer-column a:hover{color:#c084fc}
+        .footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:1.5rem;margin-top:2rem;display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin-left:auto;margin-right:auto;flex-wrap:wrap;gap:1rem}
+        .footer-links{display:flex;gap:1.5rem}
+        .footer-links a{color:rgba(255,255,255,0.55);font-size:.85rem}
+        .footer-links a:hover{color:#c084fc}
+        @media(max-width:1024px){.footer-container{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.footer-container{grid-template-columns:1fr}.footer-bottom{flex-direction:column;text-align:center}}
+
+        /* TOAST */
+        .toast-container{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px}
+        .toast{background:rgba(15,25,45,0.97);backdrop-filter:blur(10px);border-radius:12px;padding:.9rem 1.4rem;box-shadow:0 10px 30px rgba(0,0,0,0.5);border-left:4px solid #c084fc;display:flex;align-items:center;gap:.9rem;min-width:260px;transform:translateX(400px);transition:transform .3s ease;border:1px solid rgba(192,132,252,0.3);border-left:4px solid #c084fc}
+        .toast.show{transform:translateX(0)}
+        .toast-icon{color:#c084fc;font-size:1.1rem}
+        .toast h4{color:#e2e8ff;font-size:.88rem;margin-bottom:.1rem}
+        .toast p{color:#94a3b8;font-size:.8rem}
+        .toast-close{margin-left:auto;background:none;color:#94a3b8;font-size:.95rem;cursor:pointer}
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                    <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z" fill="url(#g1)" opacity="0.95"/>
+                    <circle cx="42" cy="45" r="8" fill="#fff"/><path d="M30 80 C35 60,50 60,55 75" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+                    <circle cx="78" cy="45" r="8" fill="#fff"/><path d="M90 80 C85 60,70 60,65 75" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+                    <path d="M42 65 L55 78 L78 52" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="logo-text"><span class="logo-main">GetConnect</span><span class="logo-sub">.web</span></div>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                <li><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="register.html" class="btn-reg"><i class="fas fa-user-plus"></i> Register</a>
+                <div class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="blog-hero">
+        <div class="blog-hero-inner">
+            <div class="hero-badge"><i class="fas fa-rss"></i> GetConnect Blog</div>
+            <h1>Insights on AI &amp;<br>Distributed Computing</h1>
+            <p>Deep dives, tutorials, and updates from the team building the future of intelligent task distribution.</p>
+            <div class="search-bar">
+                <input class="search-input" type="text" id="searchInput" placeholder="Search articles...">
+            </div>
+            <div class="filter-tabs">
+                <button class="ftab active" onclick="filterPosts(this,'all')">All Posts</button>
+                <button class="ftab" onclick="filterPosts(this,'ai')">AI &amp; ML</button>
+                <button class="ftab" onclick="filterPosts(this,'engineering')">Engineering</button>
+                <button class="ftab" onclick="filterPosts(this,'tutorial')">Tutorials</button>
+                <button class="ftab" onclick="filterPosts(this,'product')">Product</button>
+                <button class="ftab" onclick="filterPosts(this,'devops')">DevOps</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="page">
+
+        <!-- FEATURED POST -->
+        <div class="card featured" style="margin-bottom:3rem">
+            <div class="featured-img">🤖</div>
+            <div>
+                <div class="featured-badge"><i class="fas fa-star"></i> Featured Post</div>
+                <div style="display:flex;gap:.5rem;margin-bottom:.8rem;flex-wrap:wrap">
+                    <span class="tag purple">AI &amp; ML</span>
+                    <span class="tag">Distributed Systems</span>
+                </div>
+                <h2>How Our Neural Load Balancer Achieves 99.99% Uptime Across 300+ Nodes</h2>
+                <p>A deep technical look at the machine learning algorithms powering GetConnect's intelligent task distribution engine — from training data to real-time inference at sub-millisecond latency.</p>
+                <div class="post-meta">
+                    <div class="author"><div class="avatar-sm">SR</div> Sarah Rodriguez</div>
+                    <span><i class="fas fa-calendar" style="color:#c084fc"></i> Jan 15, 2025</span>
+                    <span><i class="fas fa-clock" style="color:#22d3ee"></i> 12 min read</span>
+                    <span><i class="fas fa-eye" style="color:#f472b6"></i> 8.4K views</span>
+                </div>
+                <a href="#" class="btn-read" onclick="showToast('Opening article...')"><i class="fas fa-book-open"></i> Read Article</a>
+            </div>
+        </div>
+
+        <!-- MAIN LAYOUT: GRID + SIDEBAR -->
+        <div class="blog-layout">
+
+            <!-- POSTS GRID -->
+            <div>
+                <div class="section-header">
+                    <h2><i class="fas fa-fire" style="color:#f472b6"></i> Latest Articles</h2>
+                    <span style="color:#94a3b8;font-size:.85rem">Showing <span id="postCount">9</span> articles</span>
+                </div>
+
+                <div class="blog-grid" id="blogGrid">
+
+                    <!-- Post 1 -->
+                    <div class="card blog-card" data-cat="tutorial">
+                        <div class="card-img-wrap">
+                            <div class="card-img" style="background:linear-gradient(135deg,rgba(168,85,247,0.3),rgba(34,211,238,0.2))">⚡</div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag">Tutorial</span></div>
+                            <h3>Getting Started with the GetConnect API in 10 Minutes</h3>
+                            <p>Step-by-step guide to submitting your first distributed task using our REST API and JavaScript SDK.</p>
+                            <div class="post-meta">
+                                <div class="author"><div class="avatar-sm">AK</div> Alex Kumar</div>
+                                <span><i class="fas fa-clock" style="color:#22d3ee"></i> 8 min</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="read-more" onclick="showToast('Opening article...')">Read More <i class="fas fa-arrow-right"></i></a>
+                            <span class="read-time"><i class="fas fa-eye"></i> 5.2K</span>
+                        </div>
+                    </div>
+
+                    <!-- Post 2 -->
+                    <div class="card blog-card" data-cat="ai">
+                        <div class="card-img-wrap">
+                            <div class="card-img" style="background:linear-gradient(135deg,rgba(34,211,238,0.3),rgba(99,102,241,0.2))">🧠</div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag purple">AI &amp; ML</span></div>
+                            <h3>Reinforcement Learning for Dynamic Node Selection</h3>
+                            <p>How we trained an RL agent to predict optimal node assignments based on historical performance patterns.</p>
+                            <div class="post-meta">
+                                <div class="author"><div class="avatar-sm">SR</div> Sarah Rodriguez</div>
+                                <span><i class="fas fa-clock" style="color:#22d3ee"></i> 15 min</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="read-more" onclick="showToast('Opening article...')">Read More <i class="fas fa-arrow-right"></i></a>
+                            <span class="read-time"><i class="fas fa-eye"></i> 7.1K</span>
+                        </div>
+                    </div>
+
+                    <!-- Post 3 -->
+                    <div class="card blog-card" data-cat="engineering">
+                        <div class="card-img-wrap">
+                            <div class="card-img" style="background:linear-gradient(135deg,rgba(244,114,182,0.3),rgba(168,85,247,0.2))">🔧</div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag pink">Engineering</span></div>
+                            <h3>Building a Zero-Downtime Deployment Pipeline for 300+ Nodes</h3>
+                            <p>Our engineering team shares the architecture behind rolling updates that never interrupt running tasks.</p>
+                            <div class="post-meta">
+                                <div class="author"><div class="avatar-sm">MC</div> Marcus Chen</div>
+                                <span><i class="fas fa-clock" style="color:#22d3ee"></i> 11 min</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="read-more" onclick="showToast('Opening article...')">Read More <i class="fas fa-arrow-right"></i></a>
+                            <span class="read-time"><i class="fas fa-eye"></i> 4.8K</span>
+                        </div>
+                    </div>
+
+                    <!-- Post 4 -->
+                    <div class="card blog-card" data-cat="devops">
+                        <div class="card-img-wrap">
+                            <div class="card-img" style="background:linear-gradient(135deg,rgba(16,185,129,0.3),rgba(34,211,238,0.2))">🚀</div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag green">DevOps</span></div>
+                            <h3>Kubernetes vs GetConnect: When to Use Each for Distributed Workloads</h3>
+                            <p>A practical comparison of orchestration strategies for compute-heavy workloads at scale.</p>
+                            <div class="post-meta">
+                                <div class="author"><div class="avatar-sm">MC</div> Marcus Chen</div>
+                                <span><i class="fas fa-clock" style="color:#22d3ee"></i> 9 min</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="read-more" onclick="showToast('Opening article...')">Read More <i class="fas fa-arrow-right"></i></a>
+                            <span class="read-time"><i class="fas fa-eye"></i> 6.3K</span>
+                        </div>
+                    </div>
+
+                    <!-- Post 5 -->
+                    <div class="card blog-card" data-cat="product">
+                        <div class="card-img-wrap">
+                            <div class="card-img" style="background:linear-gradient(135deg,rgba(245,158,11,0.3),rgba(244,114,182,0.2))">📊</div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag" style="background:rgba(245,158,11,0.12);color:#f59e0b;border-color:rgba(245,158,11,0.25)">Product</span></div>
+                            <h3>Introducing Real-Time Analytics Dashboard v2.0</h3>
+                            <p>New charts, AI-powered insights, and a redesigned interface for monitoring your distributed cluster.</p>
+                            <div class="post-meta">
+                                <div class="author"><div class="avatar-sm">PJ</div> Priya Joshi</div>
+                                <span><i class="fas fa-clock" style="color:#22d3ee"></i> 6 min</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="read-more" onclick="showToast('Opening article...')">Read More <i class="fas fa-arrow-right"></i></a>
+                            <span class="read-time"><i class="fas fa-eye"></i> 3.9K</span>
+                        </div>
+                    </div>
+
+                    <!-- Post 6 -->
+                    <div class="card blog-card" data-cat="ai">
+                        <div class="card-img-wrap">
+                            <div class="card-img" style="background:linear-gradient(135deg,rgba(99,102,241,0.3),rgba(192,132,252,0.2))">🔮</div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag purple">AI &amp; ML</span></div>
+                            <h3>Predictive Autoscaling: Adding Nodes Before You Need Them</h3>
+                            <p>How our time-series forecasting model predicts load spikes 15 minutes ahead and pre-provisions nodes.</p>
+                            <div class="post-meta">
+                                <div class="author"><div class="avatar-sm">SR</div> Sarah Rodriguez</div>
+                                <span><i class="fas fa-clock" style="color:#22d3ee"></i> 13 min</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="read-more" onclick="showToast('Opening article...')">Read More <i class="fas fa-arrow-right"></i></a>
+                            <span class="read-time"><i class="fas fa-eye"></i> 9.2K</span>
+                        </div>
+                    </div>
+
+                    <!-- Post 7 -->
+                    <div class="card blog-card" data-cat="tutorial">
+                        <div class="card-img-wrap">
+                            <div class="card-img" style="background:linear-gradient(135deg,rgba(34,211,238,0.25),rgba(16,185,129,0.2))">🐍</div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag">Tutorial</span></div>
+                            <h3>Python SDK Deep Dive: Batch Processing 1M Records</h3>
+                            <p>Complete walkthrough of using the Python SDK to distribute a large-scale data processing job across 50 nodes.</p>
+                            <div class="post-meta">
+                                <div class="author"><div class="avatar-sm">AK</div> Alex Kumar</div>
+                                <span><i class="fas fa-clock" style="color:#22d3ee"></i> 18 min</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="read-more" onclick="showToast('Opening article...')">Read More <i class="fas fa-arrow-right"></i></a>
+                            <span class="read-time"><i class="fas fa-eye"></i> 11.4K</span>
+                        </div>
+                    </div>
+
+                    <!-- Post 8 -->
+                    <div class="card blog-card" data-cat="engineering">
+                        <div class="card-img-wrap">
+                            <div class="card-img" style="background:linear-gradient(135deg,rgba(239,68,68,0.25),rgba(245,158,11,0.2))">🛡️</div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag pink">Engineering</span></div>
+                            <h3>Zero-Trust Security Architecture for Distributed Task Networks</h3>
+                            <p>How we implemented end-to-end encryption and mutual TLS across every node-to-node communication channel.</p>
+                            <div class="post-meta">
+                                <div class="author"><div class="avatar-sm">MC</div> Marcus Chen</div>
+                                <span><i class="fas fa-clock" style="color:#22d3ee"></i> 14 min</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="read-more" onclick="showToast('Opening article...')">Read More <i class="fas fa-arrow-right"></i></a>
+                            <span class="read-time"><i class="fas fa-eye"></i> 5.7K</span>
+                        </div>
+                    </div>
+
+                    <!-- Post 9 -->
+                    <div class="card blog-card" data-cat="product">
+                        <div class="card-img-wrap">
+                            <div class="card-img" style="background:linear-gradient(135deg,rgba(192,132,252,0.25),rgba(244,114,182,0.2))">🎯</div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag" style="background:rgba(245,158,11,0.12);color:#f59e0b;border-color:rgba(245,158,11,0.25)">Product</span></div>
+                            <h3>GetConnect v4.0: What's New in the Neural Mesh Update</h3>
+                            <p>Changelog and feature breakdown for our biggest release yet — new AI engine, redesigned dashboard, and 40% faster routing.</p>
+                            <div class="post-meta">
+                                <div class="author"><div class="avatar-sm">PJ</div> Priya Joshi</div>
+                                <span><i class="fas fa-clock" style="color:#22d3ee"></i> 7 min</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="read-more" onclick="showToast('Opening article...')">Read More <i class="fas fa-arrow-right"></i></a>
+                            <span class="read-time"><i class="fas fa-eye"></i> 12.1K</span>
+                        </div>
+                    </div>
+
+                </div><!-- /blog-grid -->
+
+                <!-- LOAD MORE -->
+                <div style="text-align:center;margin-bottom:2rem">
+                    <button class="btn-read" onclick="showToast('Loading more articles...')"><i class="fas fa-plus"></i> Load More Articles</button>
+                </div>
+
+            </div><!-- /posts -->
+
+            <!-- SIDEBAR -->
+            <aside>
+                <!-- Search -->
+                <div class="card sidebar-widget">
+                    <div class="widget-title"><i class="fas fa-search"></i> Search</div>
+                    <input class="search-input" style="width:100%;border-radius:12px" type="text" placeholder="Search articles...">
+                </div>
+
+                <!-- Topics -->
+                <div class="card sidebar-widget">
+                    <div class="widget-title"><i class="fas fa-tags"></i> Topics</div>
+                    <div class="topic-list">
+                        <div class="topic-item" onclick="filterPosts(null,'ai')"><span class="topic-name"><i class="fas fa-brain"></i> AI &amp; ML</span><span class="topic-count">14</span></div>
+                        <div class="topic-item" onclick="filterPosts(null,'engineering')"><span class="topic-name"><i class="fas fa-cogs"></i> Engineering</span><span class="topic-count">11</span></div>
+                        <div class="topic-item" onclick="filterPosts(null,'tutorial')"><span class="topic-name"><i class="fas fa-book"></i> Tutorials</span><span class="topic-count">9</span></div>
+                        <div class="topic-item" onclick="filterPosts(null,'product')"><span class="topic-name"><i class="fas fa-box"></i> Product</span><span class="topic-count">7</span></div>
+                        <div class="topic-item" onclick="filterPosts(null,'devops')"><span class="topic-name"><i class="fas fa-server"></i> DevOps</span><span class="topic-count">6</span></div>
+                    </div>
+                </div>
+
+                <!-- Popular Posts -->
+                <div class="card sidebar-widget">
+                    <div class="widget-title"><i class="fas fa-fire"></i> Most Read</div>
+                    <div>
+                        <div class="popular-post"><span class="pop-num">01</span><div><div class="pop-title">Python SDK Deep Dive: Batch Processing 1M Records</div><div class="pop-meta"><i class="fas fa-eye"></i> 11.4K views</div></div></div>
+                        <div class="popular-post"><span class="pop-num">02</span><div><div class="pop-title">GetConnect v4.0: What's New in the Neural Mesh Update</div><div class="pop-meta"><i class="fas fa-eye"></i> 12.1K views</div></div></div>
+                        <div class="popular-post"><span class="pop-num">03</span><div><div class="pop-title">Predictive Autoscaling: Adding Nodes Before You Need Them</div><div class="pop-meta"><i class="fas fa-eye"></i> 9.2K views</div></div></div>
+                        <div class="popular-post"><span class="pop-num">04</span><div><div class="pop-title">Reinforcement Learning for Dynamic Node Selection</div><div class="pop-meta"><i class="fas fa-eye"></i> 7.1K views</div></div></div>
+                    </div>
+                </div>
+
+                <!-- Authors -->
+                <div class="card sidebar-widget">
+                    <div class="widget-title"><i class="fas fa-users"></i> Authors</div>
+                    <div style="display:flex;flex-direction:column;gap:.8rem">
+                        <div style="display:flex;align-items:center;gap:.8rem">
+                            <div class="avatar-sm" style="width:38px;height:38px;font-size:.85rem">SR</div>
+                            <div><div style="color:#e2e8ff;font-size:.88rem;font-weight:600">Sarah Rodriguez</div><div style="color:#94a3b8;font-size:.78rem">CTO · AI Research</div></div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:.8rem">
+                            <div class="avatar-sm" style="width:38px;height:38px;font-size:.85rem">AK</div>
+                            <div><div style="color:#e2e8ff;font-size:.88rem;font-weight:600">Alex Kumar</div><div style="color:#94a3b8;font-size:.78rem">CEO · Platform</div></div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:.8rem">
+                            <div class="avatar-sm" style="width:38px;height:38px;font-size:.85rem">MC</div>
+                            <div><div style="color:#e2e8ff;font-size:.88rem;font-weight:600">Marcus Chen</div><div style="color:#94a3b8;font-size:.78rem">Engineering Lead</div></div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:.8rem">
+                            <div class="avatar-sm" style="width:38px;height:38px;font-size:.85rem">PJ</div>
+                            <div><div style="color:#e2e8ff;font-size:.88rem;font-weight:600">Priya Joshi</div><div style="color:#94a3b8;font-size:.78rem">Head of Product</div></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+        </div><!-- /blog-layout -->
+
+        <!-- NEWSLETTER -->
+        <div class="newsletter">
+            <h2>Stay in the Loop</h2>
+            <p>Get the latest articles on AI, distributed computing, and engineering delivered to your inbox every week.</p>
+            <div class="nl-form">
+                <input class="nl-input" type="email" placeholder="your@email.com">
+                <button class="nl-btn" onclick="showToast('Subscribed! Welcome to the newsletter.','#10b981')"><i class="fas fa-paper-plane"></i> Subscribe</button>
+            </div>
+        </div>
+
+    </div><!-- /page -->
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <svg width="34" height="34" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                        <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z" fill="url(#g2)" opacity="0.95"/>
+                        <circle cx="42" cy="45" r="8" fill="#fff"/><circle cx="78" cy="45" r="8" fill="#fff"/>
+                        <path d="M42 65 L55 78 L78 52" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="logo-text"><span class="logo-main">GetConnect</span><span class="logo-sub">.web</span></div>
+                </div>
+                <p class="footer-desc">AI-powered distributed task execution engine with intelligent load balancing.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a><a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column"><h3>Product</h3><ul><li><a href="features.html">Features</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="api-documentation.html">API Docs</a></li></ul></div>
+            <div class="footer-column"><h3>Company</h3><ul><li><a href="about.html">About Us</a></li><li><a href="careers.html">Careers</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+            <div class="footer-column"><h3>Legal</h3><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Service</a></li><li><a href="Support.html">Support</a></li></ul></div>
+        </div>
+        <div class="footer-bottom">
+            <p style="color:rgba(255,255,255,0.55);font-size:.85rem">&copy; 2025 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="Support.html">Support</a></div>
+        </div>
+    </footer>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Mobile nav
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            const m = document.getElementById('navMenu');
+            m.classList.toggle('active');
+            this.innerHTML = m.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Toast
+        function showToast(msg, color='#c084fc') {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.style.borderLeftColor = color;
+            t.innerHTML = `<div class="toast-icon" style="color:${color}"><i class="fas fa-rss"></i></div><div><h4>GetConnect Blog</h4><p>${msg}</p></div><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>`;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 3500);
+        }
+
+        // Filter posts by category
+        function filterPosts(btn, cat) {
+            // Update active tab
+            if (btn) {
+                document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+                btn.classList.add('active');
+            }
+            const cards = document.querySelectorAll('.blog-card');
+            let visible = 0;
+            cards.forEach(card => {
+                const show = cat === 'all' || card.dataset.cat === cat;
+                card.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+            document.getElementById('postCount').textContent = visible;
+        }
+
+        // Live search
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const q = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.blog-card');
+            let visible = 0;
+            cards.forEach(card => {
+                const text = card.querySelector('h3').textContent.toLowerCase();
+                const show = text.includes(q);
+                card.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+            document.getElementById('postCount').textContent = visible;
+        });
+    </script>
+</body>
+</html>

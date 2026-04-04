@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support | GetConnect.Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --purple:#c084fc;--cyan:#22d3ee;--pink:#f472b6;
+            --card:rgba(15,25,45,0.65);--border:rgba(192,132,252,0.3);
+            --text:#e2e8ff;--muted:#94a3b8;
+            --success:#10b981;--warning:#f59e0b;--danger:#ef4444;
+            --r:20px;--tr:250ms ease;
+        }
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0f172a}::-webkit-scrollbar-thumb{background:#c084fc;border-radius:8px}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;color:var(--text);background:radial-gradient(circle at 10% 20%,#0a0f2a,#020617);line-height:1.6;overflow-x:hidden;min-height:100vh}
+        h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;line-height:1.2}
+        a{text-decoration:none;color:inherit}
+        button{font-family:'Inter',sans-serif;cursor:pointer;border:none;outline:none}
+
+        /* NAV */
+        .header{position:sticky;top:0;z-index:1000;background:rgba(5,10,30,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+        .nav-container{max-width:1280px;margin:0 auto;padding:.85rem 2rem;display:flex;justify-content:space-between;align-items:center}
+        .logo{display:flex;align-items:center;gap:10px}
+        .logo-main{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,#fff,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent}
+        .logo-sub{color:#c084fc;font-size:.85rem}
+        .nav-menu{display:flex;list-style:none;gap:1.2rem;align-items:center}
+        .nav-link{display:flex;align-items:center;gap:6px;padding:8px 14px;font-weight:500;color:#e2e8ff;border-radius:10px;transition:var(--tr);position:relative}
+        .nav-link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(90deg,#c084fc,#22d3ee);transition:width var(--tr);border-radius:2px}
+        .nav-link:hover::after,.nav-link.active::after{width:100%}
+        .nav-link:hover,.nav-link.active{color:#22d3ee;background:rgba(192,132,252,0.1)}
+        .nav-actions{display:flex;align-items:center;gap:.8rem}
+        .btn-login{padding:8px 18px;border-radius:40px;border:1px solid rgba(192,132,252,0.5);color:#e2e8ff;background:transparent;font-weight:500;transition:var(--tr)}
+        .btn-login:hover{background:rgba(192,132,252,0.15)}
+        .btn-reg{padding:9px 20px;border-radius:40px;background:linear-gradient(90deg,#c084fc,#06b6d4);color:#0f0f2a;font-weight:700;transition:var(--tr)}
+        .btn-reg:hover{transform:scale(1.03);box-shadow:0 0 18px #a855f7}
+        .mobile-toggle{display:none;font-size:1.4rem;color:#e2e8ff;cursor:pointer;padding:8px}
+        @media(max-width:900px){
+            .nav-menu{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(5,10,30,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:1rem;border-bottom:1px solid var(--border)}
+            .nav-menu.active{display:flex}.mobile-toggle{display:block}
+            .nav-actions .btn-login,.nav-actions .btn-reg{display:none}
+        }
+
+        /* GLASS CARD */
+        .card{background:var(--card);backdrop-filter:blur(12px);border-radius:var(--r);border:1px solid var(--border);box-shadow:0 20px 40px rgba(0,0,0,0.35),0 0 15px rgba(168,85,247,0.07);transition:transform var(--tr),border-color var(--tr)}
+        .card:hover{transform:translateY(-5px);border-color:rgba(192,132,252,0.55)}
+
+        /* PAGE */
+        .page{max-width:1280px;margin:0 auto;padding:0 2rem 4rem}
+
+        /* HERO */
+        .support-hero{text-align:center;padding:5rem 2rem 3rem;position:relative;overflow:hidden}
+        .support-hero::before{content:'';position:absolute;top:-40%;right:-10%;width:55%;height:130%;background:radial-gradient(circle,rgba(168,85,247,0.1),transparent 70%);z-index:0}
+        .hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+        .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,85,247,0.15);border:1px solid rgba(192,132,252,0.4);padding:.4rem 1.1rem;border-radius:40px;font-size:.82rem;color:#c084fc;margin-bottom:1.2rem}
+        .support-hero h1{font-size:3rem;font-weight:800;background:linear-gradient(135deg,#fff,#c084fc,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:1rem}
+        .support-hero p{color:#b9c7e6;font-size:1.1rem;max-width:560px;margin:0 auto 2rem}
+
+        /* SEARCH */
+        .search-wrap{display:flex;gap:.8rem;justify-content:center;margin-bottom:1rem}
+        .search-input{padding:.85rem 1.4rem;border-radius:40px;background:rgba(255,255,255,0.06);border:1px solid rgba(192,132,252,0.35);color:#e2e8ff;font-size:.95rem;width:380px;outline:none;transition:var(--tr)}
+        .search-input::placeholder{color:#94a3b8}
+        .search-input:focus{border-color:#c084fc;box-shadow:0 0 0 3px rgba(192,132,252,0.15)}
+        .btn-search{padding:.85rem 1.8rem;border-radius:40px;background:linear-gradient(90deg,#c084fc,#06b6d4);color:#0f0f2a;font-weight:700;font-size:.92rem;transition:var(--tr)}
+        .btn-search:hover{transform:translateY(-2px);box-shadow:0 0 18px #a855f7}
+
+        /* QUICK STATS */
+        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;max-width:900px;margin:0 auto 3rem;padding:0 2rem}
+        @media(max-width:768px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+        .stat-chip{padding:1.2rem;text-align:center}
+        .stat-chip .num{font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,#c084fc,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;display:block}
+        .stat-chip .lbl{color:#94a3b8;font-size:.82rem;margin-top:.2rem}
+
+        /* SUPPORT CATEGORIES */
+        .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem;margin-bottom:3rem}
+        @media(max-width:900px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.cat-grid{grid-template-columns:1fr}}
+        .cat-card{padding:2rem;text-align:center;cursor:pointer}
+        .cat-icon{width:64px;height:64px;background:linear-gradient(135deg,#a855f7,#06b6d4);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.6rem;color:#fff;box-shadow:0 0 16px rgba(168,85,247,0.35)}
+        .cat-card h3{color:#e2e8ff;font-size:1.1rem;margin-bottom:.5rem}
+        .cat-card p{color:#94a3b8;font-size:.88rem;line-height:1.5;margin-bottom:.8rem}
+        .cat-count{font-size:.78rem;color:#c084fc;font-weight:600}
+
+        /* TWO-COL LAYOUT */
+        .support-layout{display:grid;grid-template-columns:1fr 340px;gap:2rem;margin-bottom:3rem}
+        @media(max-width:900px){.support-layout{grid-template-columns:1fr}}
+
+        /* FAQ ACCORDION */
+        .section-title{font-size:1.3rem;font-weight:700;color:#e2e8ff;margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
+        .section-title i{color:#c084fc}
+        .faq-item{border-radius:14px;overflow:hidden;margin-bottom:.8rem;border:1px solid rgba(192,132,252,0.25);background:rgba(255,255,255,0.03)}
+        .faq-q{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.3rem;cursor:pointer;transition:var(--tr)}
+        .faq-q:hover{background:rgba(192,132,252,0.08)}
+        .faq-q span{color:#e2e8ff;font-weight:500;font-size:.93rem}
+        .faq-q i{color:#c084fc;transition:transform var(--tr);font-size:.85rem}
+        .faq-item.open .faq-q i{transform:rotate(180deg)}
+        .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 1.3rem}
+        .faq-item.open .faq-a{max-height:300px;padding-bottom:1.1rem}
+        .faq-a p{color:#94a3b8;font-size:.9rem;line-height:1.7}
+
+        /* SIDEBAR WIDGETS */
+        .sidebar-widget{padding:1.5rem;margin-bottom:1.5rem}
+        .widget-title{font-size:1rem;font-weight:700;color:#e2e8ff;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+        .widget-title i{color:#c084fc}
+        .contact-option{display:flex;align-items:center;gap:.9rem;padding:.9rem;border-radius:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);margin-bottom:.7rem;transition:var(--tr);cursor:pointer}
+        .contact-option:hover{background:rgba(192,132,252,0.1);border-color:rgba(192,132,252,0.3)}
+        .co-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:#fff;flex-shrink:0}
+        .co-icon.a{background:linear-gradient(135deg,#a855f7,#c084fc)}
+        .co-icon.b{background:linear-gradient(135deg,#22d3ee,#38bdf8)}
+        .co-icon.c{background:linear-gradient(135deg,#10b981,#34d399)}
+        .co-icon.d{background:linear-gradient(135deg,#f59e0b,#fbbf24)}
+        .co-title{color:#e2e8ff;font-weight:600;font-size:.9rem}
+        .co-sub{color:#94a3b8;font-size:.78rem}
+        .status-dot{width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+        .tag-cloud{display:flex;flex-wrap:wrap;gap:.5rem}
+        .tag{padding:5px 12px;border-radius:20px;font-size:.78rem;font-weight:600;background:rgba(192,132,252,0.12);color:#c084fc;border:1px solid rgba(192,132,252,0.25);cursor:pointer;transition:var(--tr)}
+        .tag:hover{background:rgba(192,132,252,0.25)}
+
+        /* TICKET FORM */
+        .ticket-section{margin-bottom:3rem}
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+        @media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+        .form-group{display:flex;flex-direction:column;gap:.4rem}
+        .form-group label{color:#e2e8ff;font-size:.88rem;font-weight:500}
+        .form-group input,.form-group select,.form-group textarea{padding:.8rem 1rem;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(192,132,252,0.3);color:#e2e8ff;font-size:.9rem;outline:none;transition:var(--tr);font-family:'Inter',sans-serif}
+        .form-group input::placeholder,.form-group textarea::placeholder{color:#94a3b8}
+        .form-group select option{background:#0f172a;color:#e2e8ff}
+        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#c084fc;box-shadow:0 0 0 3px rgba(192,132,252,0.12);background:rgba(192,132,252,0.06)}
+        .form-group textarea{min-height:130px;resize:vertical}
+        .btn-submit{padding:12px 28px;border-radius:40px;background:linear-gradient(90deg,#c084fc,#06b6d4);color:#0f0f2a;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;transition:var(--tr);margin-top:.5rem}
+        .btn-submit:hover{transform:translateY(-2px);box-shadow:0 0 18px #a855f7}
+
+        /* DOCS GRID */
+        .docs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-bottom:3rem}
+        @media(max-width:900px){.docs-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.docs-grid{grid-template-columns:1fr}}
+        .doc-card{padding:1.5rem;text-align:center}
+        .doc-icon{font-size:2rem;margin-bottom:.8rem}
+        .doc-card h3{color:#e2e8ff;font-size:.95rem;font-weight:600;margin-bottom:.4rem}
+        .doc-card p{color:#94a3b8;font-size:.82rem;line-height:1.5}
+
+        /* CTA */
+        .support-cta{background:linear-gradient(135deg,#3a0ca3,#0e7490);border-radius:32px;padding:3.5rem 2rem;text-align:center;margin-bottom:3rem;position:relative;overflow:hidden}
+        .support-cta::before{content:'';position:absolute;top:-30%;right:-10%;width:50%;height:160%;background:radial-gradient(circle,rgba(255,255,255,0.06),transparent 70%)}
+        .support-cta h2{font-size:2rem;color:#fff;margin-bottom:.8rem}
+        .support-cta p{color:rgba(255,255,255,0.8);margin-bottom:1.8rem;font-size:.97rem}
+        .cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+        .btn-cta-w{padding:12px 28px;border-radius:40px;background:#fff;color:#1e1a3a;font-weight:700;font-size:.92rem;transition:var(--tr)}
+        .btn-cta-w:hover{background:#e2e8ff;transform:translateY(-2px)}
+        .btn-cta-o{padding:12px 28px;border-radius:40px;background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.6);font-weight:600;font-size:.92rem;transition:var(--tr)}
+        .btn-cta-o:hover{background:rgba(255,255,255,0.1);transform:translateY(-2px)}
+
+        /* FOOTER */
+        .footer{background:#030617;color:#fff;padding:3rem 2rem 2rem;border-top:1px solid rgba(192,132,252,0.2)}
+        .footer-container{display:grid;grid-template-columns:repeat(4,1fr);gap:3rem;max-width:1280px;margin:0 auto}
+        .footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+        .footer-desc{color:rgba(255,255,255,0.65);font-size:.88rem;line-height:1.6;margin-bottom:1.2rem}
+        .social-links{display:flex;gap:.7rem}
+        .social-links a{width:34px;height:34px;background:rgba(255,255,255,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;transition:var(--tr)}
+        .social-links a:hover{background:#c084fc;transform:translateY(-3px)}
+        .footer-column h3{font-size:1rem;margin-bottom:1rem;color:#e2e8ff}
+        .footer-column ul{list-style:none}
+        .footer-column li{margin-bottom:.5rem}
+        .footer-column a{color:rgba(255,255,255,0.65);font-size:.88rem;transition:color var(--tr)}
+        .footer-column a:hover{color:#c084fc}
+        .footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:1.5rem;margin-top:2rem;display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin-left:auto;margin-right:auto;flex-wrap:wrap;gap:1rem}
+        .footer-links{display:flex;gap:1.5rem}
+        .footer-links a{color:rgba(255,255,255,0.55);font-size:.85rem}
+        .footer-links a:hover{color:#c084fc}
+        @media(max-width:1024px){.footer-container{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.footer-container{grid-template-columns:1fr}.footer-bottom{flex-direction:column;text-align:center}}
+
+        /* TOAST */
+        .toast-container{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px}
+        .toast{background:rgba(15,25,45,0.97);backdrop-filter:blur(10px);border-radius:12px;padding:.9rem 1.4rem;box-shadow:0 10px 30px rgba(0,0,0,0.5);border-left:4px solid #c084fc;display:flex;align-items:center;gap:.9rem;min-width:260px;transform:translateX(400px);transition:transform .3s ease;border:1px solid rgba(192,132,252,0.3);border-left:4px solid #c084fc}
+        .toast.show{transform:translateX(0)}
+        .toast-icon{color:#c084fc;font-size:1.1rem}
+        .toast h4{color:#e2e8ff;font-size:.88rem;margin-bottom:.1rem}
+        .toast p{color:#94a3b8;font-size:.8rem}
+        .toast-close{margin-left:auto;background:none;color:#94a3b8;font-size:.95rem;cursor:pointer}
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                    <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z" fill="url(#g1)" opacity="0.95"/>
+                    <circle cx="42" cy="45" r="8" fill="#fff"/><path d="M30 80 C35 60,50 60,55 75" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+                    <circle cx="78" cy="45" r="8" fill="#fff"/><path d="M90 80 C85 60,70 60,65 75" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+                    <path d="M42 65 L55 78 L78 52" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="logo-text"><span class="logo-main">GetConnect</span><span class="logo-sub">.web</span></div>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                <li><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="register.html" class="btn-reg"><i class="fas fa-user-plus"></i> Register</a>
+                <div class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="support-hero">
+        <div class="hero-inner">
+            <div class="hero-badge"><i class="fas fa-headset"></i> Support Center</div>
+            <h1>How Can We Help You?</h1>
+            <p>Search our knowledge base, browse FAQs, or contact our team. We're here 24/7.</p>
+            <div class="search-wrap">
+                <input class="search-input" type="text" id="searchInput" placeholder="Search articles, guides, FAQs...">
+                <button class="btn-search" onclick="doSearch()"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-row">
+        <div class="card stat-chip"><span class="num">24/7</span><span class="lbl">Support Available</span></div>
+        <div class="card stat-chip"><span class="num">&lt;2h</span><span class="lbl">Avg Response Time</span></div>
+        <div class="card stat-chip"><span class="num">98%</span><span class="lbl">Satisfaction Rate</span></div>
+        <div class="card stat-chip"><span class="num">500+</span><span class="lbl">Help Articles</span></div>
+    </div>
+
+    <div class="page">
+
+        <!-- SUPPORT CATEGORIES -->
+        <div style="margin-bottom:2rem">
+            <div class="section-title"><i class="fas fa-th-large"></i> Browse by Category</div>
+        </div>
+        <div class="cat-grid">
+            <div class="card cat-card" onclick="showToast('Opening Getting Started guides...')">
+                <div class="cat-icon"><i class="fas fa-rocket"></i></div>
+                <h3>Getting Started</h3>
+                <p>Setup guides, onboarding, and first steps with GetConnect.</p>
+                <span class="cat-count">42 articles</span>
+            </div>
+            <div class="card cat-card" onclick="showToast('Opening API Documentation...')">
+                <div class="cat-icon"><i class="fas fa-code"></i></div>
+                <h3>API & Integration</h3>
+                <p>REST API reference, SDKs, webhooks, and code examples.</p>
+                <span class="cat-count">68 articles</span>
+            </div>
+            <div class="card cat-card" onclick="showToast('Opening Billing guides...')">
+                <div class="cat-icon"><i class="fas fa-credit-card"></i></div>
+                <h3>Billing & Plans</h3>
+                <p>Pricing, invoices, upgrades, and payment methods.</p>
+                <span class="cat-count">24 articles</span>
+            </div>
+            <div class="card cat-card" onclick="showToast('Opening Node Management guides...')">
+                <div class="cat-icon"><i class="fas fa-server"></i></div>
+                <h3>Node Management</h3>
+                <p>Adding, configuring, and monitoring compute nodes.</p>
+                <span class="cat-count">35 articles</span>
+            </div>
+            <div class="card cat-card" onclick="showToast('Opening Security guides...')">
+                <div class="cat-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Security & Privacy</h3>
+                <p>Authentication, encryption, compliance, and data handling.</p>
+                <span class="cat-count">19 articles</span>
+            </div>
+            <div class="card cat-card" onclick="showToast('Opening Troubleshooting guides...')">
+                <div class="cat-icon"><i class="fas fa-tools"></i></div>
+                <h3>Troubleshooting</h3>
+                <p>Common errors, debugging tips, and known issues.</p>
+                <span class="cat-count">51 articles</span>
+            </div>
+        </div>
+
+        <!-- MAIN LAYOUT -->
+        <div class="support-layout">
+
+            <!-- LEFT: FAQ + TICKET -->
+            <div>
+                <!-- FAQ -->
+                <div class="card" style="padding:1.8rem;margin-bottom:1.5rem">
+                    <div class="section-title"><i class="fas fa-question-circle"></i> Frequently Asked Questions</div>
+
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <div class="faq-q"><span>How do I get started with GetConnect?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-a"><p>Sign up for a free account, generate your API key from the dashboard, and install our SDK with <code style="color:#22d3ee">npm install @getconnect/sdk</code>. You can submit your first task in under 5 minutes.</p></div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <div class="faq-q"><span>What happens if a node fails during task execution?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-a"><p>Our AI load balancer automatically detects node failures and redistributes the task to a healthy node within milliseconds. You'll receive a webhook notification and the task will complete without interruption.</p></div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <div class="faq-q"><span>How is billing calculated?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-a"><p>Billing is based on compute time (CPU-seconds) and the number of tasks executed per month. Free tier includes 10,000 tasks/month. Pro and Enterprise plans offer higher limits with volume discounts.</p></div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <div class="faq-q"><span>Can I use GetConnect with my existing infrastructure?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-a"><p>Yes. GetConnect integrates with AWS, GCP, Azure, and on-premise servers. Use our REST API or SDKs (JS, Python, Java, Go) to connect your existing systems in minutes.</p></div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <div class="faq-q"><span>What SLA do you offer?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-a"><p>We guarantee 99.9% uptime on Pro plans and 99.99% on Enterprise. SLA credits are automatically applied if we fall below these thresholds.</p></div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <div class="faq-q"><span>How do I cancel my subscription?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-a"><p>You can cancel anytime from your account settings under Billing. Your plan remains active until the end of the current billing period. No cancellation fees.</p></div>
+                    </div>
+                </div>
+
+                <!-- SUBMIT TICKET -->
+                <div class="card ticket-section" style="padding:1.8rem">
+                    <div class="section-title"><i class="fas fa-ticket-alt"></i> Submit a Support Ticket</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Your Name</label>
+                            <input type="text" placeholder="[name]">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" placeholder="[email]">
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select>
+                                <option>Technical Issue</option>
+                                <option>Billing Question</option>
+                                <option>API / Integration</option>
+                                <option>Account Access</option>
+                                <option>Feature Request</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select>
+                                <option>Low</option>
+                                <option>Medium</option>
+                                <option>High</option>
+                                <option>Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top:1rem">
+                        <label>Subject</label>
+                        <input type="text" placeholder="Brief description of your issue">
+                    </div>
+                    <div class="form-group" style="margin-top:1rem">
+                        <label>Message</label>
+                        <textarea placeholder="Describe your issue in detail. Include any error messages, steps to reproduce, and your account ID if relevant."></textarea>
+                    </div>
+                    <button class="btn-submit" onclick="submitTicket()"><i class="fas fa-paper-plane"></i> Submit Ticket</button>
+                </div>
+            </div>
+
+            <!-- SIDEBAR -->
+            <aside>
+                <!-- Contact Options -->
+                <div class="card sidebar-widget">
+                    <div class="widget-title"><i class="fas fa-headset"></i> Contact Support</div>
+                    <div class="contact-option" onclick="showToast('Opening live chat...')">
+                        <div class="co-icon a"><i class="fas fa-comments"></i></div>
+                        <div><div class="co-title"><span class="status-dot"></span>Live Chat</div><div class="co-sub">Avg wait: &lt;2 min</div></div>
+                    </div>
+                    <div class="contact-option" onclick="showToast('Opening email support...')">
+                        <div class="co-icon b"><i class="fas fa-envelope"></i></div>
+                        <div><div class="co-title">Email Support</div><div class="co-sub">support@getconnect.web</div></div>
+                    </div>
+                    <div class="contact-option" onclick="showToast('Connecting to phone support...')">
+                        <div class="co-icon c"><i class="fas fa-phone"></i></div>
+                        <div><div class="co-title">Phone (Enterprise)</div><div class="co-sub">Mon–Fri, 9am–6pm EST</div></div>
+                    </div>
+                    <div class="contact-option" onclick="showToast('Opening community forum...')">
+                        <div class="co-icon d"><i class="fab fa-discord"></i></div>
+                        <div><div class="co-title">Community Discord</div><div class="co-sub">3,200+ members</div></div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="card sidebar-widget">
+                    <div class="widget-title"><i class="fas fa-heartbeat"></i> System Status</div>
+                    <div style="display:flex;flex-direction:column;gap:.6rem">
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:rgba(16,185,129,0.08);border-radius:10px;border:1px solid rgba(16,185,129,0.2)">
+                            <span style="color:#e2e8ff;font-size:.88rem">API Gateway</span><span style="color:#10b981;font-size:.8rem;font-weight:700">● Operational</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:rgba(16,185,129,0.08);border-radius:10px;border:1px solid rgba(16,185,129,0.2)">
+                            <span style="color:#e2e8ff;font-size:.88rem">Node Cluster</span><span style="color:#10b981;font-size:.8rem;font-weight:700">● Operational</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:rgba(245,158,11,0.08);border-radius:10px;border:1px solid rgba(245,158,11,0.2)">
+                            <span style="color:#e2e8ff;font-size:.88rem">Dashboard</span><span style="color:#f59e0b;font-size:.8rem;font-weight:700">● Degraded</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:rgba(16,185,129,0.08);border-radius:10px;border:1px solid rgba(16,185,129,0.2)">
+                            <span style="color:#e2e8ff;font-size:.88rem">Webhooks</span><span style="color:#10b981;font-size:.8rem;font-weight:700">● Operational</span>
+                        </div>
+                    </div>
+                    <a href="#" style="display:block;text-align:center;color:#22d3ee;font-size:.82rem;margin-top:1rem">View full status page →</a>
+                </div>
+
+                <!-- Popular Topics -->
+                <div class="card sidebar-widget">
+                    <div class="widget-title"><i class="fas fa-fire"></i> Popular Topics</div>
+                    <div class="tag-cloud">
+                        <span class="tag">API Keys</span>
+                        <span class="tag">Rate Limits</span>
+                        <span class="tag">Webhooks</span>
+                        <span class="tag">Node Setup</span>
+                        <span class="tag">Billing</span>
+                        <span class="tag">Python SDK</span>
+                        <span class="tag">Authentication</span>
+                        <span class="tag">Task Queue</span>
+                        <span class="tag">Uptime SLA</span>
+                        <span class="tag">Scaling</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- DOCS QUICK LINKS -->
+        <div style="margin-bottom:1.5rem">
+            <div class="section-title"><i class="fas fa-book-open"></i> Quick Documentation Links</div>
+        </div>
+        <div class="docs-grid">
+            <div class="card doc-card" onclick="showToast('Opening Quick Start guide...')">
+                <div class="doc-icon">🚀</div>
+                <h3>Quick Start Guide</h3>
+                <p>Up and running in 5 minutes</p>
+            </div>
+            <div class="card doc-card" onclick="showToast('Opening API Reference...')">
+                <div class="doc-icon">📖</div>
+                <h3>API Reference</h3>
+                <p>Full REST API documentation</p>
+            </div>
+            <div class="card doc-card" onclick="showToast('Opening SDK docs...')">
+                <div class="doc-icon">💻</div>
+                <h3>SDK Guides</h3>
+                <p>JS, Python, Java, Go SDKs</p>
+            </div>
+            <div class="card doc-card" onclick="showToast('Opening changelog...')">
+                <div class="doc-icon">📋</div>
+                <h3>Changelog</h3>
+                <p>Latest updates and releases</p>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="support-cta">
+            <h2>Still Need Help?</h2>
+            <p>Our support team is available 24/7. Enterprise customers get dedicated account managers and priority response.</p>
+            <div class="cta-btns">
+                <button class="btn-cta-w" onclick="showToast('Opening live chat...')"><i class="fas fa-comments"></i> Start Live Chat</button>
+                <a href="contact.html" class="btn-cta-o"><i class="fas fa-envelope"></i> Contact Us</a>
+            </div>
+        </div>
+
+    </div><!-- /page -->
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <svg width="34" height="34" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                        <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z" fill="url(#g2)" opacity="0.95"/>
+                        <circle cx="42" cy="45" r="8" fill="#fff"/><circle cx="78" cy="45" r="8" fill="#fff"/>
+                        <path d="M42 65 L55 78 L78 52" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="logo-text"><span class="logo-main">GetConnect</span><span class="logo-sub">.web</span></div>
+                </div>
+                <p class="footer-desc">AI-powered distributed task execution engine with intelligent load balancing.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Product</h3>
+                <ul>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="api-documentation.html">API Docs</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="Support.html">Support</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p style="color:rgba(255,255,255,0.55);font-size:.85rem">&copy; 2025 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+                <a href="Support.html">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Mobile nav
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            const m = document.getElementById('navMenu');
+            m.classList.toggle('active');
+            this.innerHTML = m.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Toast
+        function showToast(msg, color='#c084fc') {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.style.borderLeftColor = color;
+            t.innerHTML = `<div class="toast-icon" style="color:${color}"><i class="fas fa-headset"></i></div><div><h4>Support</h4><p>${msg}</p></div><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>`;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 3500);
+        }
+
+        // FAQ toggle
+        function toggleFaq(item) {
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        }
+
+        // Search
+        function doSearch() {
+            const q = document.getElementById('searchInput').value.trim();
+            if (q) showToast(`Searching for "${q}"...`, '#22d3ee');
+        }
+        document.getElementById('searchInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter') doSearch();
+        });
+
+        // Submit ticket
+        function submitTicket() {
+            showToast('Ticket submitted! We\'ll respond within 2 hours.', '#10b981');
+        }
+
+        setTimeout(() => showToast('Support Center ready · avg response &lt;2h'), 800);
+    </script>
+</body>
+</html>

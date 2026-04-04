@@ -1,0 +1,3227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management | GetConnect.Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="api-config.js"></script>
+    <style>
+        /* ===== CSS RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #a855f7;
+            --primary-light: #c084fc;
+            --primary-dark: #7c3aed;
+            --secondary-blue: #22d3ee;
+            --accent-blue: #67e8f9;
+            --sky-blue: rgba(192,132,252,0.15);
+            --white: #ffffff;
+            --off-white: #0a0a2a;
+            --light-gray: #0f172a;
+            --medium-gray: rgba(255,255,255,0.15);
+            --dark-gray: #94a3b8;
+            --text-dark: #e2e8ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #22d3ee;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5), 0 0 10px rgba(168,85,247,0.15);
+            --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.6), 0 0 20px rgba(168,85,247,0.2);
+            --shadow-xl: 0 20px 40px -10px rgba(0,0,0,0.7), 0 0 30px rgba(168,85,247,0.25);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #c084fc; border-radius: 8px; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+            background: radial-gradient(circle at 10% 20%, #0a0f2a, #020617);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== LOGO ANIMATIONS ===== */
+        .logo-animation svg {
+            animation: floatPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes floatPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform var(--transition-normal);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-main {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-sub {
+            font-size: 14px;
+            font-weight: 500;
+            color: #c084fc;
+            margin-top: -2px;
+        }
+
+        /* ===== HEADER & NAVBAR ===== */
+        .header {
+            background: rgba(5, 10, 30, 0.75); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(192, 132, 252, 0.3);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            padding: 0.75rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Animated Navigation Menu */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            font-weight: 500;
+            color: #e2e8ff;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+            transition: width var(--transition-normal);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: #22d3ee;
+            background-color: rgba(192,132,252,0.1);
+        }
+
+        .nav-link.active {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        .nav-link i {
+            font-size: 1.1em;
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-notification {
+            position: relative;
+            background: none;
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-notification:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-dark);
+            transform: rotate(15deg);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-login-header, .btn-register {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-login-header {
+            background-color: transparent;
+            color: #e2e8ff;
+            border: 1px solid rgba(192,132,252,0.5);
+        }
+
+        .btn-login-header:hover {
+            background-color: rgba(192,132,252,0.15);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-register {
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-register:hover {
+            box-shadow: 0 0 20px #a855f7;
+            transform: translateY(-2px);
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: #e2e8ff;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .tasks-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tasks-header {
+            margin-bottom: 2rem;
+        }
+
+        .tasks-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .tasks-title h1 {
+            font-size: 2.2rem;
+            color: #e2e8ff;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .tasks-title h1 i {
+            color: #c084fc;
+            background: rgba(168,85,247,0.15);
+            padding: 12px;
+            border-radius: 50%;
+        }
+
+        .tasks-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-danger {
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            font-weight: 700;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #e2e8ff;
+            border: 1px solid rgba(192,132,252,0.5);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background-color: rgba(192,132,252,0.1);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #34d399);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, #059669, var(--success));
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #fbbf24);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, #d97706, var(--warning));
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #f87171);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, #dc2626, var(--danger));
+        }
+
+        /* Task Filters */
+        .task-filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 25, 45, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(192,132,252,0.25);
+            margin-bottom: 2rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .filter-select, .filter-input, .filter-search {
+            padding: 9px 14px;
+            border: 1px solid rgba(192,132,252,0.3);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            transition: all var(--transition-normal);
+            background: rgba(15,25,45,0.8);
+            color: #e2e8ff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .filter-select:focus, .filter-input:focus, .filter-search:focus {
+            outline: none;
+            border-color: #c084fc;
+            box-shadow: 0 0 0 3px rgba(192,132,252,0.15);
+        }
+
+        .filter-select option { background: #0f172a; color: #e2e8ff; }
+
+        .filter-search {
+            min-width: 280px;
+            padding-left: 38px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 12px center;
+            background-size: 16px;
+        }
+
+        /* Task Stats */
+        .task-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(15, 25, 45, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            border: 1px solid rgba(192,132,252,0.25);
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-blue);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.total {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+        }
+
+        .stat-icon.running {
+            background: linear-gradient(135deg, var(--warning), #fbbf24);
+        }
+
+        .stat-icon.completed {
+            background: linear-gradient(135deg, var(--success), #34d399);
+        }
+
+        .stat-icon.failed {
+            background: linear-gradient(135deg, var(--danger), #f87171);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #e2e8ff;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        /* Main Content Grid */
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        /* Task Table */
+        .tasks-table-container {
+            background: rgba(15, 25, 45, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(192,132,252,0.25);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(192,132,252,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            font-size: 1.1rem;
+            color: #e2e8ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-header h3 i { color: #c084fc; }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .table-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(192,132,252,0.25);
+            color: #94a3b8;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .table-btn:hover {
+            background: rgba(192,132,252,0.1);
+            color: #e2e8ff;
+        }
+
+        .table-btn.active {
+            background: linear-gradient(90deg, #a855f7, #06b6d4);
+            color: #0f0f2a;
+            border-color: transparent;
+            font-weight: 700;
+        }
+
+        .tasks-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tasks-table th {
+            background: rgba(168,85,247,0.1);
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: #c084fc;
+            border-bottom: 1px solid rgba(192,132,252,0.25);
+            position: sticky;
+            top: 0;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tasks-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #e2e8ff;
+        }
+
+        .tasks-table tr {
+            transition: all var(--transition-fast);
+        }
+
+        .tasks-table tr:hover {
+            background: rgba(168,85,247,0.07);
+        }
+
+        .tasks-table tr.selected {
+            background: rgba(168,85,247,0.12);
+        }
+
+        .task-checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: #a855f7;
+            cursor: pointer;
+        }
+
+        .task-id {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-weight: 500;
+            color: #22d3ee;
+            font-size: 0.85rem;
+        }
+
+        .task-name {
+            font-weight: 500;
+            color: #e2e8ff;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .task-type {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .task-type.data {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .task-type.ml {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .task-type.analysis {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .task-type.report {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        .task-priority {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .task-priority.high {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .task-priority.medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .task-priority.low {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .task-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .task-status.running {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .task-status.completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .task-status.failed {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .task-status.queued {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--dark-gray);
+        }
+
+        .task-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 150px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.running {
+            background: linear-gradient(90deg, #a855f7, #22d3ee);
+        }
+
+        .progress-fill.completed {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        .progress-fill.failed {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+
+        .progress-text {
+            font-size: 0.82rem;
+            font-weight: 600;
+            min-width: 36px;
+            color: #94a3b8;
+        }
+
+        .task-node {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .task-node i { color: #22d3ee; }
+
+        .task-actions { display: flex; gap: 6px; }
+
+        .action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            color: #64748b;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(192,132,252,0.15);
+            color: #c084fc;
+            border-color: rgba(192,132,252,0.4);
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(239,68,68,0.15);
+            color: var(--danger);
+            border-color: rgba(239,68,68,0.4);
+        }
+
+        /* Task Details Sidebar */
+        .task-details-sidebar {
+            background: rgba(15, 25, 45, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(192,132,252,0.25);
+            overflow: hidden;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .details-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--sky-blue);
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+        }
+
+        .details-header h3 {
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .details-content {
+            padding: 1.5rem;
+        }
+
+        .task-detail {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 0.95rem;
+            color: #e2e8ff;
+            font-weight: 500;
+        }
+
+        .detail-value.code {
+            font-family: 'Monaco', 'Courier New', monospace;
+            background: var(--off-white);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--medium-gray);
+            word-break: break-all;
+        }
+
+        .detail-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 0.85rem;
+            background: rgba(168,85,247,0.08);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(192,132,252,0.2);
+        }
+
+        .metric-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #c084fc;
+            margin-bottom: 0.2rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .detail-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all var(--transition-normal);
+        }
+
+        /* New Task Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: relative;
+            background: rgba(10, 15, 35, 0.97);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(192,132,252,0.3);
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 800px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.4s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(192,132,252,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(168,85,247,0.08);
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+            color: #e2e8ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-modal {
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid rgba(192,132,252,0.3);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            transition: all var(--transition-normal);
+            background: rgba(15,25,45,0.8);
+            color: #e2e8ff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #c084fc;
+            box-shadow: 0 0 0 3px rgba(192,132,252,0.15);
+        }
+
+        .form-select option { background: #0f172a; color: #e2e8ff; }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .file-upload {
+            border: 2px dashed rgba(192,132,252,0.3);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            background: rgba(168,85,247,0.04);
+        }
+
+        .file-upload:hover {
+            border-color: #c084fc;
+            background: rgba(168,85,247,0.08);
+        }
+
+        .file-upload i {
+            font-size: 2.5rem;
+            color: #c084fc;
+            margin-bottom: 1rem;
+        }
+
+        .file-upload p { color: #94a3b8; }
+
+        .file-upload input { display: none; }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .form-checkbox input {
+            width: 16px;
+            height: 16px;
+            accent-color: #a855f7;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid rgba(192,132,252,0.2);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            background: rgba(168,85,247,0.04);
+        }
+
+        /* Task Charts */
+        .task-charts {
+            background: rgba(15, 25, 45, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(192,132,252,0.25);
+            margin-top: 2rem;
+        }
+
+        .charts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .charts-header h3 {
+            font-size: 1.1rem;
+            color: #e2e8ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .charts-header h3 i { color: #c084fc; }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .chart-wrapper {
+            height: 250px;
+            position: relative;
+        }
+
+        /* ===== TASK EXECUTION ENGINE ===== */
+        .execution-engine {
+            background: rgba(15, 25, 45, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(192,132,252,0.3);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(168,85,247,0.1);
+        }
+
+        .engine-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid rgba(192,132,252,0.2);
+            background: rgba(168,85,247,0.08);
+        }
+
+        .engine-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .engine-title i { color: #c084fc; font-size: 1.2rem; }
+        .engine-title h3 { color: #e2e8ff; font-size: 1.1rem; margin: 0; }
+
+        .engine-badge {
+            background: #10b981;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+        .engine-controls { display: flex; gap: 0.75rem; }
+
+        .engine-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .engine-btn.run { background: linear-gradient(90deg,#a855f7,#06b6d4); color: #0f0f2a; }
+        .engine-btn.run:hover { box-shadow: 0 0 14px #a855f7; transform: translateY(-1px); }
+        .engine-btn.stop { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.4); }
+        .engine-btn.stop:hover:not(:disabled) { background: rgba(239,68,68,0.3); }
+        .engine-btn.reset { background: rgba(255,255,255,0.08); color: #94a3b8; border: 1px solid rgba(255,255,255,0.15); }
+        .engine-btn.reset:hover { background: rgba(255,255,255,0.15); color: #e2e8ff; }
+        .engine-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .engine-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+        /* Pipeline */
+        .pipeline-section { background: rgba(0,0,0,0.25); border-radius: var(--radius-lg); padding: 1.2rem; }
+        .pipeline-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+
+        .pipeline-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .pipeline-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .stage-icon {
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            border: 2px solid rgba(192,132,252,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: #94a3b8;
+            transition: all 0.4s;
+        }
+
+        .pipeline-stage.active .stage-icon {
+            background: rgba(168,85,247,0.2);
+            border-color: #c084fc;
+            color: #c084fc;
+            box-shadow: 0 0 16px rgba(168,85,247,0.5);
+            animation: stagePulse 1s ease-in-out infinite;
+        }
+
+        .pipeline-stage.done .stage-icon {
+            background: rgba(16,185,129,0.2);
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        @keyframes stagePulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+        .stage-name { font-size: 0.75rem; color: #94a3b8; font-weight: 500; }
+        .pipeline-stage.active .stage-name { color: #c084fc; }
+        .pipeline-stage.done .stage-name { color: #10b981; }
+
+        .stage-status {
+            font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+            border-radius: 20px; text-transform: uppercase;
+        }
+        .stage-status.idle { background: rgba(255,255,255,0.06); color: #64748b; }
+        .stage-status.running { background: rgba(168,85,247,0.2); color: #c084fc; }
+        .stage-status.done { background: rgba(16,185,129,0.2); color: #10b981; }
+
+        .pipeline-arrow { color: rgba(192,132,252,0.4); font-size: 1rem; flex-shrink: 0; }
+
+        /* Engine Grid */
+        .engine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+        .nodes-panel, .terminal-panel {
+            background: rgba(0,0,0,0.3);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255,255,255,0.07);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-header i { color: #c084fc; }
+
+        .clear-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+        .clear-btn:hover { color: #ef4444; }
+
+        /* Nodes Grid */
+        .nodes-grid-exec {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            padding: 1rem;
+        }
+
+        .exec-node {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(192,132,252,0.2);
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .exec-node.active {
+            border-color: #c084fc;
+            background: rgba(168,85,247,0.12);
+            box-shadow: 0 0 12px rgba(168,85,247,0.3);
+        }
+
+        .exec-node.busy {
+            border-color: #22d3ee;
+            background: rgba(34,211,238,0.08);
+        }
+
+        .exec-node-icon { font-size: 1.1rem; color: #64748b; margin-bottom: 4px; }
+        .exec-node.active .exec-node-icon { color: #c084fc; }
+        .exec-node.busy .exec-node-icon { color: #22d3ee; }
+
+        .exec-node-name { font-size: 0.7rem; color: #94a3b8; font-weight: 600; margin-bottom: 6px; }
+
+        .exec-node-bar {
+            height: 4px; background: rgba(255,255,255,0.08);
+            border-radius: 2px; overflow: hidden; margin-bottom: 4px;
+        }
+
+        .exec-node-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #22d3ee);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        .exec-node-cpu { font-size: 0.65rem; color: #64748b; font-weight: 600; }
+        .exec-node.active .exec-node-cpu { color: #c084fc; }
+        .exec-node.busy .exec-node-cpu { color: #22d3ee; }
+
+        .ai-decision {
+            margin: 0 1rem 1rem;
+            padding: 0.6rem 1rem;
+            background: rgba(168,85,247,0.1);
+            border: 1px solid rgba(192,132,252,0.3);
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Terminal */
+        .terminal-body {
+            padding: 1rem;
+            height: 220px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.78rem;
+            line-height: 1.7;
+        }
+
+        .terminal-body::-webkit-scrollbar { width: 4px; }
+        .terminal-body::-webkit-scrollbar-track { background: transparent; }
+        .terminal-body::-webkit-scrollbar-thumb { background: rgba(192,132,252,0.3); border-radius: 4px; }
+
+        .term-line { color: #e2e8ff; }
+        .term-line.dim { color: #475569; }
+        .term-line.success { color: #10b981; }
+        .term-line.warn { color: #f59e0b; }
+        .term-line.error { color: #ef4444; }
+        .term-line.info { color: #22d3ee; }
+        .term-line.purple { color: #c084fc; }
+        .term-line::before { content: '> '; color: #a855f7; }
+        .term-line.dim::before { color: #334155; }
+
+        /* Live Metrics */
+        .live-metrics {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            background: rgba(0,0,0,0.25);
+            border-radius: var(--radius-lg);
+            padding: 1rem 1.5rem;
+        }
+
+        .live-metric { text-align: center; }
+
+        .lm-label {
+            display: block;
+            font-size: 0.72rem;
+            color: #64748b;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .lm-label i { color: #a855f7; }
+
+        .lm-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #e2e8ff;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .lm-value.success { color: #10b981; }
+
+        @media (max-width: 992px) {
+            .engine-grid { grid-template-columns: 1fr; }
+            .live-metrics { grid-template-columns: repeat(3, 1fr); }
+            .pipeline-flow { justify-content: flex-start; }
+        }
+
+        @media (max-width: 576px) {
+            .live-metrics { grid-template-columns: repeat(2, 1fr); }
+            .nodes-grid-exec { grid-template-columns: repeat(2, 1fr); }
+            .engine-controls { flex-wrap: wrap; }
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(192,132,252,0.15);
+        }
+
+        .page-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(192,132,252,0.2);
+            color: #94a3b8;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .page-btn:hover { background: rgba(192,132,252,0.1); color: #e2e8ff; }
+
+        .page-btn.active {
+            background: linear-gradient(90deg, #a855f7, #06b6d4);
+            color: #0f0f2a;
+            border-color: transparent;
+            font-weight: 700;
+        }
+
+        .page-btn.disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 3rem 2rem 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo .logo-main {
+            color: white;
+        }
+
+        .footer-logo .logo-sub {
+            color: var(--secondary-blue);
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all var(--transition-normal);
+        }
+
+        .social-links a:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+        }
+
+        .footer-column h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: color var(--transition-fast);
+        }
+
+        .footer-column a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .tasks-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .task-details-sidebar {
+                position: static;
+                margin-top: 2rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .task-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .nav-actions .btn-login-header,
+            .nav-actions .btn-register {
+                display: none;
+            }
+            
+            .tasks-title {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .tasks-controls {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            .task-filters {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-search {
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .tasks-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tasks-container {
+                padding: 1rem;
+            }
+            
+            .task-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .table-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- New Task Modal -->
+    <div id="newTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Create New Task</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Task Name</label>
+                            <input type="text" class="form-input" placeholder="Enter task name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Task Type</label>
+                            <select class="form-select" required>
+                                <option value="">Select type</option>
+                                <option value="data">Data Processing</option>
+                                <option value="ml">Machine Learning</option>
+                                <option value="analysis">Data Analysis</option>
+                                <option value="report">Report Generation</option>
+                                <option value="etl">ETL Pipeline</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Priority</label>
+                            <select class="form-select" required>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Node Assignment</label>
+                            <select class="form-select">
+                                <option value="">Auto-assign (AI Recommended)</option>
+                                <option value="node-1">Node-1</option>
+                                <option value="node-2">Node-2</option>
+                                <option value="node-3">Node-3</option>
+                                <option value="node-4">Node-4</option>
+                                <option value="node-5">Node-5</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Task Description</label>
+                            <textarea class="form-textarea" placeholder="Describe the task requirements..." rows="3"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Task Configuration (JSON)</label>
+                            <textarea class="form-textarea" placeholder='{"params": {"batch_size": 100, "iterations": 1000}}' rows="4"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Input Data</label>
+                            <div class="file-upload" id="fileUpload">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & drop files or click to browse</p>
+                                <p class="detail-value" style="font-size: 0.9rem; margin-top: 0.5rem;">Supports .csv, .json, .txt, .zip</p>
+                                <input type="file" multiple>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-checkbox">
+                                <input type="checkbox" checked>
+                                <span>Send email notification on completion</span>
+                            </label>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-checkbox">
+                                <input type="checkbox">
+                                <span>Enable retry on failure (max 3 attempts)</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancelTaskBtn">Cancel</button>
+                <button type="submit" class="btn-primary" id="submitTaskBtn">Create Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header with Animated Navbar -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <!-- Logo with Animation -->
+                <a href="index.html" class="logo">
+                    <div class="logo-animation">
+                        <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </a>
+
+                <!-- Animated Menu -->
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a href="tasks.html" class="nav-link active"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li class="nav-item"><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                    <li class="nav-item"><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+                </ul>
+
+                <!-- Right Side Actions -->
+                <div class="nav-actions">
+                    <button class="btn-notification" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">2</span>
+                    </button>
+                    <button class="btn-login-header" id="loginBtn">
+                        <i class="fas fa-user"></i> John Doe
+                    </button>
+                    <button class="btn-danger" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                    <div class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Tasks Content -->
+    <main class="tasks-container">
+        <!-- Tasks Header -->
+        <div class="tasks-header">
+            <div class="tasks-title">
+                <h1><i class="fas fa-tasks"></i> Task Management</h1>
+                <div class="tasks-controls">
+                    <button class="btn-primary" id="newTaskBtn">
+                        <i class="fas fa-plus"></i> New Task
+                    </button>
+                    <button class="btn-success" id="batchRunBtn">
+                        <i class="fas fa-play-circle"></i> Run Batch
+                    </button>
+                    <button class="btn-warning" id="pauseTasksBtn">
+                        <i class="fas fa-pause"></i> Pause All
+                    </button>
+                    <button class="btn-danger" id="deleteTasksBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                    <button class="btn-secondary" id="exportTasksBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Task Filters -->
+            <div class="task-filters">
+                <div class="filter-group">
+                    <span class="filter-label"><i class="fas fa-filter"></i> Filters</span>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="running">Running</option>
+                        <option value="completed">Completed</option>
+                        <option value="failed">Failed</option>
+                        <option value="queued">Queued</option>
+                    </select>
+                    <select class="filter-select" id="typeFilter">
+                        <option value="">All Types</option>
+                        <option value="data">Data Processing</option>
+                        <option value="ml">Machine Learning</option>
+                        <option value="analysis">Data Analysis</option>
+                        <option value="report">Report Generation</option>
+                    </select>
+                    <select class="filter-select" id="priorityFilter">
+                        <option value="">All Priorities</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <input type="text" class="filter-search" id="taskSearch" placeholder="Search tasks by name or ID...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Statistics -->
+        <div class="task-stats">
+            <div class="stat-card">
+                <div class="stat-icon total">
+                    <i class="fas fa-list-alt"></i>
+                </div>
+                <div class="stat-value" id="totalTasks">1,248</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon running">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div class="stat-value" id="runningTasks">156</div>
+                <div class="stat-label">Running</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon completed">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-value" id="completedTasks">1,042</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon failed">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="stat-value" id="failedTasks">50</div>
+                <div class="stat-label">Failed</div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="tasks-grid">
+            <!-- Tasks Table -->
+            <div class="tasks-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-table"></i> Task List</h3>
+                    <div class="table-actions">
+                        <button class="table-btn active" data-view="all">
+                            <i class="fas fa-th-list"></i> All
+                        </button>
+                        <button class="table-btn" data-view="my">
+                            <i class="fas fa-user"></i> My Tasks
+                        </button>
+                        <button class="table-btn" data-view="recent">
+                            <i class="fas fa-clock"></i> Recent
+                        </button>
+                    </div>
+                </div>
+                <table class="tasks-table" id="tasksTable">
+                    <thead>
+                        <tr>
+                            <th width="50">
+                                <input type="checkbox" id="selectAllCheckbox">
+                            </th>
+                            <th>Task ID</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                            <th>Node</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Task rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <button class="page-btn disabled">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">4</button>
+                    <button class="page-btn">5</button>
+                    <button class="page-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Task Details Sidebar -->
+            <div class="task-details-sidebar" id="taskDetails">
+                <div class="details-header">
+                    <h3><i class="fas fa-info-circle"></i> Task Details</h3>
+                </div>
+                <div class="details-content">
+                    <div class="task-detail">
+                        <div class="detail-label">Task ID</div>
+                        <div class="detail-value code">#TASK-8934</div>
+                    </div>
+                    <div class="task-detail">
+                        <div class="detail-label">Task Name</div>
+                        <div class="detail-value">ML Model Training - Customer Segmentation</div>
+                    </div>
+                    <div class="task-detail">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-badge task-status running">Running</div>
+                    </div>
+                    <div class="task-detail">
+                        <div class="detail-label">Type</div>
+                        <div class="detail-badge task-type ml">Machine Learning</div>
+                    </div>
+                    <div class="task-detail">
+                        <div class="detail-label">Priority</div>
+                        <div class="detail-badge task-priority high">High</div>
+                    </div>
+                    <div class="task-detail">
+                        <div class="detail-label">Assigned Node</div>
+                        <div class="detail-value">
+                            <i class="fas fa-server"></i> Node-7
+                        </div>
+                    </div>
+                    <div class="task-detail">
+                        <div class="detail-label">Created</div>
+                        <div class="detail-value">2024-01-15 14:30:00</div>
+                    </div>
+                    <div class="task-detail">
+                        <div class="detail-label">Started</div>
+                        <div class="detail-value">2024-01-15 14:32:15</div>
+                    </div>
+                    <div class="task-detail">
+                        <div class="detail-label">Estimated Completion</div>
+                        <div class="detail-value">2024-01-15 15:15:00</div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-value">75%</div>
+                            <div class="metric-label">Progress</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value">15m</div>
+                            <div class="metric-label">Elapsed Time</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value">4.2 GB</div>
+                            <div class="metric-label">Memory Used</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value">68%</div>
+                            <div class="metric-label">CPU Usage</div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-detail">
+                        <div class="detail-label">Input Files</div>
+                        <div class="detail-value">customer_data.csv (2.4 GB)</div>
+                    </div>
+                    
+                    <div class="task-detail">
+                        <div class="detail-label">Description</div>
+                        <div class="detail-value">Training clustering model for customer segmentation using K-Means algorithm with 1000 iterations.</div>
+                    </div>
+                    
+                    <div class="detail-actions">
+                        <button class="detail-btn btn-primary">
+                            <i class="fas fa-play"></i> Resume
+                        </button>
+                        <button class="detail-btn btn-warning">
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        <button class="detail-btn btn-danger">
+                            <i class="fas fa-stop"></i> Stop
+                        </button>
+                        <button class="detail-btn btn-secondary">
+                            <i class="fas fa-chart-line"></i> View Logs
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Execution Engine - Live Visualizer -->
+        <div class="execution-engine" id="executionEngine">
+            <div class="engine-header">
+                <div class="engine-title">
+                    <i class="fas fa-microchip"></i>
+                    <h3>Live Task Execution Engine</h3>
+                    <span class="engine-badge">LIVE</span>
+                </div>
+                <div class="engine-controls">
+                    <button class="engine-btn run" id="runEngineBtn"><i class="fas fa-play"></i> Run Simulation</button>
+                    <button class="engine-btn stop" id="stopEngineBtn" disabled><i class="fas fa-stop"></i> Stop</button>
+                    <button class="engine-btn reset" id="resetEngineBtn"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+            </div>
+
+            <div class="engine-body">
+                <!-- Pipeline Flow -->
+                <div class="pipeline-section">
+                    <div class="pipeline-label">Execution Pipeline</div>
+                    <div class="pipeline-flow">
+                        <div class="pipeline-stage" id="stage-submit">
+                            <div class="stage-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <div class="stage-name">Submit</div>
+                            <div class="stage-status idle">Idle</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+                        <div class="pipeline-stage" id="stage-analyze">
+                            <div class="stage-icon"><i class="fas fa-brain"></i></div>
+                            <div class="stage-name">AI Analyze</div>
+                            <div class="stage-status idle">Idle</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+                        <div class="pipeline-stage" id="stage-route">
+                            <div class="stage-icon"><i class="fas fa-route"></i></div>
+                            <div class="stage-name">Route</div>
+                            <div class="stage-status idle">Idle</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+                        <div class="pipeline-stage" id="stage-execute">
+                            <div class="stage-icon"><i class="fas fa-cogs"></i></div>
+                            <div class="stage-name">Execute</div>
+                            <div class="stage-status idle">Idle</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+                        <div class="pipeline-stage" id="stage-complete">
+                            <div class="stage-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="stage-name">Complete</div>
+                            <div class="stage-status idle">Idle</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="engine-grid">
+                    <!-- Node Grid -->
+                    <div class="nodes-panel">
+                        <div class="panel-header"><i class="fas fa-server"></i> Distributed Nodes</div>
+                        <div class="nodes-grid-exec" id="nodesGrid">
+                            <div class="exec-node" id="exec-node-1" data-node="1">
+                                <div class="exec-node-icon"><i class="fas fa-server"></i></div>
+                                <div class="exec-node-name">Node-1</div>
+                                <div class="exec-node-bar"><div class="exec-node-fill" style="width:0%"></div></div>
+                                <div class="exec-node-cpu">0%</div>
+                            </div>
+                            <div class="exec-node" id="exec-node-2" data-node="2">
+                                <div class="exec-node-icon"><i class="fas fa-server"></i></div>
+                                <div class="exec-node-name">Node-2</div>
+                                <div class="exec-node-bar"><div class="exec-node-fill" style="width:0%"></div></div>
+                                <div class="exec-node-cpu">0%</div>
+                            </div>
+                            <div class="exec-node" id="exec-node-3" data-node="3">
+                                <div class="exec-node-icon"><i class="fas fa-server"></i></div>
+                                <div class="exec-node-name">Node-3</div>
+                                <div class="exec-node-bar"><div class="exec-node-fill" style="width:0%"></div></div>
+                                <div class="exec-node-cpu">0%</div>
+                            </div>
+                            <div class="exec-node" id="exec-node-4" data-node="4">
+                                <div class="exec-node-icon"><i class="fas fa-server"></i></div>
+                                <div class="exec-node-name">Node-4</div>
+                                <div class="exec-node-bar"><div class="exec-node-fill" style="width:0%"></div></div>
+                                <div class="exec-node-cpu">0%</div>
+                            </div>
+                            <div class="exec-node" id="exec-node-5" data-node="5">
+                                <div class="exec-node-icon"><i class="fas fa-server"></i></div>
+                                <div class="exec-node-name">Node-5</div>
+                                <div class="exec-node-bar"><div class="exec-node-fill" style="width:0%"></div></div>
+                                <div class="exec-node-cpu">0%</div>
+                            </div>
+                            <div class="exec-node" id="exec-node-6" data-node="6">
+                                <div class="exec-node-icon"><i class="fas fa-server"></i></div>
+                                <div class="exec-node-name">Node-6</div>
+                                <div class="exec-node-bar"><div class="exec-node-fill" style="width:0%"></div></div>
+                                <div class="exec-node-cpu">0%</div>
+                            </div>
+                        </div>
+                        <div class="ai-decision" id="aiDecision">
+                            <i class="fas fa-robot"></i>
+                            <span id="aiDecisionText">AI Balancer: Waiting for task...</span>
+                        </div>
+                    </div>
+
+                    <!-- Terminal -->
+                    <div class="terminal-panel">
+                        <div class="panel-header">
+                            <i class="fas fa-terminal"></i> Execution Log
+                            <button class="clear-btn" id="clearTerminal"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                        <div class="terminal-body" id="terminalBody">
+                            <div class="term-line dim">GetConnect Task Execution Engine v4.0</div>
+                            <div class="term-line dim">Ready. Press "Run Simulation" to start.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Metrics Bar -->
+                <div class="live-metrics">
+                    <div class="live-metric">
+                        <span class="lm-label"><i class="fas fa-tasks"></i> Tasks Processed</span>
+                        <span class="lm-value" id="lmProcessed">0</span>
+                    </div>
+                    <div class="live-metric">
+                        <span class="lm-label"><i class="fas fa-bolt"></i> Throughput</span>
+                        <span class="lm-value" id="lmThroughput">0/s</span>
+                    </div>
+                    <div class="live-metric">
+                        <span class="lm-label"><i class="fas fa-clock"></i> Avg Latency</span>
+                        <span class="lm-value" id="lmLatency">0ms</span>
+                    </div>
+                    <div class="live-metric">
+                        <span class="lm-label"><i class="fas fa-microchip"></i> Avg CPU</span>
+                        <span class="lm-value" id="lmCpu">0%</span>
+                    </div>
+                    <div class="live-metric">
+                        <span class="lm-label"><i class="fas fa-check-double"></i> Success Rate</span>
+                        <span class="lm-value success" id="lmSuccess">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Charts -->
+        <div class="task-charts">
+            <div class="charts-header">
+                <h3><i class="fas fa-chart-bar"></i> Task Analytics</h3>
+                <select class="filter-select" style="width: auto;">
+                    <option>Last 7 days</option>
+                    <option>Last 30 days</option>
+                    <option>Last quarter</option>
+                </select>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-wrapper">
+                    <canvas id="tasksOverTimeChart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="taskTypesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <div class="logo-animation">
+                        <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </div>
+                <p class="footer-description">
+                    AI-powered distributed task execution engine with intelligent load balancing for modern computing needs. Scalable, secure, and efficient.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Product</h3>
+                <ul>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="api.html">API Documentation</a></li>
+                    <li><a href="tasks.html">Task Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="partners.html">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="docs.html">Documentation</a></li>
+                    <li><a href="tutorials.html">Tutorials</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="status.html">System Status</a></li>
+                    <li><a href="community.html">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="security.html">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // ===== DOM ELEMENT REFERENCES =====
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.querySelector('.nav-menu');
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationCount = document.querySelector('.notification-count');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const newTaskBtn = document.getElementById('newTaskBtn');
+        const newTaskModal = document.getElementById('newTaskModal');
+        const closeModal = document.querySelector('.close-modal');
+        const cancelTaskBtn = document.getElementById('cancelTaskBtn');
+        const submitTaskBtn = document.getElementById('submitTaskBtn');
+        const batchRunBtn = document.getElementById('batchRunBtn');
+        const pauseTasksBtn = document.getElementById('pauseTasksBtn');
+        const deleteTasksBtn = document.getElementById('deleteTasksBtn');
+        const exportTasksBtn = document.getElementById('exportTasksBtn');
+        const fileUpload = document.getElementById('fileUpload');
+        const tasksTable = document.getElementById('tasksTable');
+        const taskDetails = document.getElementById('taskDetails');
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const tableBtns = document.querySelectorAll('.table-btn');
+        const filterSelects = document.querySelectorAll('.filter-select');
+        const taskSearch = document.getElementById('taskSearch');
+
+        // ===== LIVE TASK DATA FROM API =====
+        let liveTasks = []; // populated from backend
+
+        function normaliseTask(t) {
+            const st = (t.status||'PENDING').toLowerCase();
+            const stMap = {pending:'queued',assigned:'running',running:'running',completed:'completed',failed:'failed',cancelled:'failed'};
+            const tyMap = {'synthetic_load':'data','ml':'ml','analysis':'analysis','report':'report','data':'data'};
+            return {
+                id: t.id || '',
+                name: t.type ? `${t.type.replace(/_/g,' ')} #${(t.id||'').slice(-6)}` : 'Task',
+                type: tyMap[t.type] || 'data',
+                typeLabel: (t.type||'Task').replace(/_/g,' ').replace(/\b\w/g, c=>c.toUpperCase()),
+                priority: t.priority || 'medium',
+                status: stMap[st] || 'queued',
+                progress: st === 'completed' ? 100 : st === 'running' || st === 'assigned' ? 55 : st === 'failed' ? 100 : 0,
+                node: t.assigned_node || null,
+                created: t.created_at ? new Date(t.created_at).toLocaleString() : '—',
+                description: `Type: ${t.type||'?'} | Priority: ${t.priority||'?'} | Input: ${t.input_size||0} bytes`
+            };
+        }
+
+        async function loadTasksFromAPI() {
+            try {
+                const result = await apiGetTasks();
+                liveTasks = (result.tasks||[]).map(normaliseTask);
+                renderTasksTable(liveTasks);
+                updateTaskStats();
+            } catch(e) {
+                console.warn('Tasks API failed:', e);
+            }
+        }
+
+        // ===== NOTIFICATION SYSTEM =====
+        let notificationCounter = 2;
+
+        function updateNotificationCount(count) {
+            notificationCounter = count;
+            notificationCount.textContent = count;
+            
+            if (count > 0) {
+                notificationCount.style.display = 'flex';
+            } else {
+                notificationCount.style.display = 'none';
+            }
+        }
+
+        notificationBtn.addEventListener('click', () => {
+            showToastMsg('Notifications', 'Cluster monitoring active · check dashboard for alerts', '#f59e0b');
+            updateNotificationCount(0);
+        });
+
+        // ===== MOBILE MENU TOGGLE =====
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileToggle.innerHTML = navMenu.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-container') && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // ===== LOGOUT FUNCTIONALITY =====
+        logoutBtn.addEventListener('click', () => {
+            apiLogout();
+        });
+
+        // ===== MODAL MANAGEMENT =====
+        function openModal() {
+            newTaskModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModalFunc() {
+            newTaskModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        newTaskBtn.addEventListener('click', openModal);
+        closeModal.addEventListener('click', closeModalFunc);
+        cancelTaskBtn.addEventListener('click', closeModalFunc);
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === newTaskModal) {
+                closeModalFunc();
+            }
+        });
+
+        // ===== FILE UPLOAD =====
+        fileUpload.addEventListener('click', () => {
+            fileUpload.querySelector('input').click();
+        });
+
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.style.borderColor = 'var(--primary-blue)';
+            fileUpload.style.background = 'rgba(37, 99, 235, 0.05)';
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.style.borderColor = 'var(--medium-gray)';
+            fileUpload.style.background = '';
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.style.borderColor = 'var(--primary-blue)';
+            fileUpload.style.background = 'rgba(37, 99, 235, 0.05)';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                alert(`Added ${files.length} file(s) to upload queue.`);
+            }
+        });
+
+        // ===== TASK TABLE MANAGEMENT =====
+        function renderTasksTable(tasks) {
+            const tbody = tasksTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            tasks.forEach((task, index) => {
+                const row = document.createElement('tr');
+                row.dataset.taskId = task.id;
+                
+                row.innerHTML = `
+                    <td>
+                        <input type="checkbox" class="task-checkbox" data-task-id="${task.id}">
+                    </td>
+                    <td class="task-id">#${task.id}</td>
+                    <td>
+                        <div class="task-name" title="${task.name}">${task.name}</div>
+                    </td>
+                    <td>
+                        <span class="task-type ${task.type}">${task.typeLabel}</span>
+                    </td>
+                    <td>
+                        <span class="task-priority ${task.priority}">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
+                    </td>
+                    <td>
+                        <span class="task-status ${task.status}">${task.status.charAt(0).toUpperCase() + task.status.slice(1)}</span>
+                    </td>
+                    <td>
+                        <div class="task-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill ${task.status}" style="width: ${task.progress}%"></div>
+                            </div>
+                            <span class="progress-text">${task.progress}%</span>
+                        </div>
+                    </td>
+                    <td>
+                        ${task.node ? `
+                            <div class="task-node">
+                                <i class="fas fa-server"></i>
+                                <span>${task.node}</span>
+                            </div>
+                        ` : '—'}
+                    </td>
+                    <td>
+                        <div class="task-actions">
+                            <button class="action-btn view-btn" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn edit-btn" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete-btn" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+                
+                // Add click event for view button
+                row.querySelector('.view-btn').addEventListener('click', () => {
+                    showTaskDetails(task);
+                });
+                
+                // Add click event for edit button
+                row.querySelector('.edit-btn').addEventListener('click', () => {
+                    editTask(task);
+                });
+                
+                // Add click event for delete button
+                row.querySelector('.delete-btn').addEventListener('click', () => {
+                    deleteTask(task.id);
+                });
+                
+                // Add row click event for selection
+                row.addEventListener('click', (e) => {
+                    if (!e.target.closest('.task-actions') && !e.target.closest('input')) {
+                        const checkbox = row.querySelector('.task-checkbox');
+                        checkbox.checked = !checkbox.checked;
+                        updateSelectedTasks();
+                    }
+                });
+            });
+            
+            updateSelectedTasks();
+        }
+
+        function showTaskDetails(task) {
+            // Scroll to details sidebar
+            taskDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Update details content
+            const detailsContent = taskDetails.querySelector('.details-content');
+            detailsContent.innerHTML = `
+                <div class="task-detail">
+                    <div class="detail-label">Task ID</div>
+                    <div class="detail-value code">#${task.id}</div>
+                </div>
+                <div class="task-detail">
+                    <div class="detail-label">Task Name</div>
+                    <div class="detail-value">${task.name}</div>
+                </div>
+                <div class="task-detail">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-badge task-status ${task.status}">${task.status.charAt(0).toUpperCase() + task.status.slice(1)}</div>
+                </div>
+                <div class="task-detail">
+                    <div class="detail-label">Type</div>
+                    <div class="detail-badge task-type ${task.type}">${task.typeLabel}</div>
+                </div>
+                <div class="task-detail">
+                    <div class="detail-label">Priority</div>
+                    <div class="detail-badge task-priority ${task.priority}">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</div>
+                </div>
+                <div class="task-detail">
+                    <div class="detail-label">Assigned Node</div>
+                    <div class="detail-value">
+                        ${task.node ? `<i class="fas fa-server"></i> ${task.node}` : 'Not assigned yet'}
+                    </div>
+                </div>
+                <div class="task-detail">
+                    <div class="detail-label">Created</div>
+                    <div class="detail-value">${task.created}</div>
+                </div>
+                ${task.started ? `
+                <div class="task-detail">
+                    <div class="detail-label">Started</div>
+                    <div class="detail-value">${task.started}</div>
+                </div>
+                ` : ''}
+                ${task.completed ? `
+                <div class="task-detail">
+                    <div class="detail-label">Completed</div>
+                    <div class="detail-value">${task.completed}</div>
+                </div>
+                ` : ''}
+                ${task.failed ? `
+                <div class="task-detail">
+                    <div class="detail-label">Failed</div>
+                    <div class="detail-value">${task.failed}</div>
+                </div>
+                ` : ''}
+                
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-value">${task.progress}%</div>
+                        <div class="metric-label">Progress</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">${task.status === 'running' ? '15m' : '—'}</div>
+                        <div class="metric-label">Elapsed Time</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">${task.status === 'running' ? '4.2 GB' : '—'}</div>
+                        <div class="metric-label">Memory Used</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">${task.status === 'running' ? '68%' : '—'}</div>
+                        <div class="metric-label">CPU Usage</div>
+                    </div>
+                </div>
+                
+                <div class="task-detail">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-value">${task.description}</div>
+                </div>
+                
+                <div class="detail-actions">
+                    ${task.status === 'running' ? `
+                        <button class="detail-btn btn-warning" onclick="pauseTask('${task.id}')">
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        <button class="detail-btn btn-danger" onclick="stopTask('${task.id}')">
+                            <i class="fas fa-stop"></i> Stop
+                        </button>
+                    ` : task.status === 'queued' ? `
+                        <button class="detail-btn btn-success" onclick="startTask('${task.id}')">
+                            <i class="fas fa-play"></i> Start Now
+                        </button>
+                        <button class="detail-btn btn-danger" onclick="deleteTask('${task.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    ` : `
+                        <button class="detail-btn btn-primary" onclick="retryTask('${task.id}')">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                        <button class="detail-btn btn-secondary" onclick="viewLogs('${task.id}')">
+                            <i class="fas fa-chart-line"></i> View Logs
+                        </button>
+                    `}
+                </div>
+            `;
+            
+            // Highlight selected row
+            document.querySelectorAll('#tasksTable tbody tr').forEach(row => {
+                row.classList.remove('selected');
+                if (row.dataset.taskId === task.id) {
+                    row.classList.add('selected');
+                }
+            });
+        }
+
+        function editTask(task) {
+            openModal();
+            // Pre-fill type and priority
+            const typeSelect = document.querySelector('#taskForm select');
+            const nameInput = document.querySelector('#taskForm input');
+            if (nameInput) nameInput.value = task.name || '';
+            if (typeSelect) typeSelect.value = task.type || 'data';
+        }
+
+        async function deleteTask(taskId) {
+            if (!confirm(`Cancel/delete task #${taskId}?`)) return;
+            try {
+                await apiCancelTask(taskId);
+                showToastMsg('Task Cancelled', `Task #${taskId.slice(-6)} cancelled`, '#ef4444');
+                await loadTasksFromAPI();
+            } catch(e) {
+                showToastMsg('Error', e.detail || 'Failed to cancel task', '#ef4444');
+            }
+        }
+
+        window.pauseTask = async function(taskId) {
+            try {
+                await apiCancelTask(taskId);
+                showToastMsg('Task Cancelled', `Task #${taskId.slice(-6)} stopped`, '#f59e0b');
+                await loadTasksFromAPI();
+            } catch(e) {
+                showToastMsg('Error', e.detail || 'Failed to stop task', '#ef4444');
+            }
+        };
+
+        window.stopTask = window.pauseTask;
+
+        window.startTask = async function(taskId) {
+            showToastMsg('Info', 'Queued tasks are automatically picked up by the scheduler', '#22d3ee');
+        };
+
+        window.retryTask = async function(taskId) {
+            try {
+                // create a new task of same type
+                const original = liveTasks.find(t => t.id === taskId);
+                await apiCreateTask({ type: original ? original.typeLabel.toLowerCase().replace(/ /g,'_') : 'synthetic_load', priority: original?.priority || 'medium', input_size: 100 });
+                showToastMsg('Task Retried', 'New task queued in cluster', '#10b981');
+                await loadTasksFromAPI();
+            } catch(e) {
+                showToastMsg('Error', e.detail || 'Retry failed', '#ef4444');
+            }
+        };
+
+        window.viewLogs = function(taskId) {
+            showToastMsg('Logs', `Task #${taskId.slice(-6)} · check cluster console for execution logs`, '#c084fc');
+        };
+
+        // ===== SELECT ALL CHECKBOX =====
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateSelectedTasks();
+        });
+
+        function updateSelectedTasks() {
+            const selectedCount = document.querySelectorAll('.task-checkbox:checked').length;
+            deleteTasksBtn.innerHTML = `<i class="fas fa-trash"></i> Delete Selected (${selectedCount})`;
+            deleteTasksBtn.disabled = selectedCount === 0;
+        }
+
+        // ===== FILTERING AND SEARCH =====
+        function filterTasks() {
+            const status = document.getElementById('statusFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const priority = document.getElementById('priorityFilter').value;
+            const search = document.getElementById('taskSearch').value.toLowerCase();
+            const filtered = liveTasks.filter(task => {
+                if (status && task.status !== status) return false;
+                if (type && task.type !== type) return false;
+                if (priority && task.priority !== priority) return false;
+                if (search && !task.name.toLowerCase().includes(search) && !task.id.toLowerCase().includes(search)) return false;
+                return true;
+            });
+            renderTasksTable(filtered);
+        }
+
+        filterSelects.forEach(select => {
+            select.addEventListener('change', filterTasks);
+        });
+
+        taskSearch.addEventListener('input', filterTasks);
+
+        // ===== TABLE VIEW BUTTONS =====
+        tableBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tableBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const view = this.dataset.view;
+                let filtered = liveTasks;
+                if (view === 'my') filtered = liveTasks.slice(0, 3);
+                else if (view === 'recent') filtered = liveTasks.slice(0, 5);
+                renderTasksTable(filtered);
+            });
+        });
+
+        // ===== TASK STATS UPDATE =====
+        function updateTaskStats() {
+            document.getElementById('totalTasks').textContent = liveTasks.length.toLocaleString();
+            document.getElementById('runningTasks').textContent = liveTasks.filter(t => t.status === 'running').length;
+            document.getElementById('completedTasks').textContent = liveTasks.filter(t => t.status === 'completed').length;
+            document.getElementById('failedTasks').textContent = liveTasks.filter(t => t.status === 'failed').length;
+        }
+
+        // ===== CREATE NEW TASK =====
+        submitTaskBtn.addEventListener('click', async () => {
+            const taskName = document.querySelector('#taskForm input').value;
+            const taskType = document.querySelector('#taskForm select').value;
+            const priorityEl = document.querySelector('#taskForm select[name="priority"]') || document.querySelectorAll('#taskForm select')[1];
+            const priority = priorityEl ? priorityEl.value : 'medium';
+
+            if (!taskName || !taskType) {
+                showToastMsg('Validation', 'Please fill in all required fields', '#ef4444');
+                return;
+            }
+            try {
+                await apiCreateTask({ type: taskType.replace(/ /g,'_'), priority, input_size: Math.floor(Math.random()*1000+100) });
+                showToastMsg('Task Created', `"${taskName}" queued in cluster`, '#10b981');
+                closeModalFunc();
+                document.querySelector('#taskForm').reset();
+                await loadTasksFromAPI();
+            } catch(e) {
+                showToastMsg('Error', e.detail || 'Failed to create task', '#ef4444');
+            }
+        });
+
+        // ===== BATCH OPERATIONS =====
+        batchRunBtn.addEventListener('click', async () => {
+            const selectedIds = Array.from(document.querySelectorAll('.task-checkbox:checked')).map(cb => cb.dataset.taskId);
+            if (!selectedIds.length) { showToastMsg('Select tasks', 'Check at least one task first', '#f59e0b'); return; }
+            try {
+                for (const id of selectedIds) {
+                    await apiCreateTask({ type: 'synthetic_load', priority: 'high', input_size: 500 });
+                }
+                showToastMsg('Batch Submitted', `${selectedIds.length} new tasks queued`, '#10b981');
+                await loadTasksFromAPI();
+            } catch(e) {
+                showToastMsg('Error', e.detail || 'Batch run failed', '#ef4444');
+            }
+        });
+
+        pauseTasksBtn.addEventListener('click', async () => {
+            const runningIds = Array.from(document.querySelectorAll('.task-status.running')).map(el => el.closest('tr').dataset.taskId).filter(Boolean);
+            if (!runningIds.length) { showToastMsg('No running tasks', 'Nothing to pause', '#f59e0b'); return; }
+            try {
+                for (const id of runningIds) await apiCancelTask(id);
+                showToastMsg('Stopped', `${runningIds.length} tasks cancelled`, '#f59e0b');
+                await loadTasksFromAPI();
+            } catch(e) { showToastMsg('Error', e.detail || 'Failed', '#ef4444'); }
+        });
+
+        deleteTasksBtn.addEventListener('click', async () => {
+            const selectedIds = Array.from(document.querySelectorAll('.task-checkbox:checked')).map(cb => cb.dataset.taskId);
+            if (!selectedIds.length) return;
+            if (!confirm(`Cancel ${selectedIds.length} selected tasks?`)) return;
+            try {
+                for (const id of selectedIds) await apiCancelTask(id);
+                showToastMsg('Cancelled', `${selectedIds.length} tasks cancelled`, '#ef4444');
+                await loadTasksFromAPI();
+            } catch(e) { showToastMsg('Error', e.detail || 'Failed', '#ef4444'); }
+        });
+
+        exportTasksBtn.addEventListener('click', async () => {
+            try {
+                const result = await apiGetTasks();
+                const tasks = result.tasks || [];
+                const rows = [['ID','Type','Status','Priority','Node','Created']];
+                tasks.forEach(t => rows.push([t.id, t.type||'', t.status||'', t.priority||'', t.assigned_node||'', t.created_at||'']));
+                const csv = rows.map(r => r.join(',')).join('\n');
+                const a = document.createElement('a');
+                a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                a.download = `tasks-${new Date().toISOString().slice(0,10)}.csv`;
+                a.click();
+                showToastMsg('Exported', `${tasks.length} tasks exported to CSV`, '#10b981');
+            } catch(e) {
+                showToastMsg('Export Failed', e.detail || 'Could not reach backend', '#ef4444');
+            }
+        });
+
+        // ===== CHARTS INITIALIZATION =====
+        function initializeCharts() {
+            // Tasks Over Time Chart
+            const tasksOverTimeCtx = document.getElementById('tasksOverTimeChart').getContext('2d');
+            new Chart(tasksOverTimeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'Completed',
+                            data: [45, 52, 48, 61, 55, 58, 62],
+                            borderColor: 'var(--success)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Running',
+                            data: [12, 15, 18, 22, 20, 25, 28],
+                            borderColor: 'var(--primary-blue)',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // Task Types Chart
+            const taskTypesCtx = document.getElementById('taskTypesChart').getContext('2d');
+            new Chart(taskTypesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Data Processing', 'Machine Learning', 'Data Analysis', 'Report Generation'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: [
+                            'var(--primary-blue)',
+                            'var(--warning)',
+                            'var(--success)',
+                            '#8b5cf6'
+                        ],
+                        borderWidth: 2,
+                        borderColor: 'var(--white)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                font: {
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ===== AUTO-UPDATE SIMULATION =====
+        function simulateLiveUpdates() {
+            // Randomly update progress of running tasks
+            document.querySelectorAll('.task-status.running').forEach(status => {
+                if (Math.random() > 0.7) {
+                    const row = status.closest('tr');
+                    const progressFill = row.querySelector('.progress-fill');
+                    const progressText = row.querySelector('.progress-text');
+                    const currentProgress = parseInt(progressText.textContent);
+                    
+                    if (currentProgress < 100) {
+                        const newProgress = Math.min(100, currentProgress + Math.random() * 5);
+                        progressFill.style.width = `${newProgress}%`;
+                        progressText.textContent = `${Math.round(newProgress)}%`;
+                        
+                        if (newProgress === 100) {
+                            status.textContent = 'Completed';
+                            status.className = 'task-status completed';
+                            progressFill.className = 'progress-fill completed';
+                            
+                            // Update stats
+                            setTimeout(updateTaskStats, 1000);
+                        }
+                    }
+                }
+            });
+            
+            // Random notification generation
+            if (Math.random() > 0.95) {
+                notificationCounter++;
+                updateNotificationCount(notificationCounter);
+            }
+        }
+
+        // Simple toast for tasks page
+        function showToastMsg(title, msg, color='#c084fc') {
+            const tc = document.getElementById('toastContainer');
+            if (!tc) return;
+            const t = document.createElement('div');
+            t.style.cssText = `position:relative;background:rgba(15,25,45,0.97);backdrop-filter:blur(10px);border-radius:10px;padding:.9rem 1.4rem;box-shadow:0 10px 30px rgba(0,0,0,0.5);border-left:4px solid ${color};display:flex;align-items:center;gap:.9rem;min-width:270px;border:1px solid rgba(192,132,252,0.3);border-left:4px solid ${color};transition:transform .3s;transform:translateX(400px)`;
+            t.innerHTML = `<span style="color:${color};font-size:1.1rem"><i class="fas fa-info-circle"></i></span><div><b style="color:#e2e8ff;font-size:.9rem">${title}</b><p style="color:#94a3b8;font-size:.82rem;margin:0">${msg}</p></div><button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;color:#94a3b8;border:none;cursor:pointer;font-size:1rem">&times;</button>`;
+            tc.appendChild(t);
+            setTimeout(() => t.style.transform = 'translateX(0)', 10);
+            setTimeout(() => { t.style.transform = 'translateX(400px)'; setTimeout(() => t.remove(), 300); }, 4000);
+        }
+
+        // ===== PAGE INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCharts();
+            loadTasksFromAPI();
+            // Poll every 5 seconds
+            setInterval(loadTasksFromAPI, 5000);
+            showConnectionStatus();
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelectedTasks);
+            });
+        });
+
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + N for new task
+            if (e.ctrlKey && e.key === 'n') {
+                e.preventDefault();
+                newTaskBtn.click();
+            }
+            
+            // Ctrl + F for search
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                taskSearch.focus();
+            }
+            
+            // Delete key for delete selected
+            if (e.key === 'Delete' && document.activeElement !== taskSearch) {
+                e.preventDefault();
+                deleteTasksBtn.click();
+            }
+            
+            // Escape to close modal
+            if (e.key === 'Escape' && newTaskModal.style.display === 'block') {
+                closeModalFunc();
+            }
+        });
+
+        // ===== TASK EXECUTION ENGINE =====
+        const runEngineBtn  = document.getElementById('runEngineBtn');
+        const stopEngineBtn = document.getElementById('stopEngineBtn');
+        const resetEngineBtn= document.getElementById('resetEngineBtn');
+        const terminalBody  = document.getElementById('terminalBody');
+        const aiDecisionText= document.getElementById('aiDecisionText');
+        const clearTerminal = document.getElementById('clearTerminal');
+
+        let engineInterval = null;
+        let engineRunning  = false;
+        let processedCount = 0;
+        let successCount   = 0;
+
+        const stages = ['submit','analyze','route','execute','complete'];
+        const taskNames = [
+            'ML Model Training','Data Analysis Pipeline','ETL Batch Job',
+            'Image Processing','Report Generation','Predictive Analytics',
+            'Data Aggregation','Neural Network Training','Log Processing','API Sync'
+        ];
+        const nodeLoads = [0,0,0,0,0,0];
+
+        function termLog(msg, cls='') {
+            const line = document.createElement('div');
+            line.className = 'term-line' + (cls ? ' '+cls : '');
+            line.textContent = msg;
+            terminalBody.appendChild(line);
+            terminalBody.scrollTop = terminalBody.scrollHeight;
+            // keep max 80 lines
+            while (terminalBody.children.length > 80) terminalBody.removeChild(terminalBody.firstChild);
+        }
+
+        function setStage(name, state) {
+            const el = document.getElementById('stage-'+name);
+            if (!el) return;
+            el.className = 'pipeline-stage ' + state;
+            const s = el.querySelector('.stage-status');
+            s.className = 'stage-status ' + (state === 'active' ? 'running' : state === 'done' ? 'done' : 'idle');
+            s.textContent = state === 'active' ? 'Running' : state === 'done' ? 'Done' : 'Idle';
+        }
+
+        function resetStages() {
+            stages.forEach(s => setStage(s, ''));
+        }
+
+        function updateNode(idx, cpu) {
+            const node = document.getElementById('exec-node-'+(idx+1));
+            if (!node) return;
+            nodeLoads[idx] = cpu;
+            node.querySelector('.exec-node-fill').style.width = cpu + '%';
+            node.querySelector('.exec-node-cpu').textContent = cpu + '%';
+            node.className = 'exec-node' + (cpu > 70 ? ' busy' : cpu > 0 ? ' active' : '');
+        }
+
+        function updateMetrics() {
+            document.getElementById('lmProcessed').textContent = processedCount;
+            const thr = engineRunning ? (Math.random()*8+2).toFixed(1) : '0';
+            document.getElementById('lmThroughput').textContent = thr + '/s';
+            const lat = engineRunning ? Math.floor(Math.random()*80+20) : 0;
+            document.getElementById('lmLatency').textContent = lat + 'ms';
+            const avgCpu = nodeLoads.length ? Math.round(nodeLoads.reduce((a,b)=>a+b,0)/nodeLoads.length) : 0;
+            document.getElementById('lmCpu').textContent = avgCpu + '%';
+            const rate = processedCount > 0 ? Math.round((successCount/processedCount)*100) : 0;
+            const el = document.getElementById('lmSuccess');
+            el.textContent = processedCount > 0 ? rate + '%' : '—';
+            el.className = 'lm-value' + (rate >= 90 ? ' success' : '');
+        }
+
+        async function runOneTask() {
+            const taskId = 'TASK-' + Math.floor(Math.random()*9000+1000);
+            const taskName = taskNames[Math.floor(Math.random()*taskNames.length)];
+            const nodeIdx  = Math.floor(Math.random()*6);
+            const nodeName = 'Node-' + (nodeIdx+1);
+            const willFail = Math.random() < 0.08;
+
+            // Stage: Submit
+            setStage('submit','active');
+            termLog(`[${taskId}] Submitting: ${taskName}`, 'info');
+            await sleep(400);
+            setStage('submit','done');
+
+            // Stage: AI Analyze
+            setStage('analyze','active');
+            aiDecisionText.textContent = `AI Balancer: Analyzing task complexity...`;
+            termLog(`[${taskId}] AI analyzing task requirements...`, 'purple');
+            await sleep(500);
+            setStage('analyze','done');
+
+            // Stage: Route
+            setStage('route','active');
+            const cpu = Math.floor(Math.random()*40+20);
+            aiDecisionText.textContent = `AI Balancer: Routing to ${nodeName} (load: ${cpu}%)`;
+            termLog(`[${taskId}] Routed → ${nodeName} (CPU: ${cpu}%)`, 'info');
+            updateNode(nodeIdx, cpu);
+            await sleep(400);
+            setStage('route','done');
+
+            // Stage: Execute
+            setStage('execute','active');
+            termLog(`[${taskId}] Executing on ${nodeName}...`, '');
+            const steps = Math.floor(Math.random()*4+3);
+            for (let i = 1; i <= steps; i++) {
+                if (!engineRunning) return;
+                const pct = Math.round((i/steps)*100);
+                updateNode(nodeIdx, Math.min(95, cpu + i*8));
+                termLog(`[${taskId}] Step ${i}/${steps} — ${pct}% complete`, 'dim');
+                await sleep(300);
+            }
+            setStage('execute','done');
+
+            // Stage: Complete
+            setStage('complete','active');
+            if (willFail) {
+                termLog(`[${taskId}] ✗ FAILED — retrying...`, 'error');
+                aiDecisionText.textContent = `AI Balancer: Task failed, scheduling retry`;
+            } else {
+                successCount++;
+                termLog(`[${taskId}] ✓ Completed successfully`, 'success');
+                aiDecisionText.textContent = `AI Balancer: Task complete. Nodes rebalanced.`;
+            }
+            processedCount++;
+            updateNode(nodeIdx, Math.max(0, cpu - 15));
+            setStage('complete','done');
+            updateMetrics();
+            await sleep(300);
+            resetStages();
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function engineLoop() {
+            while (engineRunning) {
+                await runOneTask();
+                if (engineRunning) await sleep(200);
+            }
+        }
+
+        runEngineBtn.addEventListener('click', () => {
+            if (engineRunning) return;
+            engineRunning = true;
+            runEngineBtn.disabled = true;
+            stopEngineBtn.disabled = false;
+            termLog('Engine started — processing tasks...', 'success');
+            engineLoop();
+        });
+
+        stopEngineBtn.addEventListener('click', () => {
+            engineRunning = false;
+            runEngineBtn.disabled = false;
+            stopEngineBtn.disabled = true;
+            resetStages();
+            aiDecisionText.textContent = 'AI Balancer: Stopped.';
+            termLog('Engine stopped.', 'warn');
+            nodeLoads.fill(0);
+            for (let i=0;i<6;i++) updateNode(i,0);
+            updateMetrics();
+        });
+
+        resetEngineBtn.addEventListener('click', () => {
+            engineRunning = false;
+            runEngineBtn.disabled = false;
+            stopEngineBtn.disabled = true;
+            processedCount = 0; successCount = 0;
+            resetStages();
+            aiDecisionText.textContent = 'AI Balancer: Waiting for task...';
+            terminalBody.innerHTML = '<div class="term-line dim">GetConnect Task Execution Engine v4.0</div><div class="term-line dim">Ready. Press "Run Simulation" to start.</div>';
+            nodeLoads.fill(0);
+            for (let i=0;i<6;i++) updateNode(i,0);
+            updateMetrics();
+        });
+
+        clearTerminal.addEventListener('click', () => {
+            terminalBody.innerHTML = '';
+        });
+    </script>
+</body>
+</html>

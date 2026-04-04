@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetConnect.Web | Privacy Policy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reusing all the same CSS from index.html */
+        /* ===== CSS RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #a855f7;
+            --primary-light: #c084fc;
+            --primary-dark: #7c3aed;
+            --secondary-blue: #22d3ee;
+            --accent-blue: #67e8f9;
+            --sky-blue: rgba(192,132,252,0.15);
+            --white: #ffffff;
+            --off-white: #0a0a2a;
+            --light-gray: #0f172a;
+            --medium-gray: rgba(255,255,255,0.15);
+            --dark-gray: #94a3b8;
+            --text-dark: #e2e8ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #22d3ee;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5), 0 0 10px rgba(168,85,247,0.15);
+            --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.6), 0 0 20px rgba(168,85,247,0.2);
+            --shadow-xl: 0 20px 40px -10px rgba(0,0,0,0.7), 0 0 30px rgba(168,85,247,0.25);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #c084fc; border-radius: 8px; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+            background: radial-gradient(circle at 10% 20%, #0a0f2a, #020617);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', 'Poppins', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== LOGO ANIMATIONS ===== */
+        .logo-animation svg {
+            animation: floatPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes floatPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform var(--transition-normal);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-main {
+            font-family: 'Space Grotesk', 'Poppins', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-sub {
+            font-size: 14px;
+            font-weight: 500;
+            color: #c084fc;
+            margin-top: -2px;
+        }
+
+        /* ===== MODAL STYLES ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ===== HEADER & NAVBAR ===== */
+        .header {
+            background: rgba(5, 10, 30, 0.75);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(192, 132, 252, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            padding: 0.75rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Animated Navigation Menu */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            font-weight: 500;
+            color: #e2e8ff;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #c084fc, #22d3ee);
+            transition: width var(--transition-normal);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .nav-link:hover::before { width: 100%; }
+
+        .nav-link:hover {
+            color: #22d3ee;
+            background-color: rgba(192,132,252,0.1);
+        }
+
+        .nav-link.active {
+            color: #22d3ee;
+            font-weight: 600;
+        }
+
+        .nav-link.active::before { width: 100%; }
+
+        .nav-link i {
+            font-size: 1.1em;
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-notification {
+            position: relative;
+            background: none;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-notification:hover {
+            background-color: rgba(192,132,252,0.15);
+            color: #c084fc;
+            transform: rotate(15deg);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-login-header, .btn-register {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-login-header {
+            background-color: transparent;
+            color: #e2e8ff;
+            border: 1px solid rgba(192,132,252,0.5);
+        }
+
+        .btn-login-header:hover {
+            background-color: rgba(192,132,252,0.15);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-register {
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            border: none;
+            font-weight: 700;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px #a855f7;
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: #e2e8ff;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* ===== PRIVACY POLICY STYLES ===== */
+        .privacy-hero {
+            padding: 5rem 2rem;
+            background: radial-gradient(ellipse at 30% 50%, rgba(168,85,247,0.1), transparent);
+            text-align: center;
+        }
+
+        .privacy-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, #c084fc, #22d3ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .privacy-hero p {
+            font-size: 1.25rem;
+            color: #b9c7e6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .last-updated {
+            display: inline-block;
+            background: rgba(168,85,247,0.15);
+            color: #c084fc;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            margin-top: 2rem;
+            border: 1px solid rgba(192,132,252,0.4);
+        }
+
+        .privacy-content {
+            padding: 5rem 2rem;
+            background-color: transparent;
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .privacy-section {
+            margin-bottom: 3.5rem;
+            padding: 2.5rem;
+            background: rgba(15,25,45,0.6);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(192,132,252,0.3);
+            transition: transform var(--transition-normal);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 15px rgba(168,85,247,0.07);
+        }
+
+        .privacy-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(168,85,247,0.18);
+            border-color: rgba(192,132,252,0.55);
+        }
+
+        .privacy-section h2 {
+            color: #e2e8ff;
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .privacy-section h2 i {
+            color: #c084fc;
+        }
+
+        .privacy-section h3 {
+            color: #e2e8ff;
+            margin: 2rem 0 1rem;
+            font-size: 1.3rem;
+        }
+
+        .privacy-section p {
+            color: #b9c7e6;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .privacy-section ul, .privacy-section ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+        }
+
+        .privacy-section li {
+            margin-bottom: 1rem;
+            color: #b9c7e6;
+            line-height: 1.6;
+        }
+
+        .highlight-box {
+            background: rgba(168,85,247,0.1);
+            border-left: 4px solid #c084fc;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            margin: 2rem 0;
+        }
+
+        .highlight-box h4 {
+            color: #e2e8ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(8,14,32,0.7);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .data-table th {
+            background: linear-gradient(90deg, #a855f7, #06b6d4);
+            color: #0f0f2a;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            color: #b9c7e6;
+        }
+
+        .data-table tr:last-child td { border-bottom: none; }
+
+        .data-table tr:hover { background: rgba(192,132,252,0.06); }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(168,85,247,0.1);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(192,132,252,0.35);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #b9c7e6;
+        }
+
+        .contact-item i {
+            color: #c084fc;
+            width: 20px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #030617;
+            color: white;
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid rgba(192,132,252,0.2);
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo .logo-main {
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .footer-logo .logo-sub {
+            color: #c084fc;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all var(--transition-normal);
+        }
+
+        .social-links a:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+        }
+
+        .footer-column h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: color var(--transition-fast);
+        }
+
+        .footer-column a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(5,10,30,0.97);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+                border-bottom: 1px solid rgba(192,132,252,0.3);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .nav-actions .btn-login-header,
+            .nav-actions .btn-register {
+                display: none;
+            }
+            
+            .privacy-hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .privacy-section {
+                padding: 1.5rem;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .privacy-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .privacy-section h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Animated Navbar -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <!-- Logo with Animation -->
+                <a href="index.html" class="logo">
+                    <div class="logo-animation">
+                        <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </a>
+
+                <!-- Animated Menu -->
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li class="nav-item"><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                    <li class="nav-item"><a href="privacy.html" class="nav-link active"><i class="fas fa-shield-alt"></i> Privacy</a></li>
+                </ul>
+
+                <!-- Right Side Actions -->
+                <div class="nav-actions">
+                    <button class="btn-notification" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </button>
+                    <!-- Updated Login Button - Now redirects to login.html -->
+                    <a href="login.html" class="btn-login-header" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <!-- Updated Register Button - Now redirects to register.html -->
+                    <a href="register.html" class="btn-register" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                    <div class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Privacy Hero Section -->
+    <section class="privacy-hero">
+        <div class="container">
+            <h1>Privacy Policy</h1>
+            <p>Your privacy is important to us. This policy explains how we collect, use, and protect your personal information when you use GetConnect.Web services.</p>
+            <div class="last-updated">
+                <i class="fas fa-calendar-alt"></i> Last Updated: December 15, 2024
+            </div>
+        </div>
+    </section>
+
+    <!-- Privacy Content -->
+    <section class="privacy-content">
+        <div class="content-container">
+            <!-- Section 1 -->
+            <div class="privacy-section" id="introduction">
+                <h2><i class="fas fa-info-circle"></i> Introduction</h2>
+                <p>GetConnect.Web ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our distributed task execution platform, website, and related services.</p>
+                <p>By accessing or using GetConnect.Web, you agree to the collection and use of information in accordance with this policy. If you disagree with any part of this policy, please do not use our services.</p>
+                
+                <div class="highlight-box">
+                    <h4>Key Principles</h4>
+                    <p>We follow these core privacy principles:</p>
+                    <ul>
+                        <li><strong>Transparency:</strong> We clearly explain what data we collect and why</li>
+                        <li><strong>Minimization:</strong> We only collect data necessary for providing our services</li>
+                        <li><strong>Security:</strong> We implement industry-standard security measures</li>
+                        <li><strong>Control:</strong> You have control over your personal information</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="privacy-section" id="data-collection">
+                <h2><i class="fas fa-database"></i> Information We Collect</h2>
+                
+                <h3>Information You Provide Directly</h3>
+                <ul>
+                    <li><strong>Account Information:</strong> Name, email address, company details, and contact information when you create an account</li>
+                    <li><strong>Payment Information:</strong> Billing address and payment details (processed by our secure payment processors)</li>
+                    <li><strong>Communication Data:</strong> Messages, support requests, and feedback you send to us</li>
+                    <li><strong>Profile Information:</strong> Job title, preferences, and settings you configure in your account</li>
+                </ul>
+                
+                <h3>Information Collected Automatically</h3>
+                <ul>
+                    <li><strong>Usage Data:</strong> Information about how you interact with our services, including IP addresses, browser type, device information, and pages visited</li>
+                    <li><strong>Technical Data:</strong> System logs, error reports, and performance metrics</li>
+                    <li><strong>Task Data:</strong> Metadata about tasks executed through our platform (excluding task content/data unless specified)</li>
+                    <li><strong>Cookies and Tracking:</strong> We use cookies and similar technologies as described in our Cookie Policy</li>
+                </ul>
+                
+                <h3>Task Data Processing</h3>
+                <p>When you use our distributed task execution service:</p>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Data Type</th>
+                            <th>What We Collect</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Task Metadata</td>
+                            <td>Task ID, submission time, node assignment, completion status, resource usage</td>
+                            <td>Service operation, billing, optimization</td>
+                        </tr>
+                        <tr>
+                            <td>Performance Data</td>
+                            <td>Execution time, CPU/memory usage, network metrics</td>
+                            <td>Load balancing, system optimization</td>
+                        </tr>
+                        <tr>
+                            <td>User Content</td>
+                            <td>Only if explicitly provided for processing (encrypted at rest and in transit)</td>
+                            <td>Task execution as requested by user</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="privacy-section" id="data-use">
+                <h2><i class="fas fa-cogs"></i> How We Use Your Information</h2>
+                
+                <p>We use the collected information for the following purposes:</p>
+                
+                <ul>
+                    <li><strong>Service Delivery:</strong> To provide, maintain, and improve our distributed computing services</li>
+                    <li><strong>AI Optimization:</strong> To train and improve our AI load balancing algorithms (using anonymized, aggregated data)</li>
+                    <li><strong>Communication:</strong> To send service updates, security alerts, and support messages</li>
+                    <li><strong>Security:</strong> To monitor and protect against security threats and unauthorized access</li>
+                    <li><strong>Billing:</strong> To process payments and prevent fraud</li>
+                    <li><strong>Compliance:</strong> To meet legal obligations and enforce our terms of service</li>
+                    <li><strong>Analytics:</strong> To understand usage patterns and improve user experience (using aggregated, anonymized data)</li>
+                </ul>
+                
+                <div class="highlight-box">
+                    <h4>AI Training Data</h4>
+                    <p>Our AI load balancing system learns from system performance data to optimize task distribution. This training uses:</p>
+                    <ul>
+                        <li>Aggregated, anonymized performance metrics</li>
+                        <li>No personally identifiable information</li>
+                        <li>No access to task content or user data</li>
+                        <li>Data is encrypted and stored securely</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="privacy-section" id="data-sharing">
+                <h2><i class="fas fa-share-alt"></i> Information Sharing and Disclosure</h2>
+                
+                <p>We do not sell your personal information. We may share information in the following limited circumstances:</p>
+                
+                <h3>Service Providers</h3>
+                <p>We engage trusted third-party companies to perform services on our behalf, such as:</p>
+                <ul>
+                    <li>Payment processing (Stripe, PayPal)</li>
+                    <li>Cloud infrastructure (AWS, Google Cloud)</li>
+                    <li>Customer support platforms</li>
+                    <li>Analytics and monitoring tools</li>
+                </ul>
+                <p>These providers only receive the information necessary to perform their functions and are contractually obligated to protect your data.</p>
+                
+                <h3>Legal Requirements</h3>
+                <p>We may disclose information if required by law, such as to:</p>
+                <ul>
+                    <li>Comply with legal obligations or court orders</li>
+                    <li>Protect against legal liability</li>
+                    <li>Protect the rights, property, or safety of GetConnect.Web, our users, or the public</li>
+                </ul>
+                
+                <h3>Business Transfers</h3>
+                <p>In the event of a merger, acquisition, or sale of assets, your information may be transferred as part of that transaction. We will notify you of any such change and outline your choices.</p>
+            </div>
+
+            <!-- Section 5 -->
+            <div class="privacy-section" id="data-security">
+                <h2><i class="fas fa-lock"></i> Data Security</h2>
+                
+                <p>We implement robust security measures to protect your information:</p>
+                
+                <ul>
+                    <li><strong>Encryption:</strong> All data is encrypted in transit (TLS 1.3) and at rest (AES-256)</li>
+                    <li><strong>Access Controls:</strong> Strict role-based access controls and authentication mechanisms</li>
+                    <li><strong>Network Security:</strong> Firewalls, intrusion detection, and DDoS protection</li>
+                    <li><strong>Regular Audits:</strong> Security assessments and penetration testing</li>
+                    <li><strong>Employee Training:</strong> Security awareness training for all employees</li>
+                    <li><strong>Data Center Security:</strong> SOC 2 Type II compliant data centers</li>
+                </ul>
+                
+                <p>While we strive to protect your information, no security system is impenetrable. We cannot guarantee absolute security but we continuously work to maintain and improve our security measures.</p>
+                
+                <h3>Data Retention</h3>
+                <p>We retain personal information only as long as necessary for the purposes outlined in this policy, unless a longer retention period is required by law. Task execution data is retained according to your plan's data retention period (14-365 days).</p>
+            </div>
+
+            <!-- Section 6 -->
+            <div class="privacy-section" id="your-rights">
+                <h2><i class="fas fa-user-check"></i> Your Rights and Choices</h2>
+                
+                <p>Depending on your location, you may have certain rights regarding your personal information:</p>
+                
+                <h3>Access and Control</h3>
+                <ul>
+                    <li><strong>Access:</strong> Request a copy of the personal information we hold about you</li>
+                    <li><strong>Correction:</strong> Update or correct inaccurate information</li>
+                    <li><strong>Deletion:</strong> Request deletion of your personal information</li>
+                    <li><strong>Restriction:</strong> Request restriction of processing of your information</li>
+                    <li><strong>Portability:</strong> Request transfer of your data to another service</li>
+                    <li><strong>Objection:</strong> Object to certain types of processing</li>
+                </ul>
+                
+                <h3>Marketing Communications</h3>
+                <p>You can opt-out of marketing communications at any time by:</p>
+                <ul>
+                    <li>Clicking the "unsubscribe" link in any marketing email</li>
+                    <li>Updating your preferences in your account settings</li>
+                    <li>Contacting us directly at privacy@getconnect.web</li>
+                </ul>
+                
+                <h3>Cookies and Tracking</h3>
+                <p>Most web browsers allow you to control cookies through their settings. However, disabling cookies may affect your ability to use certain features of our service.</p>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>To exercise your rights, contact us at: <strong>privacy@getconnect.web</strong></span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <span>We respond to all requests within 30 days</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-id-card"></i>
+                        <span>We may need to verify your identity before processing certain requests</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7 -->
+            <div class="privacy-section" id="international">
+                <h2><i class="fas fa-globe"></i> International Data Transfers</h2>
+                
+                <p>GetConnect.Web operates globally, and your information may be transferred to, and processed in, countries other than your country of residence. These countries may have data protection laws that are different from the laws of your country.</p>
+                
+                <p>We ensure appropriate safeguards are in place for such transfers, including:</p>
+                <ul>
+                    <li>Standard Contractual Clauses approved by the European Commission</li>
+                    <li>Privacy Shield Framework (where applicable)</li>
+                    <li>Binding Corporate Rules</li>
+                    <li>Other legally approved mechanisms</li>
+                </ul>
+                
+                <h3>Regional Privacy Rights</h3>
+                <p><strong>California Residents:</strong> See our California Privacy Notice for information about your rights under CCPA/CPRA.</p>
+                <p><strong>EU/UK Residents:</strong> See our GDPR Compliance Statement for information about your rights under GDPR.</p>
+            </div>
+
+            <!-- Section 8 -->
+            <div class="privacy-section" id="children">
+                <h2><i class="fas fa-child"></i> Children's Privacy</h2>
+                
+                <p>Our services are not directed to individuals under the age of 16. We do not knowingly collect personal information from children under 16. If we become aware that we have collected personal information from a child under 16, we will take steps to delete such information.</p>
+                
+                <p>If you believe we might have any information from or about a child under 16, please contact us at privacy@getconnect.web.</p>
+            </div>
+
+            <!-- Section 9 -->
+            <div class="privacy-section" id="changes">
+                <h2><i class="fas fa-sync-alt"></i> Changes to This Policy</h2>
+                
+                <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.</p>
+                
+                <p>We will also notify you via email and/or a prominent notice on our service prior to the change becoming effective if the changes are material. Your continued use of the service after any changes constitutes your acceptance of the new Privacy Policy.</p>
+                
+                <div class="highlight-box">
+                    <h4>Notification of Changes</h4>
+                    <p>We will notify you about significant changes to our Privacy Policy through:</p>
+                    <ul>
+                        <li>Email notification to registered users</li>
+                        <li>In-service notifications</li>
+                        <li>Updates to this page with clear change summaries</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 10 -->
+            <div class="privacy-section" id="contact">
+                <h2><i class="fas fa-headset"></i> Contact Us</h2>
+                
+                <p>If you have any questions about this Privacy Policy, please contact us:</p>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span><strong>Email:</strong> privacy@getconnect.web</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span><strong>Phone:</strong> +1 (555) 123-4567 (Privacy Inquiries Only)</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span><strong>Address:</strong> GetConnect.Web Inc.<br>
+                        123 Innovation Drive<br>
+                        San Francisco, CA 94107<br>
+                        United States</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span><strong>Data Protection Officer:</strong> Sarah Johnson, dpo@getconnect.web</span>
+                    </div>
+                </div>
+                
+                <p>For EU/UK residents, you also have the right to lodge a complaint with your local data protection authority.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <div class="logo-animation">
+                        <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </div>
+                <p class="footer-description">
+                    AI-powered distributed task execution engine with intelligent load balancing for modern computing needs. Scalable, secure, and efficient.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Product</h3>
+                <ul>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="api.html">API Documentation</a></li>
+                    <li><a href="tasks.html">Task Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="partners.html">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="docs.html">Documentation</a></li>
+                    <li><a href="tutorials.html">Tutorials</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="status.html">System Status</a></li>
+                    <li><a href="community.html">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="security.html">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== MOBILE MENU TOGGLE =====
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileToggle.innerHTML = navMenu.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-container') && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // ===== NOTIFICATION SYSTEM =====
+        const notificationBtn = document.getElementById('notificationBtn');
+        let notificationCount = 3;
+
+        notificationBtn.addEventListener('click', () => {
+            if (notificationCount > 0) {
+                alert(`You have ${notificationCount} unread notifications`);
+                notificationCount = 0;
+                document.querySelector('.notification-count').textContent = '0';
+                document.querySelector('.notification-count').style.display = 'none';
+            } else {
+                alert('You have no new notifications');
+            }
+        });
+
+        // ===== NAVIGATION ACTIVE STATE =====
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Close mobile menu if open
+                if (navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
+        // ===== SMOOTH SCROLL FOR ANCHORS =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add anchor links to section headers
+            const sections = document.querySelectorAll('.privacy-section');
+            sections.forEach(section => {
+                const id = section.id;
+                const header = section.querySelector('h2');
+                if (header && id) {
+                    const anchor = document.createElement('a');
+                    anchor.href = `#${id}`;
+                    anchor.className = 'section-anchor';
+                    anchor.innerHTML = '<i class="fas fa-link"></i>';
+                    anchor.style.marginLeft = '10px';
+                    anchor.style.color = 'var(--primary-blue)';
+                    anchor.style.opacity = '0.5';
+                    anchor.style.transition = 'opacity 0.3s';
+                    
+                    anchor.addEventListener('mouseenter', () => {
+                        anchor.style.opacity = '1';
+                    });
+                    
+                    anchor.addEventListener('mouseleave', () => {
+                        anchor.style.opacity = '0.5';
+                    });
+                    
+                    header.appendChild(anchor);
+                }
+            });
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') return;
+                    
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        e.preventDefault();
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        // Update URL without page jump
+                        history.pushState(null, null, href);
+                    }
+                });
+            });
+        });
+
+        // ===== ANIMATE SECTIONS ON SCROLL =====
+        function animateOnScroll() {
+            const sections = document.querySelectorAll('.privacy-section');
+            
+            sections.forEach(section => {
+                const position = section.getBoundingClientRect();
+                if (position.top < window.innerHeight - 100) {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }
+            });
+        }
+
+        // Initialize sections with hidden state
+        document.querySelectorAll('.privacy-section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        });
+
+        // Set up scroll animation
+        window.addEventListener('scroll', animateOnScroll);
+        
+        // Initial animation check
+        setTimeout(animateOnScroll, 100);
+
+        // ===== TABLE OF CONTENTS GENERATOR (Optional) =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.privacy-section');
+            const tocContainer = document.querySelector('.content-container');
+            
+            if (sections.length > 0) {
+                const toc = document.createElement('div');
+                toc.className = 'table-of-contents';
+                toc.style.background = 'rgba(168,85,247,0.1)';
+                toc.style.padding = '1.5rem';
+                toc.style.borderRadius = 'var(--radius-lg)';
+                toc.style.marginBottom = '2rem';
+                toc.style.border = '1px solid rgba(192,132,252,0.35)';
+                
+                toc.innerHTML = `
+                    <h3 style="color: #e2e8ff; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-list"></i> Table of Contents
+                    </h3>
+                    <nav>
+                        <ul style="list-style: none; columns: 2; column-gap: 2rem;">
+                            ${Array.from(sections).map((section, index) => {
+                                const id = section.id;
+                                const title = section.querySelector('h2').textContent.replace(/[^a-zA-Z0-9 ]/g, '');
+                                if (!id || !title) return '';
+                                return `
+                                    <li style="margin-bottom: 0.75rem; break-inside: avoid;">
+                                        <a href="#${id}" 
+                                           style="color: #22d3ee; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.3s;"
+                                           onmouseover="this.style.color='#c084fc'"
+                                           onmouseout="this.style.color='#22d3ee'">
+                                            <span style="background: rgba(192,132,252,0.2); color: #c084fc; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">${index + 1}</span>
+                                            ${title}
+                                        </a>
+                                    </li>
+                                `;
+                            }).join('')}
+                        </ul>
+                    </nav>
+                `;
+                
+                // Insert after first element in content container
+                tocContainer.insertBefore(toc, tocContainer.firstChild);
+            }
+        });
+    </script>
+</body>
+</html>

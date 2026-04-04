@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetConnect.Web | Careers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== CSS RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #a855f7;
+            --primary-light: #c084fc;
+            --primary-dark: #7c3aed;
+            --secondary-blue: #22d3ee;
+            --accent-blue: #67e8f9;
+            --sky-blue: rgba(192,132,252,0.15);
+            --white: #ffffff;
+            --off-white: #0a0a2a;
+            --light-gray: #0f172a;
+            --medium-gray: rgba(255,255,255,0.15);
+            --dark-gray: #94a3b8;
+            --text-dark: #e2e8ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #22d3ee;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5), 0 0 10px rgba(168,85,247,0.15);
+            --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.6), 0 0 20px rgba(168,85,247,0.2);
+            --shadow-xl: 0 20px 40px -10px rgba(0,0,0,0.7), 0 0 30px rgba(168,85,247,0.25);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #c084fc; border-radius: 8px; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+            background: radial-gradient(circle at 10% 20%, #0a0f2a, #020617);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        /* ===== FONT OVERRIDE ===== */
+        h1,h2,h3,h4 { font-family: 'Space Grotesk', 'Poppins', sans-serif; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== LOGO ANIMATIONS ===== */
+        .logo-animation svg {
+            animation: floatPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes floatPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform var(--transition-normal);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-main {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-sub {
+            font-size: 14px;
+            font-weight: 500;
+            color: #c084fc;
+            margin-top: -2px;
+        }
+
+        /* ===== HEADER & NAVBAR ===== */
+        .header {
+            background: rgba(5, 10, 30, 0.75); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(192, 132, 252, 0.3);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            padding: 0.75rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Animated Navigation Menu */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            font-weight: 500;
+            color: #e2e8ff;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #c084fc, #22d3ee);
+            transition: width var(--transition-normal);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: #22d3ee;
+            background-color: rgba(192,132,252,0.1);
+        }
+
+        .nav-link.active {
+            color: #22d3ee;
+            font-weight: 600;
+        }
+
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        .nav-link i {
+            font-size: 1.1em;
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-notification {
+            position: relative;
+            background: none;
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-notification:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-dark);
+            transform: rotate(15deg);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-login-header, .btn-register {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-login-header {
+            background-color: transparent;
+            color: #e2e8ff;
+            border: 1px solid rgba(192,132,252,0.5);
+        }
+
+        .btn-login-header:hover {
+            background-color: rgba(192,132,252,0.15);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-register {
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            border: none;
+            font-weight: 700;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px #a855f7;
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: #e2e8ff;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* ===== CAREERS STYLES ===== */
+        .careers-hero {
+            padding: 6rem 2rem;
+            background: radial-gradient(ellipse at 30% 50%, rgba(168,85,247,0.1), transparent);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .careers-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 70%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(34,211,238,0.06) 50%, transparent 70%);
+            z-index: 0;
+        }
+
+        .careers-hero .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .careers-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, #c084fc, #22d3ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .careers-hero p {
+            font-size: 1.25rem;
+            color: #b9c7e6;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            border-left: 3px solid #c084fc;
+            padding-left: 1rem;
+            text-align: left;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-stat {
+            text-align: center;
+            background: rgba(15,25,45,0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(192,132,252,0.4);
+            border-radius: 20px;
+            padding: 1.2rem 2rem;
+        }
+
+        .hero-stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #e2e8ff;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .hero-stat-label {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .values-section {
+            padding: 5rem 2rem;
+            background-color: transparent;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #e2e8ff, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .section-header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .value-card {
+            background: rgba(15,25,45,0.6);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            text-align: center;
+            border: 1px solid rgba(192,132,252,0.3);
+            transition: all var(--transition-normal);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(168,85,247,0.2);
+            border-color: rgba(192,132,252,0.6);
+        }
+
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #a855f7, #06b6d4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 0 20px rgba(168,85,247,0.4);
+        }
+
+        .value-card h3 {
+            color: #e2e8ff;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .value-card p {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .benefits-section {
+            padding: 5rem 2rem;
+            background: transparent;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .benefit-card {
+            background: rgba(15,25,45,0.6);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            border: 1px solid rgba(192,132,252,0.3);
+            transition: all var(--transition-normal);
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(168,85,247,0.2);
+            border-color: rgba(192,132,252,0.6);
+        }
+
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #a855f7, #06b6d4);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            box-shadow: 0 0 16px rgba(168,85,247,0.35);
+        }
+
+        .benefit-content h3 {
+            color: #e2e8ff;
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .benefit-content p {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        /* Open Positions */
+        .positions-section {
+            padding: 5rem 2rem;
+            background-color: transparent;
+        }
+
+        .positions-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 24px;
+            background: rgba(255,255,255,0.05);
+            color: #e2e8ff;
+            border: 1px solid rgba(192,132,252,0.3);
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+
+        .filter-btn:hover {
+            background: rgba(192,132,252,0.15);
+            border-color: #c084fc;
+            color: #c084fc;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            border-color: transparent;
+            font-weight: 700;
+        }
+
+        .positions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .position-card {
+            background: rgba(15,25,45,0.6);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            border: 1px solid rgba(192,132,252,0.3);
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+
+        .position-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(168,85,247,0.2);
+            border-color: rgba(192,132,252,0.6);
+        }
+
+        .position-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .position-title {
+            font-size: 1.5rem;
+            color: #e2e8ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .position-department {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .position-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .position-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.5rem;
+            color: #e2e8ff;
+            font-size: 0.95rem;
+        }
+
+        .position-detail i {
+            color: #c084fc;
+            width: 16px;
+        }
+
+        .position-description {
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .btn-apply {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 18px #a855f7;
+        }
+
+        /* Application Process */
+        .process-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #3a0ca3, #0e7490);
+            color: white;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .process-step::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            right: -1rem;
+            width: 2rem;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .process-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .process-step h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .process-step p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Culture Section */
+        .culture-section {
+            padding: 5rem 2rem;
+            background-color: transparent;
+        }
+
+        .culture-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            max-width: 1280px;
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        .culture-image {
+            background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(34,211,238,0.1));
+            border-radius: var(--radius-xl);
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid rgba(34,211,238,0.4);
+        }
+
+        .culture-image i {
+            font-size: 10rem;
+            color: #c084fc;
+            opacity: 0.3;
+        }
+
+        .culture-content h3 {
+            color: #e2e8ff;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .culture-content p {
+            color: #b9c7e6;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .culture-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .culture-stat {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(15,25,45,0.6);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(192,132,252,0.3);
+        }
+
+        .culture-stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #c084fc;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .culture-stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, #3a0ca3, #0e7490);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.06), transparent 70%);
+        }
+
+        .cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-container h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-container p {
+            font-size: 1.25rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .cta-buttons .btn-primary {
+            background: white;
+            color: #1e1a3a;
+        }
+
+        .cta-buttons .btn-primary:hover {
+            background: #e2e8ff;
+        }
+
+        .cta-buttons .btn-secondary {
+            background: transparent;
+            color: white;
+            border-color: white;
+        }
+
+        .cta-buttons .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 16px 32px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 20px #a855f7;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #e2e8ff;
+            border: 1px solid rgba(192,132,252,0.5);
+            border: 2px solid var(--primary-blue);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .btn-large {
+            padding: 18px 40px;
+            font-size: 1.1rem;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #030617;
+            color: white;
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid rgba(192,132,252,0.2);
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo .logo-main {
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .footer-logo .logo-sub {
+            color: #c084fc;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all var(--transition-normal);
+        }
+
+        .social-links a:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+        }
+
+        .footer-column h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: color var(--transition-fast);
+        }
+
+        .footer-column a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .nav-menu {
+                gap: 1rem;
+            }
+            
+            .nav-link {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .values-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .positions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .process-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .process-step::after {
+                display: none;
+            }
+            
+            .culture-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(5,10,30,0.97);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+                border-bottom: 1px solid rgba(192,132,252,0.3);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .nav-actions .btn-login-header,
+            .nav-actions .btn-register {
+                display: none;
+            }
+            
+            .careers-hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .positions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .culture-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .careers-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-stats {
+                gap: 1.5rem;
+            }
+            
+            .hero-stat-number {
+                font-size: 2rem;
+            }
+            
+            .section-header h2 {
+                font-size: 2rem;
+            }
+            
+            .cta-container h2 {
+                font-size: 2rem;
+            }
+            
+            .benefit-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Animated Navbar -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <!-- Logo with Animation -->
+                <a href="index.html" class="logo">
+                    <div class="logo-animation">
+                        <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </a>
+
+                <!-- Animated Menu - CONNECTED TO ALL PAGES -->
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li class="nav-item"><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                    <li class="nav-item"><a href="api-documentation.html" class="nav-link"><i class="fas fa-code"></i> API Docs</a></li>
+                    <li class="nav-item"><a href="pricing.html" class="nav-link"><i class="fas fa-tag"></i> Pricing</a></li>
+                    <li class="nav-item"><a href="careers.html" class="nav-link active"><i class="fas fa-briefcase"></i> Careers</a></li>
+                    <li class="nav-item"><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+                </ul>
+
+                <!-- Right Side Actions -->
+                <div class="nav-actions">
+                    <button class="btn-notification" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </button>
+                    <!-- Updated Login Button - Now redirects to login.html -->
+                    <a href="login.html" class="btn-login-header" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <!-- Updated Register Button - Now redirects to register.html -->
+                    <a href="register.html" class="btn-register" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                    <div class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Careers Hero Section -->
+    <section class="careers-hero">
+        <div class="container">
+            <h1>Build the Future of Distributed Computing</h1>
+            <p>Join our mission to revolutionize how computational tasks are executed at scale. We're building the most intelligent distributed computing platform powered by AI.</p>
+            
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-number">47</span>
+                    <span class="hero-stat-label">Team Members</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">12</span>
+                    <span class="hero-stat-label">Open Positions</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">15</span>
+                    <span class="hero-stat-label">Countries</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">4.8</span>
+                    <span class="hero-stat-label">Avg. Rating</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Values -->
+    <section class="values-section">
+        <div class="section-header">
+            <h2><i class="fas fa-star"></i> Our Values</h2>
+            <p>These principles guide everything we do at GetConnect.Web</p>
+        </div>
+        
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Innovation First</h3>
+                <p>We push boundaries in distributed computing and AI. Every team member is encouraged to experiment, fail fast, and innovate.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Collaborative Excellence</h3>
+                <p>Great products are built by great teams. We foster a culture of collaboration, mentorship, and shared success.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Security & Trust</h3>
+                <p>We build with security and privacy as foundational principles. Our users trust us with their most critical workloads.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3>Customer Obsession</h3>
+                <p>We exist to solve our customers' problems. Every decision starts with understanding customer needs.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>Global Impact</h3>
+                <p>We're building technology that empowers developers and businesses worldwide to solve complex problems.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>Work-Life Harmony</h3>
+                <p>We believe sustainable productivity comes from balanced lives. Flexible schedules and remote work are standard.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section">
+        <div class="section-header">
+            <h2><i class="fas fa-gift"></i> Perks & Benefits</h2>
+            <p>We invest in our team's growth, health, and happiness</p>
+        </div>
+        
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Competitive Compensation</h3>
+                    <p>Industry-leading salaries, equity packages, and performance bonuses that reward your contributions.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Flexible Work</h3>
+                    <p>Work from anywhere with flexible hours. We provide home office stipends and co-working memberships.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Health & Wellness</h3>
+                    <p>Comprehensive medical, dental, and vision coverage. Mental health support and wellness programs included.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Learning & Growth</h3>
+                    <p>$5,000 annual learning budget, conference attendance, and dedicated time for skill development.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-umbrella-beach"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Generous Time Off</h3>
+                    <p>Unlimited PTO, 12 weeks parental leave, sabbaticals every 3 years, and company-wide holidays.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-server"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Tech & Tools</h3>
+                    <p>Latest MacBook Pro or equivalent, $2,000 home office setup budget, and all the software you need.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-plane"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>Team Retreats</h3>
+                    <p>Annual global company retreats, quarterly team offsites, and regular local team building events.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <div class="benefit-content">
+                    <h3>401(k) Matching</h3>
+                    <p>4% 401(k) matching, financial planning services, and stock option plans for all employees.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Open Positions -->
+    <section class="positions-section">
+        <div class="section-header">
+            <h2><i class="fas fa-bullhorn"></i> Open Positions</h2>
+            <p>Join our team and help build the future of distributed computing</p>
+        </div>
+        
+        <div class="positions-filters">
+            <button class="filter-btn active" data-filter="all">All Positions</button>
+            <button class="filter-btn" data-filter="engineering">Engineering</button>
+            <button class="filter-btn" data-filter="product">Product</button>
+            <button class="filter-btn" data-filter="research">Research</button>
+            <button class="filter-btn" data-filter="operations">Operations</button>
+        </div>
+        
+        <div class="positions-grid">
+            <!-- Engineering Positions -->
+            <div class="position-card" data-department="engineering">
+                <span class="position-badge remote">Remote</span>
+                <div class="position-header">
+                    <h3 class="position-title">Senior AI Engineer</h3>
+                    <div class="position-department">
+                        <i class="fas fa-code"></i> Engineering • AI/ML Team
+                    </div>
+                </div>
+                <div class="position-details">
+                    <div class="position-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Remote (Global)</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-clock"></i>
+                        <span>Full-time</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-signal"></i>
+                        <span>Senior Level</span>
+                    </div>
+                </div>
+                <p class="position-description">
+                    Design and implement our next-generation AI load balancing algorithms. Work with massive datasets to optimize distributed task execution across global nodes.
+                </p>
+                <button class="btn-apply" data-position="Senior AI Engineer">
+                    <i class="fas fa-paper-plane"></i> Apply Now
+                </button>
+            </div>
+            
+            <div class="position-card" data-department="engineering">
+                <span class="position-badge hybrid">Hybrid</span>
+                <div class="position-header">
+                    <h3 class="position-title">Distributed Systems Engineer</h3>
+                    <div class="position-department">
+                        <i class="fas fa-code"></i> Engineering • Platform Team
+                    </div>
+                </div>
+                <div class="position-details">
+                    <div class="position-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>San Francisco / Remote</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-clock"></i>
+                        <span>Full-time</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-signal"></i>
+                        <span>Mid to Senior</span>
+                    </div>
+                </div>
+                <p class="position-description">
+                    Build and scale our distributed computing platform. Work on fault tolerance, consensus algorithms, and high-performance data processing systems.
+                </p>
+                <button class="btn-apply" data-position="Distributed Systems Engineer">
+                    <i class="fas fa-paper-plane"></i> Apply Now
+                </button>
+            </div>
+            
+            <div class="position-card" data-department="engineering">
+                <span class="position-badge remote">Remote</span>
+                <div class="position-header">
+                    <h3 class="position-title">Frontend Engineer</h3>
+                    <div class="position-department">
+                        <i class="fas fa-code"></i> Engineering • Product Team
+                    </div>
+                </div>
+                <div class="position-details">
+                    <div class="position-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Remote (Global)</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-clock"></i>
+                        <span>Full-time</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-signal"></i>
+                        <span>Mid Level</span>
+                    </div>
+                </div>
+                <p class="position-description">
+                    Build beautiful, responsive interfaces for our dashboard and monitoring tools. Work with React, TypeScript, and real-time data visualization.
+                </p>
+                <button class="btn-apply" data-position="Frontend Engineer">
+                    <i class="fas fa-paper-plane"></i> Apply Now
+                </button>
+            </div>
+            
+            <!-- Product Positions -->
+            <div class="position-card" data-department="product">
+                <span class="position-badge hybrid">Hybrid</span>
+                <div class="position-header">
+                    <h3 class="position-title">Product Manager</h3>
+                    <div class="position-department">
+                        <i class="fas fa-chart-line"></i> Product • Platform
+                    </div>
+                </div>
+                <div class="position-details">
+                    <div class="position-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>San Francisco / Remote</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-clock"></i>
+                        <span>Full-time</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-signal"></i>
+                        <span>Senior Level</span>
+                    </div>
+                </div>
+                <p class="position-description">
+                    Define the roadmap for our distributed computing platform. Work with engineering, design, and customers to build products that developers love.
+                </p>
+                <button class="btn-apply" data-position="Product Manager">
+                    <i class="fas fa-paper-plane"></i> Apply Now
+                </button>
+            </div>
+            
+            <!-- Research Positions -->
+            <div class="position-card" data-department="research">
+                <span class="position-badge remote">Remote</span>
+                <div class="position-header">
+                    <h3 class="position-title">Research Scientist</h3>
+                    <div class="position-department">
+                        <i class="fas fa-flask"></i> Research • AI Lab
+                    </div>
+                </div>
+                <div class="position-details">
+                    <div class="position-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Remote (Global)</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-clock"></i>
+                        <span>Full-time</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-signal"></i>
+                        <span>PhD Required</span>
+                    </div>
+                </div>
+                <p class="position-description">
+                    Conduct cutting-edge research in distributed systems optimization, reinforcement learning, and AI-powered resource allocation.
+                </p>
+                <button class="btn-apply" data-position="Research Scientist">
+                    <i class="fas fa-paper-plane"></i> Apply Now
+                </button>
+            </div>
+            
+            <!-- Operations Positions -->
+            <div class="position-card" data-department="operations">
+                <span class="position-badge onsite">On-site</span>
+                <div class="position-header">
+                    <h3 class="position-title">DevOps Engineer</h3>
+                    <div class="position-department">
+                        <i class="fas fa-server"></i> Operations • Infrastructure
+                    </div>
+                </div>
+                <div class="position-details">
+                    <div class="position-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>San Francisco</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-clock"></i>
+                        <span>Full-time</span>
+                    </div>
+                    <div class="position-detail">
+                        <i class="fas fa-signal"></i>
+                        <span>Senior Level</span>
+                    </div>
+                </div>
+                <p class="position-description">
+                    Manage our global infrastructure across AWS, GCP, and edge locations. Ensure 99.99% uptime and build automation for scaling operations.
+                </p>
+                <button class="btn-apply" data-position="DevOps Engineer">
+                    <i class="fas fa-paper-plane"></i> Apply Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Application Process -->
+    <section class="process-section">
+        <div class="section-header" style="color: white;">
+            <h2><i class="fas fa-road"></i> Application Process</h2>
+            <p>Our streamlined hiring process designed to respect your time</p>
+        </div>
+        
+        <div class="process-steps">
+            <div class="process-step">
+                <div class="step-number">1</div>
+                <h3>Initial Screen</h3>
+                <p>30-minute chat with our recruiting team to discuss your background and career goals.</p>
+            </div>
+            
+            <div class="process-step">
+                <div class="step-number">2</div>
+                <h3>Technical Chat</h3>
+                <p>60-minute conversation with team members about your technical experience and approach.</p>
+            </div>
+            
+            <div class="process-step">
+                <div class="step-number">3</div>
+                <h3>Take-home Project</h3>
+                <p>Practical, realistic project that reflects actual work you'd do at GetConnect.Web.</p>
+            </div>
+            
+            <div class="process-step">
+                <div class="step-number">4</div>
+                <h3>On-site Interviews</h3>
+                <p>Meet the team, including cross-functional partners and senior leadership.</p>
+            </div>
+        </div>
+        
+        <div class="cta-container" style="margin-top: 4rem;">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">What to Expect</h3>
+            <p style="max-width: 800px; margin: 0 auto 2rem;">
+                Our process is transparent and respectful of your time. We provide feedback at every stage and aim to complete the process within 2-3 weeks. We value diverse perspectives and encourage candidates from all backgrounds to apply.
+            </p>
+        </div>
+    </section>
+
+    <!-- Culture Section -->
+    <section class="culture-section">
+        <div class="section-header">
+            <h2><i class="fas fa-users"></i> Our Culture</h2>
+            <p>More than just a workplace - a community of innovators</p>
+        </div>
+        
+        <div class="culture-grid">
+            <div class="culture-image">
+                <i class="fas fa-brain"></i>
+            </div>
+            <div class="culture-content">
+                <h3>Where Innovation Thrives</h3>
+                <p>At GetConnect.Web, we've created an environment where brilliant minds can do their best work. We believe that innovation happens when people feel supported, challenged, and connected.</p>
+                <p>Our team is distributed across 15 countries, bringing diverse perspectives that help us build better products for a global audience. We celebrate different viewpoints and encourage healthy debate.</p>
+                <p>Weekly tech talks, quarterly hackathons, and open-source Fridays keep our skills sharp and our ideas fresh. We're not just building a product - we're advancing the state of distributed computing.</p>
+                
+                <div class="culture-stats">
+                    <div class="culture-stat">
+                        <span class="culture-stat-number">85%</span>
+                        <span class="culture-stat-label">Employee Retention</span>
+                    </div>
+                    <div class="culture-stat">
+                        <span class="culture-stat-number">94%</span>
+                        <span class="culture-stat-label">Recommend to Friends</span>
+                    </div>
+                    <div class="culture-stat">
+                        <span class="culture-stat-number">4.8/5</span>
+                        <span class="culture-stat-label">Happiness Score</span>
+                    </div>
+                    <div class="culture-stat">
+                        <span class="culture-stat-number">42%</span>
+                        <span class="culture-stat-label">Women in Tech Roles</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2>Ready to Build With Us?</h2>
+            <p>Join our mission to revolutionize distributed computing. We're hiring talented individuals who are passionate about technology and making an impact.</p>
+            <div class="cta-buttons">
+                <a href="#positions" class="btn-primary btn-large">
+                    <i class="fas fa-eye"></i> View Open Positions
+                </a>
+                <a href="mailto:careers@getconnect.web" class="btn-secondary btn-large">
+                    <i class="fas fa-envelope"></i> Contact Talent Team
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer - CONNECTED TO ALL PAGES -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <div class="logo-animation">
+                        <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </div>
+                <p class="footer-description">
+                    AI-powered distributed task execution engine with intelligent load balancing for modern computing needs. Scalable, secure, and efficient.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Product</h3>
+                <ul>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="api-documentation.html">API Documentation</a></li>
+                    <li><a href="tasks.html">Task Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="partners.html">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="docs.html">Documentation</a></li>
+                    <li><a href="tutorials.html">Tutorials</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="status.html">System Status</a></li>
+                    <li><a href="community.html">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="security.html">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== MOBILE MENU TOGGLE =====
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileToggle.innerHTML = navMenu.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-container') && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // ===== NOTIFICATION SYSTEM =====
+        const notificationBtn = document.getElementById('notificationBtn');
+        let notificationCount = 3;
+
+        notificationBtn.addEventListener('click', () => {
+            if (notificationCount > 0) {
+                alert(`You have ${notificationCount} unread notifications`);
+                notificationCount = 0;
+                document.querySelector('.notification-count').textContent = '0';
+                document.querySelector('.notification-count').style.display = 'none';
+            } else {
+                alert('You have no new notifications');
+            }
+        });
+
+        // ===== POSITION FILTERING =====
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const positionCards = document.querySelectorAll('.position-card');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                const filter = button.getAttribute('data-filter');
+                
+                // Filter position cards
+                positionCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-department') === filter) {
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 10);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // ===== APPLY BUTTON FUNCTIONALITY =====
+        const applyButtons = document.querySelectorAll('.btn-apply');
+        
+        applyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const position = button.getAttribute('data-position');
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 2000;
+                    backdrop-filter: blur(5px);
+                    animation: fadeIn 0.3s ease;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: white;
+                        border-radius: var(--radius-xl);
+                        padding: 2.5rem;
+                        width: 90%;
+                        max-width: 500px;
+                        box-shadow: var(--shadow-xl);
+                        animation: slideUp 0.4s ease;
+                    ">
+                        <div style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 1.5rem;
+                        ">
+                            <h3 style="color: var(--primary-dark); font-size: 1.5rem;">
+                                Apply for ${position}
+                            </h3>
+                            <button class="close-modal" style="
+                                background: none;
+                                border: none;
+                                font-size: 1.5rem;
+                                color: var(--dark-gray);
+                                cursor: pointer;
+                            ">&times;</button>
+                        </div>
+                        
+                        <form id="applicationForm" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">
+                                    Full Name
+                                </label>
+                                <input type="text" required style="
+                                    width: 100%;
+                                    padding: 12px 16px;
+                                    border: 2px solid var(--medium-gray);
+                                    border-radius: var(--radius-md);
+                                    font-size: 1rem;
+                                    transition: all var(--transition-normal);
+                                " placeholder="John Doe">
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">
+                                    Email Address
+                                </label>
+                                <input type="email" required style="
+                                    width: 100%;
+                                    padding: 12px 16px;
+                                    border: 2px solid var(--medium-gray);
+                                    border-radius: var(--radius-md);
+                                    font-size: 1rem;
+                                    transition: all var(--transition-normal);
+                                " placeholder="john@example.com">
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">
+                                    LinkedIn Profile
+                                </label>
+                                <input type="url" style="
+                                    width: 100%;
+                                    padding: 12px 16px;
+                                    border: 2px solid var(--medium-gray);
+                                    border-radius: var(--radius-md);
+                                    font-size: 1rem;
+                                    transition: all var(--transition-normal);
+                                " placeholder="https://linkedin.com/in/yourprofile">
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">
+                                    Resume/CV
+                                </label>
+                                <input type="file" accept=".pdf,.doc,.docx" required style="
+                                    width: 100%;
+                                    padding: 12px 16px;
+                                    border: 2px solid var(--medium-gray);
+                                    border-radius: var(--radius-md);
+                                    font-size: 1rem;
+                                    transition: all var(--transition-normal);
+                                ">
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">
+                                    Cover Letter (Optional)
+                                </label>
+                                <textarea rows="4" style="
+                                    width: 100%;
+                                    padding: 12px 16px;
+                                    border: 2px solid var(--medium-gray);
+                                    border-radius: var(--radius-md);
+                                    font-size: 1rem;
+                                    transition: all var(--transition-normal);
+                                    resize: vertical;
+                                " placeholder="Tell us why you're interested in this role..."></textarea>
+                            </div>
+                            
+                            <button type="submit" style="
+                                background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+                                color: white;
+                                padding: 14px;
+                                border-radius: var(--radius-md);
+                                font-weight: 600;
+                                font-size: 1rem;
+                                border: none;
+                                cursor: pointer;
+                                margin-top: 1rem;
+                                transition: all var(--transition-normal);
+                            ">
+                                <i class="fas fa-paper-plane"></i> Submit Application
+                            </button>
+                        </form>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Close modal
+                modal.querySelector('.close-modal').addEventListener('click', () => {
+                    modal.style.opacity = '0';
+                    setTimeout(() => modal.remove(), 300);
+                });
+                
+                // Close on outside click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.opacity = '0';
+                        setTimeout(() => modal.remove(), 300);
+                    }
+                });
+                
+                // Form submission
+                modal.querySelector('#applicationForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    // Show success message
+                    const form = e.target;
+                    form.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <div style="
+                                width: 80px;
+                                height: 80px;
+                                background: var(--success);
+                                color: white;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 2rem;
+                                margin: 0 auto 1.5rem;
+                            ">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h4 style="color: var(--primary-dark); margin-bottom: 1rem; font-size: 1.25rem;">
+                                Application Submitted!
+                            </h4>
+                            <p style="color: var(--dark-gray); margin-bottom: 1.5rem;">
+                                Thank you for applying to ${position}. Our talent team will review your application and get back to you within 5 business days.
+                            </p>
+                            <button class="close-modal" style="
+                                background: var(--primary-blue);
+                                color: white;
+                                padding: 12px 24px;
+                                border-radius: var(--radius-md);
+                                border: none;
+                                font-weight: 500;
+                                cursor: pointer;
+                            ">
+                                Close
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Close button in success message
+                    form.querySelector('.close-modal').addEventListener('click', () => {
+                        modal.style.opacity = '0';
+                        setTimeout(() => modal.remove(), 300);
+                    });
+                });
+            });
+        });
+
+        // ===== NAVIGATION ACTIVE STATE =====
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Close mobile menu if open
+                if (navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
+        // ===== SMOOTH SCROLL FOR CTA =====
+        document.querySelector('a[href="#positions"]').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelector('.positions-section').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+
+        // ===== ANIMATE CARDS ON SCROLL =====
+        function animateOnScroll() {
+            const cards = document.querySelectorAll('.value-card, .benefit-card, .position-card');
+            
+            cards.forEach(card => {
+                const position = card.getBoundingClientRect();
+                if (position.top < window.innerHeight - 100) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }
+            });
+        }
+
+        // Initialize cards with hidden state
+        document.querySelectorAll('.value-card, .benefit-card, .position-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        });
+
+        // Set up scroll animation
+        window.addEventListener('scroll', animateOnScroll);
+        
+        // Initial animation check
+        setTimeout(animateOnScroll, 100);
+
+        // ===== COUNTER ANIMATION =====
+        function animateCounter(element, target, duration = 2000) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 16);
+        }
+
+        // Animate hero stats on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const statNumbers = document.querySelectorAll('.hero-stat-number, .culture-stat-number');
+            
+            statNumbers.forEach(stat => {
+                const target = parseFloat(stat.textContent);
+                if (!isNaN(target)) {
+                    stat.textContent = '0';
+                    setTimeout(() => {
+                        animateCounter(stat, target);
+                    }, 500);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

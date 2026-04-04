@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation | GetConnect.Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --purple:#c084fc;--cyan:#22d3ee;--pink:#f472b6;
+            --card:rgba(15,25,45,0.65);--border:rgba(192,132,252,0.3);
+            --text:#e2e8ff;--muted:#94a3b8;
+            --success:#10b981;--warning:#f59e0b;--danger:#ef4444;
+            --r:16px;--tr:250ms ease;
+        }
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0f172a}::-webkit-scrollbar-thumb{background:#c084fc;border-radius:8px}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;color:var(--text);background:radial-gradient(circle at 10% 20%,#0a0f2a,#020617);line-height:1.6;overflow-x:hidden;min-height:100vh}
+        h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;line-height:1.2}
+        a{text-decoration:none;color:inherit}
+        button{font-family:'Inter',sans-serif;cursor:pointer;border:none;outline:none}
+
+        /* NAV */
+        .header{position:sticky;top:0;z-index:1000;background:rgba(5,10,30,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+        .nav-container{max-width:1400px;margin:0 auto;padding:.85rem 2rem;display:flex;justify-content:space-between;align-items:center}
+        .logo{display:flex;align-items:center;gap:10px}
+        .logo-main{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,#fff,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent}
+        .logo-sub{color:#c084fc;font-size:.85rem}
+        .nav-menu{display:flex;list-style:none;gap:1.2rem;align-items:center}
+        .nav-link{display:flex;align-items:center;gap:6px;padding:8px 14px;font-weight:500;color:#e2e8ff;border-radius:10px;transition:var(--tr);position:relative}
+        .nav-link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(90deg,#c084fc,#22d3ee);transition:width var(--tr);border-radius:2px}
+        .nav-link:hover::after,.nav-link.active::after{width:100%}
+        .nav-link:hover,.nav-link.active{color:#22d3ee;background:rgba(192,132,252,0.1)}
+        .nav-actions{display:flex;align-items:center;gap:.8rem}
+        .btn-login{padding:8px 18px;border-radius:40px;border:1px solid rgba(192,132,252,0.5);color:#e2e8ff;background:transparent;font-weight:500;transition:var(--tr)}
+        .btn-login:hover{background:rgba(192,132,252,0.15)}
+        .btn-reg{padding:9px 20px;border-radius:40px;background:linear-gradient(90deg,#c084fc,#06b6d4);color:#0f0f2a;font-weight:700;transition:var(--tr)}
+        .btn-reg:hover{transform:scale(1.03);box-shadow:0 0 18px #a855f7}
+        .mobile-toggle{display:none;font-size:1.4rem;color:#e2e8ff;cursor:pointer;padding:8px}
+        @media(max-width:900px){
+            .nav-menu{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(5,10,30,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:1rem;border-bottom:1px solid var(--border)}
+            .nav-menu.active{display:flex}.mobile-toggle{display:block}
+            .nav-actions .btn-login,.nav-actions .btn-reg{display:none}
+        }
+
+        /* LAYOUT */
+        .docs-layout{display:grid;grid-template-columns:260px 1fr;gap:0;max-width:1400px;margin:0 auto;min-height:calc(100vh - 64px)}
+
+        /* SIDEBAR */
+        .sidebar{position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;padding:2rem 1.2rem;border-right:1px solid var(--border);background:rgba(5,10,30,0.5);backdrop-filter:blur(8px)}
+        .sidebar::-webkit-scrollbar{width:4px}
+        .sidebar-section{margin-bottom:1.8rem}
+        .sidebar-title{font-size:.72rem;font-weight:700;color:#c084fc;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.7rem;padding:0 .5rem}
+        .sidebar-link{display:flex;align-items:center;gap:8px;padding:.5rem .8rem;border-radius:10px;font-size:.88rem;color:#94a3b8;transition:var(--tr);cursor:pointer;margin-bottom:2px}
+        .sidebar-link:hover,.sidebar-link.active{color:#e2e8ff;background:rgba(192,132,252,0.12);border-left:2px solid #c084fc;padding-left:.6rem}
+        .sidebar-link i{font-size:.8rem;width:14px;text-align:center}
+        .method-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+        .dot-get{background:#10b981}.dot-post{background:#c084fc}.dot-put{background:#f59e0b}.dot-del{background:#ef4444}
+
+        /* CONTENT */
+        .docs-content{padding:2.5rem 3rem;overflow-y:auto}
+        @media(max-width:900px){.docs-layout{grid-template-columns:1fr}.sidebar{display:none}.docs-content{padding:1.5rem}}
+
+        /* SECTION */
+        .doc-section{margin-bottom:4rem;scroll-margin-top:80px}
+        .section-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,85,247,0.15);border:1px solid rgba(192,132,252,0.4);padding:.35rem 1rem;border-radius:40px;font-size:.8rem;color:#c084fc;margin-bottom:1rem}
+        .doc-section h2{font-size:1.9rem;font-weight:800;background:linear-gradient(135deg,#e2e8ff,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:.8rem}
+        .doc-section>p{color:#b9c7e6;font-size:.97rem;line-height:1.8;margin-bottom:1.5rem;max-width:720px}
+        .doc-section h3{font-size:1.2rem;color:#e2e8ff;margin:2rem 0 .8rem;display:flex;align-items:center;gap:.6rem}
+        .doc-section h3 i{color:#c084fc;font-size:1rem}
+
+        /* GLASS CARD */
+        .card{background:var(--card);backdrop-filter:blur(12px);border-radius:var(--r);border:1px solid var(--border);box-shadow:0 20px 40px rgba(0,0,0,0.3),0 0 15px rgba(168,85,247,0.06)}
+
+        /* METHOD BADGES */
+        .method{display:inline-flex;align-items:center;padding:4px 12px;border-radius:8px;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-right:.5rem}
+        .method.get{background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)}
+        .method.post{background:rgba(192,132,252,0.15);color:#c084fc;border:1px solid rgba(192,132,252,0.3)}
+        .method.put{background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)}
+        .method.delete{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+
+        /* ENDPOINT CARDS */
+        .endpoint{margin-bottom:1.2rem;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+        .endpoint-head{display:flex;align-items:center;gap:.8rem;padding:1rem 1.2rem;background:rgba(15,25,45,0.7);cursor:pointer;transition:var(--tr)}
+        .endpoint-head:hover{background:rgba(192,132,252,0.08)}
+        .endpoint-path{font-family:'Courier New',monospace;font-size:.92rem;color:#e2e8ff;font-weight:600}
+        .endpoint-desc{margin-left:auto;font-size:.82rem;color:#94a3b8}
+        .endpoint-body{padding:1.5rem;background:rgba(8,14,32,0.6);border-top:1px solid rgba(255,255,255,0.06);display:none}
+        .endpoint-body.open{display:block}
+        .param-table{width:100%;border-collapse:collapse;margin:.8rem 0}
+        .param-table th{padding:.6rem .8rem;text-align:left;font-size:.78rem;font-weight:700;color:#c084fc;border-bottom:1px solid rgba(192,132,252,0.2);background:rgba(168,85,247,0.06)}
+        .param-table td{padding:.6rem .8rem;font-size:.84rem;border-bottom:1px solid rgba(255,255,255,0.04);color:#e2e8ff}
+        .param-table tr:last-child td{border-bottom:none}
+        .param-type{font-family:'Courier New',monospace;color:#22d3ee;font-size:.8rem}
+        .param-req{color:#ef4444;font-size:.75rem;font-weight:700}
+        .param-opt{color:#94a3b8;font-size:.75rem}
+
+        /* CODE BLOCKS */
+        .code-block{background:#0d1117;border-radius:12px;border:1px solid rgba(192,132,252,0.2);overflow:hidden;margin:.8rem 0}
+        .code-header{display:flex;justify-content:space-between;align-items:center;padding:.6rem 1rem;background:rgba(168,85,247,0.08);border-bottom:1px solid rgba(192,132,252,0.15)}
+        .code-lang{font-size:.75rem;color:#c084fc;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+        .copy-btn{padding:4px 10px;background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);border-radius:6px;color:#c084fc;font-size:.75rem;cursor:pointer;transition:var(--tr)}
+        .copy-btn:hover{background:rgba(192,132,252,0.3)}
+        pre{padding:1.2rem;overflow-x:auto;font-family:'Courier New',monospace;font-size:.85rem;line-height:1.7;color:#e2e8ff}
+        pre .kw{color:#c084fc}
+        pre .str{color:#10b981}
+        pre .num{color:#f59e0b}
+        pre .cmt{color:#4a5568;font-style:italic}
+        pre .key{color:#22d3ee}
+        pre .url{color:#f472b6}
+
+        /* RESPONSE TABS */
+        .resp-tabs{display:flex;gap:.4rem;margin-bottom:.8rem}
+        .rtab{padding:5px 14px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.1);color:#94a3b8;transition:var(--tr)}
+        .rtab.active,.rtab:hover{background:rgba(192,132,252,0.15);border-color:#c084fc;color:#c084fc}
+        .rtab.s200{border-color:rgba(16,185,129,0.4);color:#10b981}
+        .rtab.s400{border-color:rgba(245,158,11,0.4);color:#f59e0b}
+        .rtab.s500{border-color:rgba(239,68,68,0.4);color:#ef4444}
+
+        /* INFO BOXES */
+        .info-box{padding:1rem 1.2rem;border-radius:12px;margin:1rem 0;display:flex;gap:.8rem;align-items:flex-start;font-size:.88rem;line-height:1.6}
+        .info-box.tip{background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);color:#b9c7e6}
+        .info-box.warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);color:#b9c7e6}
+        .info-box.danger{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:#b9c7e6}
+        .info-box i{margin-top:2px;flex-shrink:0}
+        .info-box.tip i{color:#22d3ee}.info-box.warn i{color:#f59e0b}.info-box.danger i{color:#ef4444}
+
+        /* RATE LIMIT TABLE */
+        .rate-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0}
+        @media(max-width:600px){.rate-grid{grid-template-columns:1fr}}
+        .rate-card{padding:1.2rem;text-align:center;border-radius:14px}
+        .rate-val{font-size:1.6rem;font-weight:800;color:#c084fc;font-family:'Space Grotesk',sans-serif}
+        .rate-lbl{font-size:.82rem;color:#94a3b8;margin-top:.3rem}
+
+        /* FOOTER */
+        .footer{background:#030617;color:#fff;padding:3rem 2rem 2rem;border-top:1px solid rgba(192,132,252,0.2);margin-top:3rem}
+        .footer-container{display:grid;grid-template-columns:repeat(4,1fr);gap:3rem;max-width:1400px;margin:0 auto}
+        .footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+        .footer-desc{color:rgba(255,255,255,0.65);font-size:.88rem;line-height:1.6;margin-bottom:1.2rem}
+        .social-links{display:flex;gap:.7rem}
+        .social-links a{width:34px;height:34px;background:rgba(255,255,255,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;transition:var(--tr)}
+        .social-links a:hover{background:#c084fc;transform:translateY(-3px)}
+        .footer-column h3{font-size:1rem;margin-bottom:1rem;color:#e2e8ff}
+        .footer-column ul{list-style:none}
+        .footer-column li{margin-bottom:.5rem}
+        .footer-column a{color:rgba(255,255,255,0.65);font-size:.88rem;transition:color var(--tr)}
+        .footer-column a:hover{color:#c084fc}
+        .footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:1.5rem;margin-top:2rem;display:flex;justify-content:space-between;align-items:center;max-width:1400px;margin-left:auto;margin-right:auto;flex-wrap:wrap;gap:1rem}
+        .footer-links{display:flex;gap:1.5rem}
+        .footer-links a{color:rgba(255,255,255,0.55);font-size:.85rem}
+        .footer-links a:hover{color:#c084fc}
+        @media(max-width:1024px){.footer-container{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.footer-container{grid-template-columns:1fr}.footer-bottom{flex-direction:column;text-align:center}}
+
+        /* TOAST */
+        .toast-container{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px}
+        .toast{background:rgba(15,25,45,0.97);backdrop-filter:blur(10px);border-radius:12px;padding:.9rem 1.4rem;box-shadow:0 10px 30px rgba(0,0,0,0.5);border-left:4px solid #c084fc;display:flex;align-items:center;gap:.9rem;min-width:260px;transform:translateX(400px);transition:transform .3s ease;border:1px solid rgba(192,132,252,0.3);border-left:4px solid #c084fc}
+        .toast.show{transform:translateX(0)}
+        .toast-icon{color:#c084fc;font-size:1.1rem}
+        .toast h4{color:#e2e8ff;font-size:.88rem;margin-bottom:.1rem}
+        .toast p{color:#94a3b8;font-size:.8rem}
+        .toast-close{margin-left:auto;background:none;color:#94a3b8;font-size:.95rem;cursor:pointer}
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                    <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z" fill="url(#g1)" opacity="0.95"/>
+                    <circle cx="42" cy="45" r="8" fill="#fff"/><path d="M30 80 C35 60,50 60,55 75" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+                    <circle cx="78" cy="45" r="8" fill="#fff"/><path d="M90 80 C85 60,70 60,65 75" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+                    <path d="M42 65 L55 78 L78 52" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="logo-text"><span class="logo-main">GetConnect</span><span class="logo-sub">.web</span></div>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                <li><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="register.html" class="btn-reg"><i class="fas fa-user-plus"></i> Register</a>
+                <div class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- DOCS LAYOUT -->
+    <div class="docs-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Getting Started</div>
+                <a class="sidebar-link active" onclick="scrollTo('intro')"><i class="fas fa-rocket"></i> Introduction</a>
+                <a class="sidebar-link" onclick="scrollTo('auth')"><i class="fas fa-key"></i> Authentication</a>
+                <a class="sidebar-link" onclick="scrollTo('base')"><i class="fas fa-globe"></i> Base URL</a>
+                <a class="sidebar-link" onclick="scrollTo('rate')"><i class="fas fa-tachometer-alt"></i> Rate Limits</a>
+                <a class="sidebar-link" onclick="scrollTo('errors')"><i class="fas fa-exclamation-circle"></i> Error Codes</a>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Tasks API</div>
+                <a class="sidebar-link" onclick="scrollTo('tasks-list')"><span class="method-dot dot-get"></span> List Tasks</a>
+                <a class="sidebar-link" onclick="scrollTo('tasks-create')"><span class="method-dot dot-post"></span> Create Task</a>
+                <a class="sidebar-link" onclick="scrollTo('tasks-get')"><span class="method-dot dot-get"></span> Get Task</a>
+                <a class="sidebar-link" onclick="scrollTo('tasks-update')"><span class="method-dot dot-put"></span> Update Task</a>
+                <a class="sidebar-link" onclick="scrollTo('tasks-delete')"><span class="method-dot dot-del"></span> Delete Task</a>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Nodes API</div>
+                <a class="sidebar-link" onclick="scrollTo('nodes-list')"><span class="method-dot dot-get"></span> List Nodes</a>
+                <a class="sidebar-link" onclick="scrollTo('nodes-status')"><span class="method-dot dot-get"></span> Node Status</a>
+                <a class="sidebar-link" onclick="scrollTo('nodes-add')"><span class="method-dot dot-post"></span> Add Node</a>
+                <a class="sidebar-link" onclick="scrollTo('nodes-remove')"><span class="method-dot dot-del"></span> Remove Node</a>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Analytics API</div>
+                <a class="sidebar-link" onclick="scrollTo('analytics-metrics')"><span class="method-dot dot-get"></span> Get Metrics</a>
+                <a class="sidebar-link" onclick="scrollTo('analytics-logs')"><span class="method-dot dot-get"></span> Get Logs</a>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Webhooks</div>
+                <a class="sidebar-link" onclick="scrollTo('webhooks')"><i class="fas fa-bell"></i> Webhooks</a>
+                <a class="sidebar-link" onclick="scrollTo('sdks')"><i class="fas fa-code"></i> SDKs</a>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="docs-content">
+
+            <!-- INTRO -->
+            <div class="doc-section" id="intro">
+                <div class="section-badge"><i class="fas fa-rocket"></i> Getting Started</div>
+                <h2>API Documentation</h2>
+                <p>The GetConnect.Web REST API lets you programmatically manage distributed tasks, monitor nodes, and retrieve analytics. All requests use HTTPS and return JSON responses.</p>
+                <div class="rate-grid">
+                    <div class="card rate-card"><div class="rate-val">REST</div><div class="rate-lbl">API Architecture</div></div>
+                    <div class="card rate-card"><div class="rate-val">v2.4</div><div class="rate-lbl">Current Version</div></div>
+                    <div class="card rate-card"><div class="rate-val">JSON</div><div class="rate-lbl">Response Format</div></div>
+                </div>
+                <div class="info-box tip"><i class="fas fa-lightbulb"></i><span>All API endpoints require authentication via Bearer token. Include your API key in every request header.</span></div>
+            </div>
+
+            <!-- AUTH -->
+            <div class="doc-section" id="auth">
+                <div class="section-badge"><i class="fas fa-key"></i> Authentication</div>
+                <h2>Authentication</h2>
+                <p>GetConnect uses API keys for authentication. Pass your key in the <code style="color:#22d3ee;background:rgba(34,211,238,0.1);padding:2px 6px;border-radius:4px">Authorization</code> header as a Bearer token.</p>
+                <h3><i class="fas fa-code"></i> Request Header</h3>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">HTTP</span><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+                    <pre><span class="key">Authorization:</span> <span class="str">Bearer gc_live_xxxxxxxxxxxxxxxxxxxx</span>
+<span class="key">Content-Type:</span> <span class="str">application/json</span>
+<span class="key">X-API-Version:</span> <span class="str">2024-01</span></pre>
+                </div>
+                <h3><i class="fas fa-terminal"></i> Example with cURL</h3>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">cURL</span><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+                    <pre><span class="kw">curl</span> -X GET <span class="str">"https://api.getconnect.web/v2/tasks"</span> \
+  -H <span class="str">"Authorization: Bearer gc_live_xxxxxxxxxxxxxxxxxxxx"</span> \
+  -H <span class="str">"Content-Type: application/json"</span></pre>
+                </div>
+                <div class="info-box warn"><i class="fas fa-exclamation-triangle"></i><span>Never expose your API key in client-side code. Use environment variables or a backend proxy.</span></div>
+            </div>
+
+            <!-- BASE URL -->
+            <div class="doc-section" id="base">
+                <div class="section-badge"><i class="fas fa-globe"></i> Base URL</div>
+                <h2>Base URL</h2>
+                <p>All API requests should be made to the following base URL. We support both production and sandbox environments.</p>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Endpoints</span></div>
+                    <pre><span class="cmt"># Production</span>
+<span class="url">https://api.getconnect.web/v2</span>
+
+<span class="cmt"># Sandbox (testing)</span>
+<span class="url">https://sandbox.api.getconnect.web/v2</span></pre>
+                </div>
+            </div>
+
+            <!-- RATE LIMITS -->
+            <div class="doc-section" id="rate">
+                <div class="section-badge"><i class="fas fa-tachometer-alt"></i> Rate Limits</div>
+                <h2>Rate Limits</h2>
+                <p>API requests are rate-limited per API key. Exceeding limits returns a <code style="color:#f59e0b;background:rgba(245,158,11,0.1);padding:2px 6px;border-radius:4px">429 Too Many Requests</code> response.</p>
+                <div class="rate-grid">
+                    <div class="card rate-card"><div class="rate-val">1,000</div><div class="rate-lbl">Requests / minute (Free)</div></div>
+                    <div class="card rate-card"><div class="rate-val">10,000</div><div class="rate-lbl">Requests / minute (Pro)</div></div>
+                    <div class="card rate-card"><div class="rate-val">Unlimited</div><div class="rate-lbl">Enterprise Plan</div></div>
+                </div>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Response Headers</span></div>
+                    <pre><span class="key">X-RateLimit-Limit:</span>      <span class="num">1000</span>
+<span class="key">X-RateLimit-Remaining:</span>  <span class="num">847</span>
+<span class="key">X-RateLimit-Reset:</span>      <span class="num">1704067200</span></pre>
+                </div>
+            </div>
+
+            <!-- ERRORS -->
+            <div class="doc-section" id="errors">
+                <div class="section-badge"><i class="fas fa-exclamation-circle"></i> Error Codes</div>
+                <h2>Error Codes</h2>
+                <p>The API uses standard HTTP status codes. All error responses include a JSON body with a <code style="color:#22d3ee;background:rgba(34,211,238,0.1);padding:2px 6px;border-radius:4px">code</code> and <code style="color:#22d3ee;background:rgba(34,211,238,0.1);padding:2px 6px;border-radius:4px">message</code> field.</p>
+                <div class="card" style="overflow:hidden;margin-top:1rem">
+                    <table style="width:100%;border-collapse:collapse">
+                        <thead><tr><th style="padding:.7rem 1rem;text-align:left;color:#c084fc;font-size:.8rem;background:rgba(168,85,247,0.08);border-bottom:1px solid rgba(192,132,252,0.2)">Status</th><th style="padding:.7rem 1rem;text-align:left;color:#c084fc;font-size:.8rem;background:rgba(168,85,247,0.08);border-bottom:1px solid rgba(192,132,252,0.2)">Code</th><th style="padding:.7rem 1rem;text-align:left;color:#c084fc;font-size:.8rem;background:rgba(168,85,247,0.08);border-bottom:1px solid rgba(192,132,252,0.2)">Description</th></tr></thead>
+                        <tbody>
+                            <tr><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:#10b981;font-weight:700">200</span></td><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#94a3b8;font-family:monospace">OK</td><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#b9c7e6">Request succeeded</td></tr>
+                            <tr><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:#10b981;font-weight:700">201</span></td><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#94a3b8;font-family:monospace">CREATED</td><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#b9c7e6">Resource created successfully</td></tr>
+                            <tr><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:#f59e0b;font-weight:700">400</span></td><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#94a3b8;font-family:monospace">BAD_REQUEST</td><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#b9c7e6">Invalid request parameters</td></tr>
+                            <tr><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:#f59e0b;font-weight:700">401</span></td><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#94a3b8;font-family:monospace">UNAUTHORIZED</td><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#b9c7e6">Invalid or missing API key</td></tr>
+                            <tr><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:#f59e0b;font-weight:700">429</span></td><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#94a3b8;font-family:monospace">RATE_LIMITED</td><td style="padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);color:#b9c7e6">Too many requests</td></tr>
+                            <tr><td style="padding:.7rem 1rem"><span style="color:#ef4444;font-weight:700">500</span></td><td style="padding:.7rem 1rem;color:#94a3b8;font-family:monospace">SERVER_ERROR</td><td style="padding:.7rem 1rem;color:#b9c7e6">Internal server error</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TASKS API -->
+            <div class="doc-section" id="tasks-list">
+                <div class="section-badge"><i class="fas fa-tasks"></i> Tasks API</div>
+                <h2>Tasks API</h2>
+                <p>Manage distributed tasks — create, monitor, update, and delete tasks across your node cluster.</p>
+
+                <!-- List Tasks -->
+                <h3><i class="fas fa-list"></i> List Tasks</h3>
+                <div class="endpoint">
+                    <div class="endpoint-head" onclick="toggleEndpoint(this)">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/tasks</span>
+                        <span class="endpoint-desc">Returns paginated list of all tasks</span>
+                        <i class="fas fa-chevron-down" style="color:#94a3b8;margin-left:auto"></i>
+                    </div>
+                    <div class="endpoint-body">
+                        <p style="color:#94a3b8;font-size:.88rem;margin-bottom:1rem">Retrieve a paginated list of tasks with optional filters.</p>
+                        <p style="color:#c084fc;font-size:.82rem;font-weight:700;margin-bottom:.5rem">QUERY PARAMETERS</p>
+                        <table class="param-table">
+                            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td style="color:#e2e8ff">status</td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td style="color:#94a3b8">Filter by: pending, processing, completed, failed</td></tr>
+                                <tr><td style="color:#e2e8ff">limit</td><td><span class="param-type">integer</span></td><td><span class="param-opt">optional</span></td><td style="color:#94a3b8">Results per page (default: 20, max: 100)</td></tr>
+                                <tr><td style="color:#e2e8ff">page</td><td><span class="param-type">integer</span></td><td><span class="param-opt">optional</span></td><td style="color:#94a3b8">Page number (default: 1)</td></tr>
+                                <tr><td style="color:#e2e8ff">node_id</td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td style="color:#94a3b8">Filter tasks by node ID</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">cURL</span><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+                            <pre><span class="kw">curl</span> -X GET <span class="str">"https://api.getconnect.web/v2/tasks?status=processing&limit=20"</span> \
+  -H <span class="str">"Authorization: Bearer gc_live_xxxx"</span></pre>
+                        </div>
+                        <div class="resp-tabs"><span class="rtab s200 active">200 OK</span><span class="rtab s400">400 Error</span></div>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">JSON Response</span></div>
+                            <pre>{
+  <span class="key">"success"</span>: <span class="kw">true</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"tasks"</span>: [
+      {
+        <span class="key">"id"</span>: <span class="str">"task_abc123"</span>,
+        <span class="key">"name"</span>: <span class="str">"Data Processing Batch"</span>,
+        <span class="key">"status"</span>: <span class="str">"processing"</span>,
+        <span class="key">"node_id"</span>: <span class="str">"node_7"</span>,
+        <span class="key">"progress"</span>: <span class="num">67</span>,
+        <span class="key">"created_at"</span>: <span class="str">"2025-01-15T10:30:00Z"</span>
+      }
+    ],
+    <span class="key">"pagination"</span>: { <span class="key">"total"</span>: <span class="num">1542</span>, <span class="key">"page"</span>: <span class="num">1</span>, <span class="key">"limit"</span>: <span class="num">20</span> }
+  }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Task -->
+                <h3 id="tasks-create"><i class="fas fa-plus-circle"></i> Create Task</h3>
+                <div class="endpoint">
+                    <div class="endpoint-head" onclick="toggleEndpoint(this)">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/tasks</span>
+                        <span class="endpoint-desc">Submit a new task for distribution</span>
+                        <i class="fas fa-chevron-down" style="color:#94a3b8;margin-left:auto"></i>
+                    </div>
+                    <div class="endpoint-body">
+                        <p style="color:#94a3b8;font-size:.88rem;margin-bottom:1rem">Submit a new task. The AI load balancer will automatically assign it to the optimal node.</p>
+                        <p style="color:#c084fc;font-size:.82rem;font-weight:700;margin-bottom:.5rem">REQUEST BODY</p>
+                        <table class="param-table">
+                            <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td style="color:#e2e8ff">name</td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td style="color:#94a3b8">Human-readable task name</td></tr>
+                                <tr><td style="color:#e2e8ff">type</td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td style="color:#94a3b8">Task type: compute, ml, render, sync</td></tr>
+                                <tr><td style="color:#e2e8ff">priority</td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td style="color:#94a3b8">high | medium | low (default: medium)</td></tr>
+                                <tr><td style="color:#e2e8ff">payload</td><td><span class="param-type">object</span></td><td><span class="param-req">required</span></td><td style="color:#94a3b8">Task-specific data payload</td></tr>
+                                <tr><td style="color:#e2e8ff">node_id</td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td style="color:#94a3b8">Force assignment to specific node</td></tr>
+                                <tr><td style="color:#e2e8ff">webhook_url</td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td style="color:#94a3b8">URL to notify on completion</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">cURL</span><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+                            <pre><span class="kw">curl</span> -X POST <span class="str">"https://api.getconnect.web/v2/tasks"</span> \
+  -H <span class="str">"Authorization: Bearer gc_live_xxxx"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "name": "ML Model Training",
+    "type": "ml",
+    "priority": "high",
+    "payload": { "model": "bert-base", "epochs": 10 },
+    "webhook_url": "https://yourapp.com/webhook"
+  }'</span></pre>
+                        </div>
+                        <div class="resp-tabs"><span class="rtab s200 active">201 Created</span><span class="rtab s400">400 Error</span></div>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">JSON Response</span></div>
+                            <pre>{
+  <span class="key">"success"</span>: <span class="kw">true</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"id"</span>: <span class="str">"task_xyz789"</span>,
+    <span class="key">"status"</span>: <span class="str">"queued"</span>,
+    <span class="key">"node_id"</span>: <span class="str">"node_3"</span>,
+    <span class="key">"estimated_completion"</span>: <span class="str">"2025-01-15T10:45:00Z"</span>,
+    <span class="key">"queue_position"</span>: <span class="num">4</span>
+  }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get Task -->
+                <h3 id="tasks-get"><i class="fas fa-search"></i> Get Task</h3>
+                <div class="endpoint">
+                    <div class="endpoint-head" onclick="toggleEndpoint(this)">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/tasks/{task_id}</span>
+                        <span class="endpoint-desc">Get details of a specific task</span>
+                        <i class="fas fa-chevron-down" style="color:#94a3b8;margin-left:auto"></i>
+                    </div>
+                    <div class="endpoint-body">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">cURL</span><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+                            <pre><span class="kw">curl</span> -X GET <span class="str">"https://api.getconnect.web/v2/tasks/task_abc123"</span> \
+  -H <span class="str">"Authorization: Bearer gc_live_xxxx"</span></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Task -->
+                <h3 id="tasks-delete"><i class="fas fa-trash"></i> Delete Task</h3>
+                <div class="endpoint">
+                    <div class="endpoint-head" onclick="toggleEndpoint(this)">
+                        <span class="method delete">DELETE</span>
+                        <span class="endpoint-path">/tasks/{task_id}</span>
+                        <span class="endpoint-desc">Cancel and delete a task</span>
+                        <i class="fas fa-chevron-down" style="color:#94a3b8;margin-left:auto"></i>
+                    </div>
+                    <div class="endpoint-body">
+                        <div class="info-box danger"><i class="fas fa-exclamation-triangle"></i><span>Deleting a running task will immediately stop execution. This action cannot be undone.</span></div>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">cURL</span><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+                            <pre><span class="kw">curl</span> -X DELETE <span class="str">"https://api.getconnect.web/v2/tasks/task_abc123"</span> \
+  -H <span class="str">"Authorization: Bearer gc_live_xxxx"</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NODES API -->
+            <div class="doc-section" id="nodes-list">
+                <div class="section-badge"><i class="fas fa-server"></i> Nodes API</div>
+                <h2>Nodes API</h2>
+                <p>Monitor and manage compute nodes in your distributed cluster.</p>
+
+                <h3><i class="fas fa-list"></i> List Nodes</h3>
+                <div class="endpoint">
+                    <div class="endpoint-head" onclick="toggleEndpoint(this)">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/nodes</span>
+                        <span class="endpoint-desc">List all nodes in your cluster</span>
+                        <i class="fas fa-chevron-down" style="color:#94a3b8;margin-left:auto"></i>
+                    </div>
+                    <div class="endpoint-body">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">JSON Response</span></div>
+                            <pre>{
+  <span class="key">"success"</span>: <span class="kw">true</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"nodes"</span>: [
+      {
+        <span class="key">"id"</span>: <span class="str">"node_3"</span>,
+        <span class="key">"status"</span>: <span class="str">"active"</span>,
+        <span class="key">"cpu_usage"</span>: <span class="num">45</span>,
+        <span class="key">"memory_usage"</span>: <span class="num">40</span>,
+        <span class="key">"active_tasks"</span>: <span class="num">210</span>,
+        <span class="key">"region"</span>: <span class="str">"us-east-1"</span>,
+        <span class="key">"uptime"</span>: <span class="str">"99.9%"</span>
+      }
+    ],
+    <span class="key">"total"</span>: <span class="num">324</span>
+  }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 id="nodes-add"><i class="fas fa-plus"></i> Add Node</h3>
+                <div class="endpoint">
+                    <div class="endpoint-head" onclick="toggleEndpoint(this)">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/nodes</span>
+                        <span class="endpoint-desc">Register a new compute node</span>
+                        <i class="fas fa-chevron-down" style="color:#94a3b8;margin-left:auto"></i>
+                    </div>
+                    <div class="endpoint-body">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">cURL</span><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+                            <pre><span class="kw">curl</span> -X POST <span class="str">"https://api.getconnect.web/v2/nodes"</span> \
+  -H <span class="str">"Authorization: Bearer gc_live_xxxx"</span> \
+  -d <span class="str">'{ "name": "Node 25", "region": "eu-west-1", "capacity": "high" }'</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALYTICS API -->
+            <div class="doc-section" id="analytics-metrics">
+                <div class="section-badge"><i class="fas fa-chart-pie"></i> Analytics API</div>
+                <h2>Analytics API</h2>
+                <p>Retrieve performance metrics, logs, and usage statistics for your cluster.</p>
+
+                <h3><i class="fas fa-chart-bar"></i> Get Metrics</h3>
+                <div class="endpoint">
+                    <div class="endpoint-head" onclick="toggleEndpoint(this)">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/analytics/metrics</span>
+                        <span class="endpoint-desc">Retrieve cluster performance metrics</span>
+                        <i class="fas fa-chevron-down" style="color:#94a3b8;margin-left:auto"></i>
+                    </div>
+                    <div class="endpoint-body">
+                        <table class="param-table">
+                            <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td style="color:#e2e8ff">from</td><td><span class="param-type">ISO 8601</span></td><td><span class="param-req">required</span></td><td style="color:#94a3b8">Start datetime</td></tr>
+                                <tr><td style="color:#e2e8ff">to</td><td><span class="param-type">ISO 8601</span></td><td><span class="param-req">required</span></td><td style="color:#94a3b8">End datetime</td></tr>
+                                <tr><td style="color:#e2e8ff">granularity</td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td style="color:#94a3b8">hour | day | week (default: hour)</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">cURL</span><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+                            <pre><span class="kw">curl</span> <span class="str">"https://api.getconnect.web/v2/analytics/metrics?from=2025-01-01&to=2025-01-31&granularity=day"</span> \
+  -H <span class="str">"Authorization: Bearer gc_live_xxxx"</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WEBHOOKS -->
+            <div class="doc-section" id="webhooks">
+                <div class="section-badge"><i class="fas fa-bell"></i> Webhooks</div>
+                <h2>Webhooks</h2>
+                <p>Receive real-time notifications when task status changes. Register a webhook URL when creating a task or via the dashboard.</p>
+                <h3><i class="fas fa-code"></i> Webhook Payload</h3>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">JSON Payload</span></div>
+                    <pre>{
+  <span class="key">"event"</span>: <span class="str">"task.completed"</span>,
+  <span class="key">"timestamp"</span>: <span class="str">"2025-01-15T10:45:00Z"</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"task_id"</span>: <span class="str">"task_xyz789"</span>,
+    <span class="key">"status"</span>: <span class="str">"completed"</span>,
+    <span class="key">"duration_ms"</span>: <span class="num">4820</span>,
+    <span class="key">"node_id"</span>: <span class="str">"node_3"</span>,
+    <span class="key">"result_url"</span>: <span class="str">"https://api.getconnect.web/v2/tasks/task_xyz789/result"</span>
+  }
+}</pre>
+                </div>
+                <div class="info-box tip"><i class="fas fa-shield-alt"></i><span>Verify webhook authenticity by checking the <code style="color:#22d3ee">X-GetConnect-Signature</code> header against your webhook secret using HMAC-SHA256.</span></div>
+            </div>
+
+            <!-- SDKs -->
+            <div class="doc-section" id="sdks">
+                <div class="section-badge"><i class="fas fa-code"></i> SDKs</div>
+                <h2>Official SDKs</h2>
+                <p>Use our official SDKs for faster integration. All SDKs are open-source and available on GitHub.</p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-top:1rem">
+                    <div class="card" style="padding:1.2rem;display:flex;align-items:center;gap:.8rem">
+                        <i class="fab fa-js-square" style="font-size:2rem;color:#f7df1e"></i>
+                        <div><div style="color:#e2e8ff;font-weight:600">JavaScript / Node.js</div><div style="color:#94a3b8;font-size:.82rem">npm install @getconnect/sdk</div></div>
+                    </div>
+                    <div class="card" style="padding:1.2rem;display:flex;align-items:center;gap:.8rem">
+                        <i class="fab fa-python" style="font-size:2rem;color:#3776ab"></i>
+                        <div><div style="color:#e2e8ff;font-weight:600">Python</div><div style="color:#94a3b8;font-size:.82rem">pip install getconnect-sdk</div></div>
+                    </div>
+                    <div class="card" style="padding:1.2rem;display:flex;align-items:center;gap:.8rem">
+                        <i class="fab fa-java" style="font-size:2rem;color:#ed8b00"></i>
+                        <div><div style="color:#e2e8ff;font-weight:600">Java</div><div style="color:#94a3b8;font-size:.82rem">Maven / Gradle</div></div>
+                    </div>
+                    <div class="card" style="padding:1.2rem;display:flex;align-items:center;gap:.8rem">
+                        <i class="fab fa-golang" style="font-size:2rem;color:#00add8"></i>
+                        <div><div style="color:#e2e8ff;font-weight:600">Go</div><div style="color:#94a3b8;font-size:.82rem">go get getconnect/sdk</div></div>
+                    </div>
+                </div>
+                <h3 style="margin-top:2rem"><i class="fas fa-terminal"></i> Quick Start (JavaScript)</h3>
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">JavaScript</span><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+                    <pre><span class="kw">import</span> { GetConnect } <span class="kw">from</span> <span class="str">'@getconnect/sdk'</span>;
+
+<span class="kw">const</span> client = <span class="kw">new</span> GetConnect({ apiKey: <span class="str">'gc_live_xxxx'</span> });
+
+<span class="cmt">// Create a task</span>
+<span class="kw">const</span> task = <span class="kw">await</span> client.tasks.create({
+  name: <span class="str">'ML Training'</span>,
+  type: <span class="str">'ml'</span>,
+  priority: <span class="str">'high'</span>,
+  payload: { model: <span class="str">'bert-base'</span>, epochs: <span class="num">10</span> }
+});
+
+<span class="cmt">// Poll for completion</span>
+<span class="kw">const</span> result = <span class="kw">await</span> client.tasks.waitForCompletion(task.id);
+console.log(<span class="str">'Done:'</span>, result);</pre>
+                </div>
+            </div>
+
+        </main>
+    </div><!-- /docs-layout -->
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <svg width="34" height="34" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                        <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z" fill="url(#g2)" opacity="0.95"/>
+                        <circle cx="42" cy="45" r="8" fill="#fff"/><circle cx="78" cy="45" r="8" fill="#fff"/>
+                        <path d="M42 65 L55 78 L78 52" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="logo-text"><span class="logo-main">GetConnect</span><span class="logo-sub">.web</span></div>
+                </div>
+                <p class="footer-desc">AI-powered distributed task execution engine with intelligent load balancing.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a><a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column"><h3>Product</h3><ul><li><a href="features.html">Features</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="api-documentation.html">API Docs</a></li></ul></div>
+            <div class="footer-column"><h3>Company</h3><ul><li><a href="about.html">About Us</a></li><li><a href="careers.html">Careers</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+            <div class="footer-column"><h3>Legal</h3><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Service</a></li><li><a href="Support.html">Support</a></li></ul></div>
+        </div>
+        <div class="footer-bottom">
+            <p style="color:rgba(255,255,255,0.55);font-size:.85rem">&copy; 2025 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="Support.html">Support</a></div>
+        </div>
+    </footer>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Mobile nav
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            const m = document.getElementById('navMenu');
+            m.classList.toggle('active');
+            this.innerHTML = m.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Sidebar active state
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+
+        // Scroll to section
+        function scrollTo(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Toggle endpoint body
+        function toggleEndpoint(head) {
+            const body = head.nextElementSibling;
+            const icon = head.querySelector('.fa-chevron-down, .fa-chevron-up');
+            body.classList.toggle('open');
+            if (icon) icon.className = body.classList.contains('open') ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+            icon.style.color = body.classList.contains('open') ? '#c084fc' : '#94a3b8';
+        }
+
+        // Copy code
+        function copyCode(btn) {
+            const pre = btn.closest('.code-block').querySelector('pre');
+            navigator.clipboard.writeText(pre.innerText).then(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.style.color = '#10b981';
+                setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; btn.style.color = ''; }, 2000);
+            });
+        }
+
+        // Toast
+        function toast(title, msg, color='#c084fc') {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.style.borderLeftColor = color;
+            t.innerHTML = `<div class="toast-icon" style="color:${color}"><i class="fas fa-code"></i></div><div><h4>${title}</h4><p>${msg}</p></div><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>`;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 3500);
+        }
+
+        setTimeout(() => toast('API Docs', 'Click any endpoint to expand details'), 700);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetConnect.Web | Pricing Plans</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reusing all the same CSS from index.html */
+        /* ===== CSS RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #a855f7;
+            --primary-light: #c084fc;
+            --primary-dark: #7c3aed;
+            --secondary-blue: #22d3ee;
+            --accent-blue: #67e8f9;
+            --sky-blue: rgba(192,132,252,0.15);
+            --white: #ffffff;
+            --off-white: #0a0a2a;
+            --light-gray: #0f172a;
+            --medium-gray: rgba(255,255,255,0.15);
+            --dark-gray: #94a3b8;
+            --text-dark: #e2e8ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #22d3ee;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5), 0 0 10px rgba(168,85,247,0.15);
+            --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.6), 0 0 20px rgba(168,85,247,0.2);
+            --shadow-xl: 0 20px 40px -10px rgba(0,0,0,0.7), 0 0 30px rgba(168,85,247,0.25);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #c084fc; border-radius: 8px; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+            background: radial-gradient(circle at 10% 20%, #0a0f2a, #020617);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', 'Poppins', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== LOGO ANIMATIONS ===== */
+        .logo-animation svg {
+            animation: floatPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes floatPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform var(--transition-normal);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-main {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-sub {
+            font-size: 14px;
+            font-weight: 500;
+            color: #c084fc;
+            margin-top: -2px;
+        }
+
+        /* ===== MODAL STYLES ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: relative;
+            background: rgba(15,25,45,0.97);
+            backdrop-filter: blur(16px);
+            margin: 5% auto;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 450px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(192,132,252,0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 1.5rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        .close-modal:hover { color: var(--danger); }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.75rem;
+            color: #e2e8ff;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .modal-header p { color: #94a3b8; }
+
+        /* ===== HEADER & NAVBAR ===== */
+        .header {
+            background: rgba(5, 10, 30, 0.75); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(192, 132, 252, 0.3);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            padding: 0.75rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Animated Navigation Menu */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            font-weight: 500;
+            color: #e2e8ff;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #c084fc, #22d3ee);
+            transition: width var(--transition-normal);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .nav-link:hover::before { width: 100%; }
+
+        .nav-link:hover {
+            color: #22d3ee;
+            background-color: rgba(192,132,252,0.1);
+        }
+
+        .nav-link.active {
+            color: #22d3ee;
+            font-weight: 600;
+        }
+
+        .nav-link.active::before { width: 100%; }
+
+        .nav-link i {
+            font-size: 1.1em;
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-notification {
+            position: relative;
+            background: none;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-notification:hover {
+            background-color: rgba(192,132,252,0.15);
+            color: #c084fc;
+            transform: rotate(15deg);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-login-header, .btn-register {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-login-header {
+            background-color: transparent;
+            color: #e2e8ff;
+            border: 1px solid rgba(192,132,252,0.5);
+        }
+
+        .btn-login-header:hover {
+            background-color: rgba(192,132,252,0.15);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-register {
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-register:hover {
+            box-shadow: 0 0 20px #a855f7;
+            transform: translateY(-2px);
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: #e2e8ff;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* ===== PRICING SECTION STYLES ===== */
+        .pricing-hero {
+            padding: 5rem 2rem;
+            background: radial-gradient(ellipse at 30% 50%, rgba(168,85,247,0.08), transparent);
+            text-align: center;
+        }
+
+        .pricing-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, #c084fc, #22d3ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-hero p {
+            font-size: 1.25rem;
+            color: #b9c7e6;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .pricing-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .toggle-label {
+            font-weight: 500;
+            color: #e2e8ff;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 70px;
+            height: 34px;
+        }
+
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.15);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #a855f7, #06b6d4);
+        }
+
+        input:checked + .toggle-slider:before { transform: translateX(36px); }
+
+        .billing-period {
+            font-weight: 600;
+            color: #e2e8ff;
+        }
+
+        .savings-badge {
+            display: inline-block;
+            background-color: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        /* Pricing Cards */
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1280px;
+            margin: 0 auto 5rem;
+        }
+
+        .pricing-card {
+            background: rgba(15,25,45,0.65);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 15px rgba(168,85,247,0.1);
+            transition: all var(--transition-normal);
+            position: relative;
+            border: 1px solid rgba(192,132,252,0.3);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 35px rgba(168,85,247,0.25);
+            border-color: rgba(192,132,252,0.7);
+        }
+
+        .pricing-card.popular {
+            border-color: #c084fc;
+            border-width: 2px;
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(168,85,247,0.3);
+        }
+
+        .pricing-card.popular:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            color: #e2e8ff;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .plan-description {
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 2rem;
+            min-height: 60px;
+        }
+
+        .plan-price {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .price-amount {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #e2e8ff;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .price-period {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2.5rem;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            color: #b9c7e6;
+        }
+
+        .plan-features li i { color: var(--success); font-size: 1.1rem; }
+
+        .plan-features li.disabled { color: #4a5568; }
+
+        .plan-features li.disabled i { color: #2d3748; }
+
+        .btn-select-plan {
+            width: 100%;
+            padding: 14px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-select-plan.primary {
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-select-plan.primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 20px #a855f7;
+        }
+
+        .btn-select-plan.secondary {
+            background: transparent;
+            color: #e2e8ff;
+            border: 1px solid rgba(192,132,252,0.5);
+        }
+
+        .btn-select-plan.secondary:hover {
+            transform: translateY(-4px);
+            background: rgba(192,132,252,0.15);
+            border-color: #c084fc;
+        }
+
+        /* Enterprise Section */
+        .enterprise-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #3a0ca3, #0e7490);
+            color: white;
+            text-align: center;
+            border-radius: var(--radius-xl);
+            max-width: 1280px;
+            margin: 0 auto 5rem;
+        }
+
+        .enterprise-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .enterprise-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-enterprise {
+            background: white;
+            color: #1e1a3a;
+            padding: 16px 32px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-enterprise:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            background: #e2e8ff;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 5rem 2rem;
+            background: transparent;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #e2e8ff, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .section-header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: rgba(15,25,45,0.6);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            border: 1px solid rgba(192,132,252,0.3);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .faq-item:hover {
+            background: rgba(192,132,252,0.08);
+            box-shadow: var(--shadow-md);
+        }
+
+        .faq-item.active {
+            background: rgba(192,132,252,0.1);
+            box-shadow: var(--shadow-md);
+            border-color: #c084fc;
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #e2e8ff;
+        }
+
+        .faq-icon { transition: transform var(--transition-normal); color: #c084fc; }
+
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-normal);
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            margin-top: 1rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, #3a0ca3, #0e7490);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.06), transparent 70%);
+        }
+
+        .cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-container h2 { font-size: 3rem; margin-bottom: 1rem; }
+
+        .cta-container p { font-size: 1.25rem; margin-bottom: 3rem; opacity: 0.9; }
+
+        .cta-buttons { display: flex; gap: 1.5rem; justify-content: center; }
+
+        .cta-buttons .btn-primary { background: white; color: #1e1a3a; }
+        .cta-buttons .btn-primary:hover { background: #e2e8ff; }
+        .cta-buttons .btn-secondary { background: transparent; color: white; border-color: white; }
+        .cta-buttons .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        .btn-primary, .btn-secondary {
+            padding: 16px 32px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all var(--transition-normal);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #c084fc, #06b6d4);
+            color: #0f0f2a;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 20px #a855f7;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #e2e8ff;
+            border: 1px solid rgba(192,132,252,0.5);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-4px);
+            background: rgba(192,132,252,0.15);
+            border-color: #c084fc;
+        }
+
+        .btn-large {
+            padding: 18px 40px;
+            font-size: 1.1rem;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #030617;
+            color: white;
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid rgba(192,132,252,0.2);
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo .logo-main {
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .footer-logo .logo-sub {
+            color: #c084fc;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all var(--transition-normal);
+        }
+
+        .social-links a:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+        }
+
+        .footer-column h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: color var(--transition-fast);
+        }
+
+        .footer-column a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .pricing-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .pricing-card.popular {
+                transform: scale(1);
+            }
+            
+            .pricing-card.popular:hover {
+                transform: translateY(-10px);
+            }
+            
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(5,10,30,0.97);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+                border-bottom: 1px solid rgba(192,132,252,0.3);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .nav-actions .btn-login-header,
+            .nav-actions .btn-register {
+                display: none;
+            }
+            
+            .pricing-hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pricing-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .price-amount {
+                font-size: 2.5rem;
+            }
+            
+            .section-header h2 {
+                font-size: 2rem;
+            }
+            
+            .cta-container h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Animated Navbar -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <!-- Logo with Animation -->
+                <a href="index.html" class="logo">
+                    <div class="logo-animation">
+                        <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </a>
+
+                <!-- Animated Menu -->
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a href="tasks.html" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li class="nav-item"><a href="analytics.html" class="nav-link"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                    <li class="nav-item"><a href="pricing.html" class="nav-link active"><i class="fas fa-tag"></i> Pricing</a></li>
+                </ul>
+
+                <!-- Right Side Actions -->
+                <div class="nav-actions">
+                    <button class="btn-notification" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </button>
+                    <!-- Updated Login Button - Now redirects to login.html -->
+                    <a href="login.html" class="btn-login-header" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <!-- Updated Register Button - Now redirects to register.html -->
+                    <a href="register.html" class="btn-register" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                    <div class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Pricing Hero Section -->
+    <section class="pricing-hero">
+        <div class="container">
+            <h1>Simple, Transparent Pricing</h1>
+            <p>Choose the perfect plan for your distributed computing needs. All plans include our AI-powered load balancing and 24/7 support.</p>
+            
+            <div class="pricing-toggle">
+                <span class="toggle-label">Monthly</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="billingToggle">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Annual <span class="billing-period">(Save 20%)</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Cards -->
+    <section class="pricing-cards">
+        <div class="pricing-card">
+            <div class="plan-name">Starter</div>
+            <div class="plan-description">Perfect for individuals and small projects getting started with distributed computing</div>
+            
+            <div class="plan-price">
+                <div class="price-amount" data-monthly="$49" data-annual="$39">$49</div>
+                <div class="price-period" data-monthly="per month" data-annual="per month, billed annually">per month</div>
+                <div class="savings-badge" id="starterSavings" style="display: none;">Save $120/year</div>
+            </div>
+            
+            <ul class="plan-features">
+                <li><i class="fas fa-check"></i> Up to 100,000 tasks/month</li>
+                <li><i class="fas fa-check"></i> 5 concurrent AI nodes</li>
+                <li><i class="fas fa-check"></i> Basic load balancing</li>
+                <li><i class="fas fa-check"></i> Email support</li>
+                <li><i class="fas fa-check"></i> Real-time dashboard</li>
+                <li><i class="fas fa-check"></i> 14-day data retention</li>
+                <li class="disabled"><i class="fas fa-times"></i> Priority support</li>
+                <li class="disabled"><i class="fas fa-times"></i> Advanced analytics</li>
+                <li class="disabled"><i class="fas fa-times"></i> Custom AI models</li>
+                <li class="disabled"><i class="fas fa-times"></i> SLA guarantee</li>
+            </ul>
+            
+            <a href="register.html" class="btn-select-plan secondary">
+                <i class="fas fa-rocket"></i> Start Free Trial
+            </a>
+        </div>
+        
+        <div class="pricing-card popular">
+            <div class="popular-badge">Most Popular</div>
+            <div class="plan-name">Professional</div>
+            <div class="plan-description">For growing businesses and teams with advanced computing requirements</div>
+            
+            <div class="plan-price">
+                <div class="price-amount" data-monthly="$149" data-annual="$119">$149</div>
+                <div class="price-period" data-monthly="per month" data-annual="per month, billed annually">per month</div>
+                <div class="savings-badge" id="proSavings" style="display: none;">Save $360/year</div>
+            </div>
+            
+            <ul class="plan-features">
+                <li><i class="fas fa-check"></i> Up to 1,000,000 tasks/month</li>
+                <li><i class="fas fa-check"></i> 20 concurrent AI nodes</li>
+                <li><i class="fas fa-check"></i> Advanced load balancing</li>
+                <li><i class="fas fa-check"></i> Priority email & chat support</li>
+                <li><i class="fas fa-check"></i> Advanced dashboard</li>
+                <li><i class="fas fa-check"></i> 90-day data retention</li>
+                <li><i class="fas fa-check"></i> Custom task queues</li>
+                <li><i class="fas fa-check"></i> Advanced analytics</li>
+                <li class="disabled"><i class="fas fa-times"></i> Custom AI models</li>
+                <li class="disabled"><i class="fas fa-times"></i> Dedicated account manager</li>
+            </ul>
+            
+            <a href="register.html" class="btn-select-plan primary">
+                <i class="fas fa-bolt"></i> Get Started
+            </a>
+        </div>
+        
+        <div class="pricing-card">
+            <div class="plan-name">Business</div>
+            <div class="plan-description">For enterprises with high-volume distributed computing and mission-critical workloads</div>
+            
+            <div class="plan-price">
+                <div class="price-amount" data-monthly="$349" data-annual="$279">$349</div>
+                <div class="price-period" data-monthly="per month" data-annual="per month, billed annually">per month</div>
+                <div class="savings-badge" id="businessSavings" style="display: none;">Save $840/year</div>
+            </div>
+            
+            <ul class="plan-features">
+                <li><i class="fas fa-check"></i> Unlimited tasks</li>
+                <li><i class="fas fa-check"></i> 50+ concurrent AI nodes</li>
+                <li><i class="fas fa-check"></i> Premium load balancing</li>
+                <li><i class="fas fa-check"></i> 24/7 phone & chat support</li>
+                <li><i class="fas fa-check"></i> Enterprise dashboard</li>
+                <li><i class="fas fa-check"></i> 365-day data retention</li>
+                <li><i class="fas fa-check"></i> Custom task queues</li>
+                <li><i class="fas fa-check"></i> Premium analytics</li>
+                <li><i class="fas fa-check"></i> Custom AI models</li>
+                <li><i class="fas fa-check"></i> Dedicated account manager</li>
+            </ul>
+            
+            <a href="register.html" class="btn-select-plan secondary">
+                <i class="fas fa-crown"></i> Contact Sales
+            </a>
+        </div>
+    </section>
+
+    <!-- Enterprise Section -->
+    <section class="enterprise-section">
+        <div class="container">
+            <h2>Need Enterprise-Grade Solutions?</h2>
+            <p>For organizations requiring custom deployments, on-premise solutions, or specialized compliance requirements, we offer tailored enterprise plans with dedicated support and custom pricing.</p>
+            <a href="contact.html" class="btn-enterprise">
+                <i class="fas fa-headset"></i> Contact Enterprise Sales
+            </a>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="section-header">
+            <h2><i class="fas fa-question-circle"></i> Frequently Asked Questions</h2>
+            <p>Find answers to common questions about our pricing and plans</p>
+        </div>
+        
+        <div class="faq-grid">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can I switch plans at any time?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes, you can upgrade or downgrade your plan at any time. When upgrading, you'll get immediate access to the new features and be billed the prorated difference. When downgrading, changes take effect at the start of your next billing cycle.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is there a free trial available?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes! All new users get a 14-day free trial of our Professional plan. No credit card required to start. After the trial, you can choose any plan that fits your needs.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What payment methods do you accept?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and bank transfers for annual plans. Enterprise customers can also be invoiced.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How does the AI load balancing work?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Our AI analyzes task complexity, node availability, network latency, and historical performance to distribute tasks optimally. It continuously learns from system behavior to improve distribution efficiency over time.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What happens if I exceed my monthly task limit?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    We'll notify you when you reach 80% and 100% of your monthly limit. Once exceeded, additional tasks are billed at $0.0005 per task (or you can upgrade your plan). You can set hard limits in your account settings.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Do you offer discounts for non-profits or educational institutions?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes! We offer special pricing for qualified non-profit organizations, educational institutions, and research projects. Contact our sales team with documentation of your status to learn more.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2>Start Your Distributed Computing Journey Today</h2>
+            <p>Join thousands of developers and enterprises using GetConnect.Web. No long-term contracts, cancel anytime.</p>
+            <div class="cta-buttons">
+                <a href="register.html" class="btn-primary btn-large">
+                    <i class="fas fa-play-circle"></i> Start Free Trial
+                </a>
+                <a href="contact.html" class="btn-secondary btn-large">
+                    <i class="fas fa-comment-alt"></i> Talk to Sales
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <div class="logo-animation">
+                        <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60a5fa"/>
+                                    <stop offset="100%" stop-color="#2563eb"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M20 30 Q60 5 100 30 V85 Q60 115 20 85 Z"
+                                  fill="url(#blueGrad)" opacity="0.95"/>
+                            <circle cx="42" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M30 80 C35 60, 50 60, 55 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="78" cy="45" r="8" fill="#ffffff"/>
+                            <path d="M90 80 C85 60, 70 60, 65 75"
+                                  fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M42 65 L55 78 L78 52"
+                                  fill="none" stroke="#ffffff" stroke-width="7"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">GetConnect</span>
+                        <span class="logo-sub">.web</span>
+                    </div>
+                </div>
+                <p class="footer-description">
+                    AI-powered distributed task execution engine with intelligent load balancing for modern computing needs. Scalable, secure, and efficient.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Product</h3>
+                <ul>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="api.html">API Documentation</a></li>
+                    <li><a href="tasks.html">Task Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="partners.html">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="docs.html">Documentation</a></li>
+                    <li><a href="tutorials.html">Tutorials</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="status.html">System Status</a></li>
+                    <li><a href="community.html">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GetConnect.Web. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="security.html">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== DOM ELEMENT REFERENCES =====
+        const billingToggle = document.getElementById('billingToggle');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.querySelector('.nav-menu');
+        const priceAmounts = document.querySelectorAll('.price-amount');
+        const pricePeriods = document.querySelectorAll('.price-period');
+        const savingsBadges = document.querySelectorAll('.savings-badge');
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        // ===== BILLING TOGGLE FUNCTIONALITY =====
+        billingToggle.addEventListener('change', function() {
+            const isAnnual = this.checked;
+            
+            priceAmounts.forEach(amount => {
+                const monthlyPrice = amount.getAttribute('data-monthly');
+                const annualPrice = amount.getAttribute('data-annual');
+                amount.textContent = isAnnual ? annualPrice : monthlyPrice;
+            });
+            
+            pricePeriods.forEach(period => {
+                const monthlyText = period.getAttribute('data-monthly');
+                const annualText = period.getAttribute('data-annual');
+                period.textContent = isAnnual ? annualText : monthlyText;
+            });
+            
+            savingsBadges.forEach(badge => {
+                badge.style.display = isAnnual ? 'inline-block' : 'none';
+            });
+        });
+
+        // ===== FAQ ACCORDION FUNCTIONALITY =====
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            
+            question.addEventListener('click', () => {
+                // Close all other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current item
+                item.classList.toggle('active');
+            });
+        });
+
+        // ===== MOBILE MENU TOGGLE =====
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileToggle.innerHTML = navMenu.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-container') && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // ===== NOTIFICATION SYSTEM =====
+        const notificationBtn = document.getElementById('notificationBtn');
+        let notificationCount = 3;
+
+        notificationBtn.addEventListener('click', () => {
+            if (notificationCount > 0) {
+                alert(`You have ${notificationCount} unread notifications`);
+                notificationCount = 0;
+                document.querySelector('.notification-count').textContent = '0';
+                document.querySelector('.notification-count').style.display = 'none';
+            } else {
+                alert('You have no new notifications');
+            }
+        });
+
+        // ===== NAVIGATION ACTIVE STATE =====
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Close mobile menu if open
+                if (navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
+        // ===== PRICE CALCULATOR =====
+        function calculateSavings() {
+            const toggle = document.getElementById('billingToggle');
+            if (toggle.checked) {
+                // Show all savings badges
+                savingsBadges.forEach(badge => badge.style.display = 'inline-block');
+            }
+        }
+
+        // Initial calculation
+        calculateSavings();
+
+        // ===== SMOOTH SCROLL FOR FAQ =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ===== PAGE LOAD EFFECTS =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate pricing cards on load
+            const cards = document.querySelectorAll('.pricing-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+            
+            // Auto-open first FAQ item
+            setTimeout(() => {
+                if (faqItems.length > 0) {
+                    faqItems[0].classList.add('active');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
