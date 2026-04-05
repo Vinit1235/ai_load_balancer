@@ -246,33 +246,33 @@
             <div class="card stat-card">
                 <div class="stat-icon cpu"><i class="fas fa-microchip"></i></div>
                 <div>
-                    <div class="stat-val" id="cpuVal">72%</div>
+                    <div class="stat-val" id="cpuVal">0%</div>
                     <div class="stat-lbl">CPU Utilization</div>
-                    <div class="stat-change up"><i class="fas fa-arrow-up"></i> +4.2% vs last hour</div>
+                    <div class="stat-change up" id="cpuTrend"><i class="fas fa-arrow-up"></i> Waiting for backend data</div>
                 </div>
             </div>
             <div class="card stat-card">
                 <div class="stat-icon mem"><i class="fas fa-memory"></i></div>
                 <div>
-                    <div class="stat-val" id="memVal">58%</div>
+                    <div class="stat-val" id="memVal">0%</div>
                     <div class="stat-lbl">Memory Usage</div>
-                    <div class="stat-change down"><i class="fas fa-arrow-down"></i> -1.8% vs last hour</div>
+                    <div class="stat-change down" id="memTrend"><i class="fas fa-arrow-down"></i> Waiting for backend data</div>
                 </div>
             </div>
             <div class="card stat-card">
                 <div class="stat-icon tasks"><i class="fas fa-tasks"></i></div>
                 <div>
-                    <div class="stat-val" id="taskVal">45.2K</div>
+                    <div class="stat-val" id="taskVal">0</div>
                     <div class="stat-lbl">Tasks / Hour</div>
-                    <div class="stat-change up"><i class="fas fa-arrow-up"></i> +12.5% vs last hour</div>
+                    <div class="stat-change up" id="taskTrend"><i class="fas fa-arrow-up"></i> Waiting for backend data</div>
                 </div>
             </div>
             <div class="card stat-card">
                 <div class="stat-icon nodes"><i class="fas fa-server"></i></div>
                 <div>
-                    <div class="stat-val" id="nodeVal">324</div>
+                    <div class="stat-val" id="nodeVal">0</div>
                     <div class="stat-lbl">Active Nodes</div>
-                    <div class="stat-change up"><i class="fas fa-arrow-up"></i> +8 new nodes</div>
+                    <div class="stat-change up" id="nodeTrend"><i class="fas fa-arrow-up"></i> Waiting for backend data</div>
                 </div>
             </div>
         </div>
@@ -304,14 +304,14 @@
             <div class="card" style="padding:1.5rem">
                 <div style="display:flex;justify-content:space-between;align-items:center">
                     <h3 style="color:#e2e8ff;font-size:1.1rem;display:flex;align-items:center;gap:8px"><i class="fas fa-heartbeat" style="color:#c084fc"></i> System Status</h3>
-                    <span class="live-badge">ALL SYSTEMS GO</span>
+                    <span class="live-badge" id="systemStatusBadge">CONNECTING</span>
                 </div>
                 <div class="status-list">
-                    <div class="status-item"><div class="status-left"><div class="s-icon ok"><i class="fas fa-check"></i></div><span class="s-name">API Gateway</span></div><span class="s-val ok">Healthy</span></div>
-                    <div class="status-item"><div class="status-left"><div class="s-icon ok"><i class="fas fa-check"></i></div><span class="s-name">Load Balancer</span></div><span class="s-val ok">98.7% Uptime</span></div>
-                    <div class="status-item"><div class="status-left"><div class="s-icon warn"><i class="fas fa-exclamation"></i></div><span class="s-name">Node Cluster 7</span></div><span class="s-val warn">High Load</span></div>
-                    <div class="status-item"><div class="status-left"><div class="s-icon ok"><i class="fas fa-check"></i></div><span class="s-name">Database</span></div><span class="s-val ok">124ms Latency</span></div>
-                    <div class="status-item"><div class="status-left"><div class="s-icon ok"><i class="fas fa-check"></i></div><span class="s-name">AI Engine</span></div><span class="s-val ok">Optimizing</span></div>
+                    <div class="status-item"><div class="status-left"><div class="s-icon ok" id="apiHealthIcon"><i class="fas fa-plug"></i></div><span class="s-name">API Gateway</span></div><span class="s-val ok" id="apiHealthValue">Connecting</span></div>
+                    <div class="status-item"><div class="status-left"><div class="s-icon ok" id="clusterHealthIcon"><i class="fas fa-network-wired"></i></div><span class="s-name">Cluster</span></div><span class="s-val ok" id="clusterHealthValue">Waiting</span></div>
+                    <div class="status-item"><div class="status-left"><div class="s-icon warn" id="nodeHealthIcon"><i class="fas fa-server"></i></div><span class="s-name">Active Nodes</span></div><span class="s-val warn" id="nodeHealthValue">0</span></div>
+                    <div class="status-item"><div class="status-left"><div class="s-icon ok" id="dbHealthIcon"><i class="fas fa-database"></i></div><span class="s-name">Task Store</span></div><span class="s-val ok" id="dbHealthValue">SQLite ready</span></div>
+                    <div class="status-item"><div class="status-left"><div class="s-icon ok" id="aiHealthIcon"><i class="fas fa-brain"></i></div><span class="s-name">Scheduler</span></div><span class="s-val ok" id="aiHealthValue">HEURISTIC</span></div>
                 </div>
             </div>
 
@@ -454,17 +454,26 @@
 
         // ===== RENDER NODES FROM API =====
         const grid = document.getElementById('nodeGrid');
+        if (!grid) console.error('ERROR: nodeGrid element not found in DOM');
         const cpuFillClass = cpu => cpu > 85 ? 'crit' : cpu > 70 ? 'warn' : '';
 
         function renderNodes(nodes) {
+            console.log('renderNodes called with', nodes?.length || 0, 'nodes');
+            if (!grid) {
+                console.error('ERROR: grid is null, cannot render nodes');
+                return;
+            }
             if (!nodes || nodes.length === 0) {
                 grid.innerHTML = '<p style="color:#94a3b8;padding:1rem">No worker nodes connected yet. Start a worker with: <code style="color:#22d3ee">python worker/sentinel.py --master-url http://localhost:8000 --node-name worker-1</code></p>';
                 return;
             }
+            console.log('Rendering', nodes.length, 'worker nodes...');
             grid.innerHTML = '';
             nodes.forEach(n => {
                 const cpu = Math.round(n.cpu || 0);
                 const mem = Math.round(n.ram || 0);
+                const gpu = Math.round(n.gpu_utilization || 0);
+                const disk = Math.round(n.disk_percent || 0);
                 const tasks = n.active_tasks || 0;
                 const status = (n.status || 'HEALTHY').toLowerCase() === 'healthy' ? 'ok' : 'warn';
                 grid.innerHTML += `
@@ -476,6 +485,8 @@
                     <div class="node-stats">
                         <div class="n-stat"><div class="n-stat-lbl">CPU</div><div class="n-stat-val">${cpu}%</div></div>
                         <div class="n-stat"><div class="n-stat-lbl">Memory</div><div class="n-stat-val">${mem}%</div></div>
+                        <div class="n-stat"><div class="n-stat-lbl">GPU</div><div class="n-stat-val">${n.gpu_available ? `${gpu}%` : 'N/A'}</div></div>
+                        <div class="n-stat"><div class="n-stat-lbl">Disk</div><div class="n-stat-val">${disk}%</div></div>
                         <div class="n-stat"><div class="n-stat-lbl">Tasks</div><div class="n-stat-val">${tasks}</div></div>
                         <div class="n-stat"><div class="n-stat-lbl">IP</div><div class="n-stat-val" style="font-size:.85rem">${n.ip || '—'}</div></div>
                     </div>
@@ -529,6 +540,26 @@
             }).join('');
         }
 
+        function updateSystemStatusPanel(clusterStatus, healthStatus, schedulerStatus) {
+            const nodesOnline = clusterStatus?.nodes_online || 0;
+            const totalTasks = clusterStatus?.tasks_total || 0;
+            const activeTasks = (clusterStatus?.task_status?.running || 0) + (clusterStatus?.task_status?.assigned || 0);
+            const schedulerMode = schedulerStatus?.mode || 'HEURISTIC';
+
+            document.getElementById('systemStatusBadge').textContent = healthStatus?.status === 'ok' ? 'BACKEND ONLINE' : 'BACKEND OFFLINE';
+            document.getElementById('apiHealthValue').textContent = healthStatus?.status === 'ok' ? 'Healthy' : 'Offline';
+            document.getElementById('clusterHealthValue').textContent = `${activeTasks} active, ${totalTasks} total`;
+            document.getElementById('nodeHealthValue').textContent = String(nodesOnline);
+            document.getElementById('dbHealthValue').textContent = `${totalTasks} tasks in SQLite`;
+            document.getElementById('aiHealthValue').textContent = schedulerMode;
+
+            document.getElementById('apiHealthIcon').className = `s-icon ${healthStatus?.status === 'ok' ? 'ok' : 'crit'}`;
+            document.getElementById('clusterHealthIcon').className = `s-icon ${nodesOnline > 0 ? 'ok' : 'warn'}`;
+            document.getElementById('nodeHealthIcon').className = `s-icon ${nodesOnline > 0 ? 'ok' : 'warn'}`;
+            document.getElementById('dbHealthIcon').className = 's-icon ok';
+            document.getElementById('aiHealthIcon').className = `s-icon ${schedulerMode === 'AI' ? 'ok' : 'warn'}`;
+        }
+
         function timeAgo(iso) {
             const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
             if (diff < 60) return `${diff}s ago`;
@@ -548,10 +579,17 @@
         // ===== LIVE POLLING =====
         async function refreshDashboard() {
             try {
-                const status = await apiGetClusterStatus();
+                const [status, health, schedulerStatus] = await Promise.all([
+                    apiGetClusterStatus(),
+                    apiHealthCheck().catch(() => null),
+                    apiGetSchedulerStatus().catch(() => null),
+                ]);
                 const nodes = status.nodes || [];
                 const tasks = status.recent_tasks || [];
                 const taskStatus = status.task_status || {};
+                
+                console.log('refreshDashboard: Got', nodes.length, 'nodes from API');
+                if (nodes.length > 0) console.log('First node:', nodes[0]);
 
                 // Update stat cards
                 document.getElementById('nodeVal').textContent = status.nodes_online || 0;
@@ -581,12 +619,15 @@
                 renderNodes(nodes);
                 renderTaskFeed(tasks);
                 renderTaskTable(tasks);
+                updateSystemStatusPanel(status, health, schedulerStatus);
             } catch(e) {
-                console.warn('Dashboard refresh failed:', e);
+                console.error('Dashboard refresh failed:', e);
+                updateSystemStatusPanel({}, { status: 'error' }, { mode: 'HEURISTIC' });
             }
         }
 
         // Initial load + poll every 5s
+        console.log('Dashboard initializing... grid element:', grid?.id || 'NOT FOUND');
         refreshDashboard();
         setInterval(refreshDashboard, 5000);
 

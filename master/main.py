@@ -30,7 +30,7 @@ app.add_middleware(
 # Middleware: Request logging
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    logger = logging.getLogger("uvicorn.access")
+    logger = logging.getLogger("master.requests")
     logger.info(f"Request: {request.method} {request.url}")
     response = await call_next(request)
     return response
@@ -138,6 +138,7 @@ def build_cluster_snapshot() -> dict:
         "task_status": status_counts,
         "nodes": nodes,
         "recent_tasks": tasks[:25],
+        "scheduler_status": scheduler.get_status()
     }
 
 @api_router.post("/tasks")
@@ -187,13 +188,19 @@ async def get_task(id: str):
     raise HTTPException(status_code=404, detail=f"Task {id} not found")
 
 @api_router.delete("/tasks/{id}")
+async def delete_task(id: str):
+    deleted = state_manager.delete_task(str(id))
+    if not deleted:
+        raise HTTPException(status_code=404, detail=f"Task {id} not found")
+    return {"ok": True, "task_id": id, "status": "DELETED"}
+
+
+@api_router.post("/tasks/{id}/cancel")
 async def cancel_task(id: str):
-    tasks = state_manager.get_all_tasks()
-    for task in tasks:
-        if str(task.get("id")) == str(id):
-            state_manager.update_task_status(str(id), "CANCELLED")
-            return {"ok": True, "task_id": id, "status": "CANCELLED"}
-    raise HTTPException(status_code=404, detail=f"Task {id} not found")
+    cancelled = state_manager.cancel_task(str(id))
+    if not cancelled:
+        raise HTTPException(status_code=404, detail=f"Task {id} not found")
+    return {"ok": True, "task_id": id, "status": "CANCELLED"}
 
 @api_router.get("/nodes")
 async def list_nodes():
@@ -222,6 +229,9 @@ async def node_heartbeat(payload: dict):
             "gpu_utilization": payload.get("gpu_utilization", 0),
             "gpu_memory_used_mb": payload.get("gpu_memory_used_mb", 0),
             "gpu_temperature": payload.get("gpu_temperature", 0),
+            "disk_total_gb": payload.get("disk_total_gb", 0),
+            "disk_used_gb": payload.get("disk_used_gb", 0),
+            "disk_percent": payload.get("disk_percent", 0),
             "active_tasks": payload.get("active_tasks", 0),
         }
     )

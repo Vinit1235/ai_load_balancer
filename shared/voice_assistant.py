@@ -122,10 +122,29 @@ def _ai_answer(query: str, context: Dict[str, Any]) -> str:
     genai.configure(api_key=settings.GEMINI_API_KEY)
     model = genai.GenerativeModel(settings.LLM_MODEL)
 
+    # Token Saver: Only load the Heavy SOP.md if the user complains of errors or asks "how/why" questions
+    query_lower = query.lower()
+    needs_knowledge = any(keyword in query_lower for keyword in 
+       ["how", "explain", "architecture", "what is", "recover", "fail", "error", "sop", "why"]
+    )
+
+    project_knowledge_text = ""
+    if needs_knowledge:
+        import os
+        knowledge_path = os.path.join(os.path.dirname(__file__), "..", "SOP.md")
+        try:
+            if os.path.exists(knowledge_path):
+                with open(knowledge_path, "r", encoding="utf-8") as f:
+                    # Cut down to 2000 chars to save even more tokens
+                    project_knowledge_text = f"\n--- PROJECT KNOWLEDGE ---\n{f.read()[:2000]}\n--------------------------\n"
+        except Exception as e:
+            logger.warning(f"Failed to load project knowledge: {e}")
+
     prompt = (
-        "You are a voice assistant for a distributed task dashboard. "
-        "Answer only from the provided cluster snapshot. "
-        "Do not invent values, do not give control commands, and keep the reply short and spoken-friendly.\n\n"
+        "You are a highly intelligent voice assistant for the 'NeuroCluster' Distributed AI Load Balancer dashboard. "
+        "Keep your reply conversational, spoken-friendly, and avoid returning markdown formatting. "
+        "Use the Cluster Snapshot JSON to answer questions about the current state of the system (e.g. CPU loads, queues).\n"
+        f"{project_knowledge_text}\n"
         f"User question: {query}\n\n"
         f"Cluster snapshot JSON:\n{json.dumps(context, indent=2, default=str)}"
     )

@@ -1429,7 +1429,13 @@
                 // Real API call to backend
                 const result = await apiLogin(email, password);
                 showToast('Login Successful', `Welcome back, ${result.user.name}!`, 'success');
-                if (rememberMe) localStorage.setItem('rememberMe', 'true');
+                if (rememberMe) {
+                    localStorage.setItem('rememberMe', 'true');
+                    localStorage.setItem('remembered_email', email);
+                } else {
+                    localStorage.removeItem('rememberMe');
+                    localStorage.removeItem('remembered_email');
+                }
                 setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
             } catch (error) {
                 showToast('Login Failed', error.detail || error.message || 'Invalid email or password', 'error');
@@ -1525,46 +1531,19 @@
             });
         });
 
-        // ===== AUTO-FILL DEMO CREDENTIALS (FOR DEMO PURPOSES) =====
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if user has previously visited
-            const hasVisited = sessionStorage.getItem('hasVisitedLogin');
-            
-            if (!hasVisited) {
-                // Show welcome toast
-                setTimeout(() => {
-                    showToast('Welcome to GetConnect', 'Try our demo credentials: demo@getconnect.web / password123', 'info');
-                }, 1000);
-                
-                // Auto-fill demo credentials for testing
-                const loginEmail = document.getElementById('loginEmail');
-                const loginPassword = document.getElementById('loginPassword');
-                
-                if (loginEmail && loginPassword) {
-                    loginEmail.value = 'demo@getconnect.web';
-                    loginPassword.value = 'password123';
+            const loginEmail = document.getElementById('loginEmail');
+
+            if (loginEmail) {
+                const rememberedEmail = localStorage.getItem('remembered_email');
+                if (rememberedEmail) {
+                    loginEmail.value = rememberedEmail;
                 }
-                
-                sessionStorage.setItem('hasVisitedLogin', 'true');
             }
-            
-            // Check for remember me
+
             if (localStorage.getItem('rememberMe') === 'true') {
                 document.getElementById('rememberMe').checked = true;
             }
-            
-            // Pre-fill registration fields with demo data
-            document.getElementById('firstName')?.addEventListener('focus', function() {
-                if (!this.value) this.value = 'Demo';
-            });
-            
-            document.getElementById('lastName')?.addEventListener('focus', function() {
-                if (!this.value) this.value = 'User';
-            });
-            
-            document.getElementById('registerEmail')?.addEventListener('focus', function() {
-                if (!this.value) this.value = 'demo@getconnect.web';
-            });
         });
 
         // ===== FORM VALIDATION ENHANCEMENTS =====
@@ -1633,15 +1612,6 @@
                 }
             });
         }
-
-        // ===== AUTO-REDIRECT IF ALREADY LOGGED IN =====
-        window.addEventListener('load', () => {
-            // If user already has a real auth token, redirect to dashboard
-            if (localStorage.getItem('auth_token')) {
-                showToast('Already Logged In', 'Redirecting to dashboard...', 'info');
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
-            }
-        });
 
         // ===== ENHANCED PASSWORD STRENGTH INDICATOR =====
         const registerPassword = document.getElementById('registerPassword');

@@ -1850,7 +1850,7 @@
                         <span class="notification-count">2</span>
                     </button>
                     <button class="btn-login-header" id="loginBtn">
-                        <i class="fas fa-user"></i> John Doe
+                        <i class="fas fa-sign-in-alt"></i> Login
                     </button>
                     <button class="btn-danger" id="logoutBtn">
                         <i class="fas fa-sign-out-alt"></i> Logout
@@ -2698,11 +2698,11 @@
         async function deleteTask(taskId) {
             if (!confirm(`Cancel/delete task #${taskId}?`)) return;
             try {
-                await apiCancelTask(taskId);
-                showToastMsg('Task Cancelled', `Task #${taskId.slice(-6)} cancelled`, '#ef4444');
+                await apiDeleteTask(taskId);
+                showToastMsg('Task Deleted', `Task #${taskId.slice(-6)} deleted`, '#ef4444');
                 await loadTasksFromAPI();
             } catch(e) {
-                showToastMsg('Error', e.detail || 'Failed to cancel task', '#ef4444');
+                showToastMsg('Error', e.detail || 'Failed to delete task', '#ef4444');
             }
         }
 
@@ -2846,12 +2846,12 @@
         deleteTasksBtn.addEventListener('click', async () => {
             const selectedIds = Array.from(document.querySelectorAll('.task-checkbox:checked')).map(cb => cb.dataset.taskId);
             if (!selectedIds.length) return;
-            if (!confirm(`Cancel ${selectedIds.length} selected tasks?`)) return;
+            if (!confirm(`Delete ${selectedIds.length} selected tasks?`)) return;
             try {
-                for (const id of selectedIds) await apiCancelTask(id);
-                showToastMsg('Cancelled', `${selectedIds.length} tasks cancelled`, '#ef4444');
+                for (const id of selectedIds) await apiDeleteTask(id);
+                showToastMsg('Deleted', `${selectedIds.length} tasks deleted`, '#ef4444');
                 await loadTasksFromAPI();
-            } catch(e) { showToastMsg('Error', e.detail || 'Failed', '#ef4444'); }
+            } catch(e) { showToastMsg('Error', e.detail || 'Failed to delete tasks', '#ef4444'); }
         });
 
         exportTasksBtn.addEventListener('click', async () => {

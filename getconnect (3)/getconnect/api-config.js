@@ -4,9 +4,18 @@
  */
 
 const API_CONFIG = {
-    BASE_URL: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-        ? `http://${window.location.hostname}:8000`
-        : window.location.origin,
+    BASE_URL: (() => {
+        const host = window.location.hostname;
+        const isFileProtocol = window.location.protocol === 'file:';
+        const invalidOrigin = !window.location.origin || window.location.origin === 'null';
+        if (isFileProtocol || invalidOrigin) {
+            return 'http://127.0.0.1:8000';
+        }
+        if (host === 'localhost' || host === '127.0.0.1') {
+            return `http://${host}:8000`;
+        }
+        return window.location.origin;
+    })(),
     API_PREFIX: '/api/v1',
     WS_PREFIX: '/ws',
 };
@@ -54,6 +63,7 @@ async function apiLogin(email, password) {
         localStorage.setItem('user_email', data.user.email);
         // Also keep session key for legacy compatibility
         sessionStorage.setItem('userEmail', data.user.email);
+        syncAuthNavigation();
     }
     return data;
 }
@@ -70,6 +80,7 @@ function apiLogout() {
     localStorage.removeItem('user_name');
     localStorage.removeItem('user_email');
     sessionStorage.removeItem('userEmail');
+    syncAuthNavigation();
     window.location.href = 'login.html';
 }
 
@@ -82,6 +93,106 @@ function getCurrentUser() {
         name: localStorage.getItem('user_name') || 'Guest',
         email: localStorage.getItem('user_email') || '',
     };
+}
+
+function syncAuthNavigation() {
+    const loggedIn = isLoggedIn();
+    const user = getCurrentUser();
+
+    document.querySelectorAll('.nav-actions').forEach((actions) => {
+        const loginControls = actions.querySelectorAll('a[href="login.html"], .btn-login, .btn-login-header');
+        const registerControls = actions.querySelectorAll('a[href="register.html"], .btn-register, .btn-register-nav');
+        const logoutControls = actions.querySelectorAll('#logoutBtn, [data-auth-logout="true"]');
+        let authWidget = actions.querySelector('[data-auth-widget="true"]');
+
+        if (loggedIn) {
+            loginControls.forEach((control) => {
+                control.style.display = 'none';
+            });
+            registerControls.forEach((control) => {
+                control.style.display = 'none';
+            });
+
+            if (!authWidget) {
+                authWidget = document.createElement('button');
+                authWidget.type = 'button';
+                authWidget.dataset.authWidget = 'true';
+                authWidget.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid rgba(192,132,252,0.35);background:rgba(15,23,42,0.75);color:#e2e8ff;font:600 0.9rem Inter,sans-serif;cursor:pointer;';
+                authWidget.innerHTML = `<i class="fas fa-user-circle"></i><span>${user.name || 'Account'}</span>`;
+                authWidget.addEventListener('click', () => {
+                    window.location.href = 'dashboard.html';
+                });
+
+                const mobileToggle = actions.querySelector('.mobile-toggle');
+                if (mobileToggle) {
+                    actions.insertBefore(authWidget, mobileToggle);
+                } else {
+                    actions.appendChild(authWidget);
+                }
+            } else {
+                const label = authWidget.querySelector('span');
+                if (label) {
+                    label.textContent = user.name || 'Account';
+                }
+            }
+
+            logoutControls.forEach((control) => {
+                control.style.display = '';
+                if (!control.dataset.authLogoutBound) {
+                    control.addEventListener('click', apiLogout);
+                    control.dataset.authLogoutBound = 'true';
+                }
+            });
+
+            if (!logoutControls.length) {
+                const logoutButton = document.createElement('button');
+                logoutButton.type = 'button';
+                logoutButton.dataset.authLogout = 'true';
+                logoutButton.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid rgba(239,68,68,0.35);background:rgba(127,29,29,0.25);color:#fecaca;font:600 0.9rem Inter,sans-serif;cursor:pointer;';
+                logoutButton.innerHTML = '<i class="fas fa-right-from-bracket"></i><span>Logout</span>';
+                logoutButton.addEventListener('click', apiLogout);
+
+                const mobileToggle = actions.querySelector('.mobile-toggle');
+                if (mobileToggle) {
+                    actions.insertBefore(logoutButton, mobileToggle);
+                } else {
+                    actions.appendChild(logoutButton);
+                }
+            }
+        } else {
+            loginControls.forEach((control) => {
+                control.style.display = '';
+                if (control.tagName === 'BUTTON') {
+                    control.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                    if (!control.dataset.authLoginBound) {
+                        control.addEventListener('click', () => {
+                            window.location.href = 'login.html';
+                        });
+                        control.dataset.authLoginBound = 'true';
+                    }
+                }
+            });
+
+            registerControls.forEach((control) => {
+                control.style.display = '';
+                if (control.tagName === 'BUTTON') {
+                    control.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+                    if (!control.dataset.authRegisterBound) {
+                        control.addEventListener('click', () => {
+                            window.location.href = 'register.html';
+                        });
+                        control.dataset.authRegisterBound = 'true';
+                    }
+                }
+            });
+
+            logoutControls.forEach((control) => {
+                control.style.display = 'none';
+            });
+
+            authWidget?.remove();
+        }
+    });
 }
 
 // ===== CLUSTER / DASHBOARD HELPERS =====
@@ -116,6 +227,10 @@ async function apiGetTask(taskId) {
 }
 
 async function apiCancelTask(taskId) {
+    return await apiFetch(`/tasks/${taskId}/cancel`, { method: 'POST' });
+}
+
+async function apiDeleteTask(taskId) {
     return await apiFetch(`/tasks/${taskId}`, { method: 'DELETE' });
 }
 
@@ -123,6 +238,10 @@ async function apiCancelTask(taskId) {
 
 async function apiGetNodes() {
     return await apiFetch('/nodes');
+}
+
+async function apiGetSchedulerStatus() {
+    return await apiFetch('/scheduler/status');
 }
 
 async function apiDrainNode(nodeId) {
@@ -234,5 +353,9 @@ function initApiConfig() {
     if (isProtected) {
         showConnectionStatus();
     }
+
+    syncAuthNavigation();
 }
+
+window.addEventListener('storage', syncAuthNavigation);
 

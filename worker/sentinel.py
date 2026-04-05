@@ -65,6 +65,24 @@ class HealthSentinel:
     def get_ram_percent(self) -> float:
         """Get RAM utilization percentage"""
         return psutil.virtual_memory().percent
+
+    def get_disk_usage(self) -> dict:
+        """Get disk usage metrics for the primary filesystem."""
+        try:
+            usage = psutil.disk_usage('/')
+            gb = 1024 ** 3
+            return {
+                "disk_total_gb": round(usage.total / gb, 2),
+                "disk_used_gb": round(usage.used / gb, 2),
+                "disk_percent": round(usage.percent, 2),
+            }
+        except Exception as e:
+            logger.debug(f"Disk usage reading failed: {e}")
+            return {
+                "disk_total_gb": 0,
+                "disk_used_gb": 0,
+                "disk_percent": 0,
+            }
     
     def get_thermal(self) -> float:
         """
@@ -168,6 +186,7 @@ class HealthSentinel:
             cpu = self.get_cpu_percent()
             ram = self.get_ram_percent()
             thermal = self.get_thermal()
+            disk = self.get_disk_usage()
             gpu_metrics = get_gpu_metrics()
             active_tasks = self.get_active_task_count()
             
@@ -184,6 +203,9 @@ class HealthSentinel:
                 "gpu_utilization": gpu_metrics["utilization"],
                 "gpu_memory_used_mb": gpu_metrics["memory_used_mb"],
                 "gpu_temperature": gpu_metrics["temperature"],
+                "disk_total_gb": disk["disk_total_gb"],
+                "disk_used_gb": disk["disk_used_gb"],
+                "disk_percent": disk["disk_percent"],
                 "active_tasks": active_tasks,
                 "timestamp": datetime.now().isoformat()
             }
@@ -316,7 +338,12 @@ async def main():
                        help="Master node URL")
     parser.add_argument("--node-name", required=True, help="Node name (e.g., worker-1)")
     parser.add_argument("--node-id", help="Node ID (defaults to node-name)")
-    
+    parser.add_argument(
+        "--enable-task-consumer",
+        action="store_true",
+        help="Enable task execution loop (requires MinIO/checkpoint backend)",
+    )
+
     args = parser.parse_args()
     
     node_id = args.node_id or args.node_name
@@ -333,17 +360,29 @@ async def main():
         node_name=args.node_name
     )
     
-    consumer = TaskConsumer(
-        master_url=args.master_url,
-        node_id=node_id
-    )
-    
-    # Run both simultaneously
+    consumer = None
+    if args.enable_task_consumer:
+        try:
+            consumer = TaskConsumer(
+                master_url=args.master_url,
+                node_id=node_id
+            )
+        except Exception as e:
+            logger.warning(
+                "Task consumer unavailable (%s). Running heartbeat-only mode. "
+                "This is expected when MinIO/checkpoint dependencies are down.",
+                e,
+            )
+
+    # Run heartbeat + task consumer when available
     try:
-        await asyncio.gather(
-            sentinel.run(),
-            consumer.run()
-        )
+        if consumer is not None:
+            await asyncio.gather(
+                sentinel.run(),
+                consumer.run()
+            )
+        else:
+            await sentinel.run()
     except KeyboardInterrupt:
         logger.info("Worker gracefully stopped by user")
 

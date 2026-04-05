@@ -40,10 +40,14 @@ class StateManager:
                 gpu_utilization REAL DEFAULT 0,
                 gpu_memory_used_mb INTEGER DEFAULT 0,
                 gpu_temperature REAL DEFAULT 0,
+                disk_total_gb REAL DEFAULT 0,
+                disk_used_gb REAL DEFAULT 0,
+                disk_percent REAL DEFAULT 0,
                 active_tasks INTEGER DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        self._ensure_nodes_columns(cursor)
         
         # Tasks table
         cursor.execute("""
@@ -85,6 +89,20 @@ class StateManager:
         """)
         
         self.conn.commit()
+
+    def _ensure_nodes_columns(self, cursor):
+        """Ensure new node columns exist in older databases."""
+        cursor.execute("PRAGMA table_info(nodes)")
+        existing_columns = {row[1] for row in cursor.fetchall()}
+        required_columns = {
+            "disk_total_gb": "REAL DEFAULT 0",
+            "disk_used_gb": "REAL DEFAULT 0",
+            "disk_percent": "REAL DEFAULT 0",
+        }
+
+        for column_name, column_type in required_columns.items():
+            if column_name not in existing_columns:
+                cursor.execute(f"ALTER TABLE nodes ADD COLUMN {column_name} {column_type}")
     
     # ---------- NODE OPERATIONS ----------
     
@@ -94,8 +112,9 @@ class StateManager:
         
         cursor.execute("""
             INSERT INTO nodes (id, name, ip, status, last_heartbeat, cpu, ram, thermal,
-                             gpu_available, gpu_utilization, gpu_memory_used_mb, gpu_temperature, active_tasks)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                             gpu_available, gpu_utilization, gpu_memory_used_mb, gpu_temperature,
+                             disk_total_gb, disk_used_gb, disk_percent, active_tasks)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
                 name=excluded.name,
                 ip=excluded.ip,
@@ -108,6 +127,9 @@ class StateManager:
                 gpu_utilization=excluded.gpu_utilization,
                 gpu_memory_used_mb=excluded.gpu_memory_used_mb,
                 gpu_temperature=excluded.gpu_temperature,
+                disk_total_gb=excluded.disk_total_gb,
+                disk_used_gb=excluded.disk_used_gb,
+                disk_percent=excluded.disk_percent,
                 active_tasks=excluded.active_tasks
         """, (
             node_data['id'],
@@ -122,6 +144,9 @@ class StateManager:
             node_data.get('gpu_utilization', 0),
             node_data.get('gpu_memory_used_mb', 0),
             node_data.get('gpu_temperature', 0),
+            node_data.get('disk_total_gb', 0),
+            node_data.get('disk_used_gb', 0),
+            node_data.get('disk_percent', 0),
             node_data.get('active_tasks', 0)
         ))
         
@@ -351,6 +376,25 @@ class StateManager:
             WHERE id = ?
         """, (node_id, task_id))
         self.conn.commit()
+
+    def cancel_task(self, task_id: str):
+        """Mark a task as cancelled without deleting its record."""
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            UPDATE tasks
+            SET status = 'CANCELLED'
+            WHERE id = ?
+        """, (task_id,))
+        self.conn.commit()
+        return cursor.rowcount > 0
+
+    def delete_task(self, task_id: str):
+        """Delete a task and its metrics from the database."""
+        cursor = self.conn.cursor()
+        cursor.execute("DELETE FROM task_metrics WHERE task_id = ?", (task_id,))
+        cursor.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+        self.conn.commit()
+        return cursor.rowcount > 0
     
     # ---------- METRICS OPERATIONS ----------
     

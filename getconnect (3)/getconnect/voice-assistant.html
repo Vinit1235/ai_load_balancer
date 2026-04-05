@@ -275,6 +275,9 @@
       </div>
 
       <div class="field">
+        <label for="voiceSelect">Assistant Voice</label>
+        <select id="voiceSelect" style="width: 100%; border-radius: 18px; padding: 14px 16px; background: var(--panel-strong); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.12); margin-top: 5px; margin-bottom: 15px; outline: none;"></select>
+
         <label for="queryInput">Manual question</label>
         <input id="queryInput" type="text" placeholder="Say or type a question about status..." />
         <button class="primary" id="askBtn">Ask Status</button>
@@ -314,13 +317,41 @@
     const snapshotNode = document.getElementById("snapshot");
     const listeningState = document.getElementById("listeningState");
     const assistantState = document.getElementById("assistantState");
+    const voiceSelect = document.getElementById("voiceSelect");
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
     let lastAnswer = "";
+    let isUserStopped = false; // Add flag so we can force reconnect
+    let voices = [];
+
+    function populateVoiceList() {
+      if(typeof speechSynthesis === 'undefined') { return; }
+      voices = speechSynthesis.getVoices();
+      voiceSelect.innerHTML = '';
+      
+      let preSelected = false;
+      voices.forEach((voice) => {
+        const option = document.createElement('option');
+        option.textContent = voice.name + ' (' + voice.lang + ')';
+        option.setAttribute('data-name', voice.name);
+        
+        // Auto-select a nice voice if we haven't selected one yet
+        if (!preSelected && (voice.name.includes('Siri') || voice.name.includes('Google US English') || voice.name.includes('Zira') || voice.default)) {
+           option.selected = true;
+           preSelected = true;
+        }
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    populateVoiceList();
+    if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
 
     function setListening(active) {
-      listeningState.textContent = active ? "Listening" : "Idle";
+      listeningState.textContent = active ? "Listening (Say 'Hey Siri')" : "Idle";
       startBtn.disabled = active;
       stopBtn.disabled = !active;
     }
@@ -329,6 +360,15 @@
       if (!("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Attempt to load the selected voice
+      const selectedOption = voiceSelect.selectedOptions[0];
+      if (selectedOption) {
+          const selectedVoiceName = selectedOption.getAttribute('data-name');
+          const voice = voices.find(v => v.name === selectedVoiceName);
+          if (voice) utterance.voice = voice;
+      }
+
       utterance.rate = 1;
       utterance.pitch = 1;
       utterance.lang = "en-US";
@@ -357,6 +397,9 @@
         answerNode.textContent = lastAnswer;
         assistantState.textContent = data.provider || "Local";
         snapshotNode.textContent = JSON.stringify(data.snapshot || {}, null, 2);
+        
+        // Automatically speak out the answer
+        speak(lastAnswer);
       } catch (error) {
         answerNode.textContent = `Request failed: ${error.message}`;
         snapshotNode.textContent = "Unable to reach the assistant endpoint.";
@@ -369,18 +412,63 @@
         return;
       }
 
+      isUserStopped = false;
       recognition = new SpeechRecognition();
       recognition.lang = "en-US";
+      recognition.continuous = true; // Stay alive continuously
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
 
-      recognition.onstart = () => setListening(true);
-      recognition.onend = () => setListening(false);
-      recognition.onerror = () => setListening(false);
+      recognition.onstart = () => {
+        setListening(true);
+        console.log("Listening for 'Hey Siri'...");
+      };
+      
+      recognition.onend = () => {
+        setListening(false);
+        // Automatically restart if not willfully stopped by the user
+        if (!isUserStopped) {
+            console.log("Restarting listener...");
+            setTimeout(startRecognition, 1000); 
+        }
+      };
+      
+      recognition.onerror = (event) => {
+        if(event.error === 'no-speech' || event.error === 'network') {
+            // Ignore no speech gaps and let it auto restart
+            return;
+        }
+        setListening(false);
+      };
+      
       recognition.onresult = event => {
-        const transcript = event.results[0][0].transcript;
-        queryInput.value = transcript;
-        askStatus(transcript);
+        const currentResultIndex = event.resultIndex;
+        let transcript = event.results[currentResultIndex][0].transcript.trim().toLowerCase();
+        
+        console.log("Heard:", transcript);
+        
+        // Simple Wake Word check
+        const wakeWords = ["hey siri", "hi siri", "ok siri", "okay siri"];
+        let triggered = false;
+        
+        for (let word of wakeWords) {
+            if (transcript.includes(word)) {
+                triggered = true;
+                // Strip the wake word out to just send the question
+                transcript = transcript.replace(word, "").trim();
+                break;
+            }
+        }
+        
+        if (triggered) {
+            // If they just said "Hey Siri" we might not have the query yet. 
+            // In a simple app, we send what was heard in the same sentence.
+            if (transcript.length < 3) {
+                 transcript = "What is the status?"; // default fallback
+            }
+            queryInput.value = transcript;
+            askStatus(transcript);
+        }
       };
 
       recognition.start();
@@ -388,6 +476,7 @@
 
     startBtn.addEventListener("click", startRecognition);
     stopBtn.addEventListener("click", () => {
+      isUserStopped = true;
       if (recognition) {
         recognition.stop();
       }
