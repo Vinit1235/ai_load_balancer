@@ -11,6 +11,10 @@
   <img src="https://img.shields.io/badge/License-MIT-lightgrey" />
 </p>
 
+<p align="center">
+  <img src="docs/architecture.jpg" alt="NeuroCluster Architecture Diagram" width="800"/>
+</p>
+
 ---
 
 ## Table of Contents
