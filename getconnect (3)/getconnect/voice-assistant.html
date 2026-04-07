@@ -406,80 +406,123 @@
       }
     }
 
-    function startRecognition() {
-      if (!SpeechRecognition) {
-        answerNode.textContent = "Speech recognition is not supported in this browser. Use the text box instead.";
-        return;
-      }
+    function initRecognition() {
+      if (!SpeechRecognition) return;
+      if (recognition) return;
 
-      isUserStopped = false;
       recognition = new SpeechRecognition();
       recognition.lang = "en-US";
       recognition.continuous = true; // Stay alive continuously
-      recognition.interimResults = false;
+      recognition.interimResults = true; // Enable live feedback to improve user experience
       recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
         setListening(true);
         console.log("Listening for 'Hey Siri'...");
+        transcriptNode.innerHTML = "<span style='color: #7dd3fc;'>Microphone active. Listening for your voice...</span>";
       };
       
       recognition.onend = () => {
-        setListening(false);
         // Automatically restart if not willfully stopped by the user
         if (!isUserStopped) {
-            console.log("Restarting listener...");
-            setTimeout(startRecognition, 1000); 
+            console.log("Auto-restarting listener...");
+            try { recognition.start(); } catch(e) {}
+        } else {
+            setListening(false);
+            if (!transcriptNode.innerHTML.includes("Error:")) {
+                transcriptNode.innerHTML = "<span style='color: #94a3b8;'>Microphone turned off.</span>";
+            }
         }
       };
       
       recognition.onerror = (event) => {
-        if(event.error === 'no-speech' || event.error === 'network') {
-            // Ignore no speech gaps and let it auto restart
-            return;
+        console.warn("Speech error:", event.error);
+        if (event.error === 'not-allowed') {
+            isUserStopped = true;
+            transcriptNode.innerHTML = "<span style='color: #fb7185;'>Error: Microphone access denied by browser. Please allow microphone permissions in the URL bar.</span>";
+        } else if (event.error === 'network') {
+            isUserStopped = true;
+            transcriptNode.innerHTML = "<span style='color: #fb7185;'>Error: Network issue. The browser's speech engine requires an active internet connection to transcribe voice. Stopping.</span>";
+        } else if (event.error !== 'no-speech') {
+            transcriptNode.innerHTML = `<span style='color: #fb7185;'>Speech error: ${event.error}. Your browser might not fully support this API.</span>`;
         }
-        setListening(false);
       };
       
       recognition.onresult = event => {
-        const currentResultIndex = event.resultIndex;
-        let transcript = event.results[currentResultIndex][0].transcript.trim().toLowerCase();
-        
-        console.log("Heard:", transcript);
-        
-        // Simple Wake Word check
-        const wakeWords = ["hey siri", "hi siri", "ok siri", "okay siri"];
-        let triggered = false;
-        
-        for (let word of wakeWords) {
-            if (transcript.includes(word)) {
-                triggered = true;
-                // Strip the wake word out to just send the question
-                transcript = transcript.replace(word, "").trim();
-                break;
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript;
+            } else {
+                interimTranscript += event.results[i][0].transcript;
             }
         }
         
-        if (triggered) {
-            // If they just said "Hey Siri" we might not have the query yet. 
-            // In a simple app, we send what was heard in the same sentence.
-            if (transcript.length < 3) {
-                 transcript = "What is the status?"; // default fallback
+        // Update UI with live transcription so the user knows what is being heard
+        transcriptNode.innerHTML = `<span style="color: #94a3b8;">${interimTranscript}</span> ${finalTranscript}`;
+
+        if (finalTranscript) {
+            let processed = finalTranscript.toLowerCase().trim();
+            console.log("Heard final:", processed);
+            
+            // Expanded trigger list to catch common misrecognitions
+            const wakeWords = [
+                "hey siri", "hi siri", "ok siri", "okay siri",
+                "hey theory", "hey city", "hey craig", "ok theory",
+                "hey assistant", "ok assistant", "cluster system",
+                "hey steady", "hey seriously"
+            ];
+            
+            let triggered = false;
+            
+            for (let word of wakeWords) {
+                if (processed.includes(word)) {
+                    triggered = true;
+                    // Strip the wake word out
+                    processed = processed.replace(word, "").trim();
+                    break;
+                }
             }
-            queryInput.value = transcript;
-            askStatus(transcript);
+            
+            // If the user hasn't said a wake word but they ask a clear question or give long input,
+            // we should also trigger since they explicitly activated 'Start Listening'.
+            const questionWords = ["what", "how", "which", "give", "tell", "show", "is", "are", "do", "does", "can"];
+            const startsWithQuestion = questionWords.some(w => processed.startsWith(w));
+            
+            if (triggered || startsWithQuestion || processed.split(' ').length > 4) {
+                 if (processed.length < 3) {
+                     processed = "What is the cluster status?"; // default fallback
+                 }
+                 queryInput.value = processed;
+                 askStatus(processed);
+            }
         }
       };
-
-      recognition.start();
     }
 
-    startBtn.addEventListener("click", startRecognition);
+    function startListening() {
+      if (!SpeechRecognition) {
+        answerNode.textContent = "Speech recognition is not supported in this browser. Use the text box instead.";
+        return;
+      }
+      isUserStopped = false;
+      initRecognition();
+      try {
+        recognition.start();
+      } catch (e) {
+        console.log("Already started:", e);
+      }
+    }
+
+    startBtn.addEventListener("click", startListening);
     stopBtn.addEventListener("click", () => {
       isUserStopped = true;
       if (recognition) {
         recognition.stop();
       }
+      setListening(false);
     });
     askBtn.addEventListener("click", () => askStatus(queryInput.value));
     speakBtn.addEventListener("click", () => speak(lastAnswer || answerNode.textContent));

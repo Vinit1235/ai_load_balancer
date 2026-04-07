@@ -1,4 +1,4 @@
-# Python
+# ── Python ────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
@@ -7,28 +7,56 @@ __pycache__/
 venv/
 env/
 
-# Build and packaging
+# ── Build / packaging ─────────────────────────────────────
 build/
 dist/
 *.egg-info/
 
-# Testing and tooling
+# ── Testing / tooling ─────────────────────────────────────
 .pytest_cache/
 .mypy_cache/
 .coverage
 htmlcov/
 
-# Environment and secrets
+# ── Secrets & environment ─────────────────────────────────
 .env
 .env.*
 *.pem
 *.key
 
-# IDE/editor
+# ── IDE / editor ──────────────────────────────────────────
 .vscode/
 .idea/
 *.swp
 
-# OS files
+# ── OS files ──────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+
+# ── Runtime / generated data (do NOT commit) ──────────────
+execution_logs.csv          # generated log data
+cluster_state.db            # runtime SQLite database
+*.db                        # any other database files
+*.db-shm
+*.db-wal
+
+# ── ML model binary (regenerate with train_model.py) ──────
+*.pkl
+ai/models/*.pkl
+
+# ── User accounts (security risk) ─────────────────────────
+users.json
+
+# ── Personal / non-project files ──────────────────────────
+LINKEDIN_POST.md
+claude.md                   # AI assistant context file
+tracked_files.txt           # temp file
+
+# ── Duplicate / archive folders ───────────────────────────
+test1/                      # zip archive + extracted duplicate
+getconnect (3)/             # extracted duplicate of frontend
+
+# ── Large binary / zip archives ───────────────────────────
+*.zip
+*.tar.gz
+*.rar
