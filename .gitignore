@@ -52,9 +52,8 @@ LINKEDIN_POST.md
 claude.md                   # AI assistant context file
 tracked_files.txt           # temp file
 
-# ── Duplicate / archive folders ───────────────────────────
-test1/                      # zip archive + extracted duplicate
-getconnect (3)/             # extracted duplicate of frontend
+# ── Archive / temp folders ────────────────────────────────
+test1/                      # zip archive only, not source code
 
 # ── Large binary / zip archives ───────────────────────────
 *.zip
